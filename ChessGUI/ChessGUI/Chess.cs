@@ -711,8 +711,11 @@ namespace ChessGUI
                 int j = (sender as Square).posX;
                 if (origin == String.Empty)
                 {
-                    origin += i.ToString() + j.ToString();
-                    ParseAndHighlight(i, j);
+                    if(board[i, j].White == state.White)
+                    {
+                        origin += i.ToString() + j.ToString();
+                        ParseAndHighlight(i, j);
+                    }
                 }
                 else
                 {
