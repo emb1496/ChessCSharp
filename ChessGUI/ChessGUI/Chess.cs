@@ -124,6 +124,16 @@ namespace ChessGUI
                 moves += (i + brilliantNum).ToString() + j.ToString() + ", ";
             }
 
+            // empessant check
+            if (i == 3 && j + brilliantNum < 8 && tempBoard[i, j + brilliantNum].HasMoved == false && tempBoard[i, j + brilliantNum].Value == 1)
+            {
+                moves += (i + brilliantNum).ToString() + (j + brilliantNum).ToString() + ", ";
+            }
+            if (i == 3 && j - brilliantNum >= 0 && tempBoard[i, j - brilliantNum].HasMoved == false && tempBoard[i, j - brilliantNum].Value == 1)
+            {
+                moves += (i + brilliantNum).ToString() + (j - brilliantNum).ToString() + ", ";
+            }
+
             //taking pieces
             if ((i + brilliantNum <= 7) && (i + brilliantNum >= 0) && (j + brilliantNum <= 7) && (j + brilliantNum >= 0) && tempBoard[i + brilliantNum, j + brilliantNum].Value != 0 && tempBoard[i + brilliantNum, j + brilliantNum].White != tempBoard[i, j].White)
             {
@@ -694,6 +704,54 @@ namespace ChessGUI
             }
         }
 
+        private void MakeMove(int i, int j, int tempI, int tempJ)
+        {
+            if (board[tempI, tempJ].Value == 9)
+            {
+                if (tempJ - 2 == j)
+                {
+                    board[i, j + 1] = board[i, 0];
+                    board[i, j + 1].HasMoved = true;
+                    board[i, 0] = new Piece();
+                }
+                else if (tempJ + 2 == j)
+                {
+                    board[i, j - 1] = board[i, 7];
+                    board[i, j - 1].HasMoved = true;
+                    board[i, 7] = new Piece();
+                }
+                board[i, j] = board[tempI, tempJ];
+                board[tempI, tempJ] = new Piece();
+                board[i, j].HasMoved = true;
+            }
+            else if (board[tempI, tempJ].Value == 1 && Math.Abs(i - tempI) == 2)
+            {
+                board[i, j] = board[tempI, tempJ];
+                board[tempI, tempJ] = new Piece();
+                board[i, j].HasMoved = false;
+            }
+            else
+            {
+                board[i, j] = board[tempI, tempJ];
+                board[tempI, tempJ] = new Piece();
+                board[i, j].HasMoved = true;
+            }
+        }
+
+        private void ParseForPawns()
+        {
+            for(int i = 0; i < 8; i++)
+            {
+                for(int j = 0; j < 8; j++)
+                {
+                    if(board[i, j].Value == 1 && board[i,j].White == state.White)
+                    {
+                        board[i, j].HasMoved = true;
+                    }
+                }
+            }
+        }
+
         void Square_Click(object sender, EventArgs e)
         {
             if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove))
@@ -711,7 +769,7 @@ namespace ChessGUI
                 int j = (sender as Square).posX;
                 if (origin == String.Empty)
                 {
-                    if(board[i, j].White == state.White)
+                    if(board[i, j].White == state.White && board[i,j].Value != 0)
                     {
                         origin += i.ToString() + j.ToString();
                         ParseAndHighlight(i, j);
@@ -723,22 +781,8 @@ namespace ChessGUI
                     {
                         int tempI = Convert.ToInt32(origin.ElementAt(0) - 48);
                         int tempJ = Convert.ToInt32(origin.ElementAt(1) - 48);
-                        if(board[tempI, tempJ].Value == 9)
-                        {
-                            if (tempJ - 2 == j)
-                            {
-                                board[i, j + 1] = board[i, 0];
-                                board[i, 0] = new Piece();
-                            }
-                            else if(tempJ + 2 == j)
-                            {
-                                board[i, j - 1] = board[i, 7];
-                                board[i, 7] = new Piece();
-                            }
-                        }
-                        board[i, j] = board[tempI, tempJ];
-                        board[tempI, tempJ] = new Piece();
-                        board[i, j].HasMoved = true;
+                        ParseForPawns();
+                        MakeMove(i, j, tempI, tempJ);
                         state.Board = board;
                         ResetColors();
                         Drawing(board);
@@ -764,8 +808,6 @@ namespace ChessGUI
                         {
                             ReverseBoard();
                         }
-                        //Thread t = new Thread(ProcessServerMessages);
-                        //t.Start();
                         origin = String.Empty;
                     }
                     else
