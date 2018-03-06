@@ -15,6 +15,7 @@ namespace ChessServer
 
     public class SendState
     {
+        private List<Piece[,]> allPositions;
         private string chat;
         private Piece[,] board;
         private string notation;
@@ -23,6 +24,23 @@ namespace ChessServer
         private bool staleMate;
         private bool whiteToMove;
         private bool waitingForSecondPlayer;
+
+        public List<Piece[,]> AllPositions
+        {
+            get
+            {
+                return allPositions;
+            }
+            set
+            {
+                allPositions = value;
+            }
+        }
+
+        public void AddToAllPositions(Piece[,] position)
+        {
+            allPositions.Add(position);
+        }
 
         public bool WaitingForSecondPlayer
         {
@@ -128,11 +146,13 @@ namespace ChessServer
             chat = String.Empty;
             notation = String.Empty;
             waitingForSecondPlayer = true;
+            allPositions = new List<Piece[,]>();
         }
     }
 
     public class GameState
     {
+        private List<Piece[,]> allPositions;
         private string chat;
         private Piece[,] board;
         private string notation;
@@ -145,6 +165,23 @@ namespace ChessServer
         private Socket player2;
         private IPEndPoint endPoint2;
         private bool waitingForSecondPlayer;
+
+        public List<Piece[,]> AllPositions
+        {
+            get
+            {
+                return allPositions;
+            }
+            set
+            {
+                allPositions = value;
+            }
+        }
+
+        public void AddToAllPositions(Piece[,] position)
+        {
+            allPositions.Add(position);
+        }
 
         public IPEndPoint EndPoint1
         {
@@ -300,6 +337,7 @@ namespace ChessServer
             chat = String.Empty;
             notation = String.Empty;
             waitingForSecondPlayer = true;
+            allPositions = new List<Piece[,]>();
         }
     }
 
@@ -482,6 +520,7 @@ namespace ChessServer
                 allGames.Last().Player2 = myClients.Last();
                 allGames.Last().WaitingForSecondPlayer = false;
                 allGames.Last().EndPoint2 = myEndPoints.Last();
+                allGames.Last().AddToAllPositions(allGames.Last().Board);
                 SendClientsGameState(allGames.Last(), allGames.Last().Player1);
             }
         }
@@ -537,6 +576,7 @@ namespace ChessServer
             NetworkStream ns;
             StreamReader sr;
             StreamWriter sw;
+            sendState.AllPositions = state.AllPositions;
             sendState.Board = state.Board;
             sendState.Chat = state.Chat;
             sendState.CheckMate = state.CheckMate;
@@ -589,6 +629,28 @@ namespace ChessServer
             return true;
         }
 
+        private static void CheckForDrawByRepitition(GameState state)
+        {
+            int count;
+            for(int i = 0; i < state.AllPositions.Count; i++)
+            {
+                count = 0;
+                for(int j = i + 1; j < state.AllPositions.Count; j++)
+                {
+                    if(IsSameBoard(state.AllPositions.ElementAt(i), state.AllPositions.ElementAt(j)))
+                    {
+                        count++;
+                    }
+                }
+                if(count < 2)
+                {
+                    continue;
+                }
+                state.StaleMate = true;
+                break;
+            }
+        }
+
         private static void Play()
         {
             ArrayList checkRead = new ArrayList();
@@ -634,6 +696,8 @@ namespace ChessServer
                         if(!IsSameBoard(state.Board, allGames.ElementAt(index / 2).Board))
                         {
                             allGames.ElementAt(index / 2).WhiteToMove = !state.WhiteToMove;
+                            allGames.ElementAt(index / 2).AddToAllPositions(allGames.ElementAt(index / 2).Board);
+                            CheckForDrawByRepitition(allGames.ElementAt(index / 2));
                         }
 
                         allGames.ElementAt(index / 2).Board = state.Board;

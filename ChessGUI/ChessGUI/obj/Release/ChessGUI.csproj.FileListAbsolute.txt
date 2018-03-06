@@ -109,3 +109,15 @@ C:\Users\emb14\source\repos\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.c
 C:\Users\emb14\source\repos\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.exe
 C:\Users\emb14\source\repos\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.pdb
 C:\Users\emb14\source\repos\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.csprojResolveAssemblyReference.cache
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\bin\Release\ChessGUI.exe.config
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\bin\Release\ChessGUI.exe
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\bin\Release\ChessGUI.pdb
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\bin\Release\Newtonsoft.Json.dll
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.csprojResolveAssemblyReference.cache
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.Chess.resources
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.Properties.Resources.resources
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.Square.resources
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.csproj.GenerateResource.Cache
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.csproj.CoreCompileInputs.cache
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.exe
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.pdb

@@ -8,6 +8,7 @@ namespace ChessGUI
 {
     class GameState
     {
+        private List<Piece[,]> allPositions;
         private string chat;
         private Piece[,] board;
         private string notation;
@@ -15,6 +16,23 @@ namespace ChessGUI
         private bool checkMate;
         private bool staleMate;
         private bool whiteToMove;
+
+        public List<Piece[,]> AllPositions
+        {
+            get
+            {
+                return allPositions;
+            }
+            set
+            {
+                allPositions = value;
+            }
+        }
+
+        public void AddToAllPositions(Piece[,] position)
+        {
+            allPositions.Add(position);
+        }
 
         public bool CheckMate
         {

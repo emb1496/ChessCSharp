@@ -16,3 +16,12 @@ C:\Users\emb14\source\repos\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessS
 C:\Users\emb14\source\repos\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.csproj.CoreCompileInputs.cache
 C:\Users\emb14\source\repos\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.exe
 C:\Users\emb14\source\repos\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.pdb
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Debug\ChessServer.exe.config
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Debug\ChessServer.exe
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Debug\ChessServer.pdb
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.csprojResolveAssemblyReference.cache
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.csproj.CoreCompileInputs.cache
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.exe
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.pdb
