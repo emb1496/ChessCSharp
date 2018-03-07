@@ -16,6 +16,19 @@ namespace ChessGUI
         private bool checkMate;
         private bool staleMate;
         private bool whiteToMove;
+        private bool drawByRepitition;
+
+        public bool DrawByRepitition
+        {
+            get
+            {
+                return drawByRepitition;
+            }
+            set
+            {
+                drawByRepitition = value;
+            }
+        }
 
         public List<Piece[,]> AllPositions
         {

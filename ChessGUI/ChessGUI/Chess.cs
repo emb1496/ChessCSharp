@@ -78,6 +78,10 @@ namespace ChessGUI
                 {
                     MessageBox.Show("StaleMate");
                 }
+                else if (state.DrawByRepitition)
+                {
+                    MessageBox.Show("Draw By Repitition");
+                }
                 Invoke(new Action(() =>
                 {
                     textBoxChat.Text = state.Chat;

@@ -22,8 +22,21 @@ namespace ChessServer
         private bool white;
         private bool checkMate;
         private bool staleMate;
+        private bool drawByRepitition;
         private bool whiteToMove;
         private bool waitingForSecondPlayer;
+
+        public bool DrawByRepitition
+        {
+            get
+            {
+                return drawByRepitition;
+            }
+            set
+            {
+                drawByRepitition = value;
+            }
+        }
 
         public List<Piece[,]> AllPositions
         {
@@ -147,6 +160,7 @@ namespace ChessServer
             notation = String.Empty;
             waitingForSecondPlayer = true;
             allPositions = new List<Piece[,]>();
+            drawByRepitition = false;
         }
     }
 
@@ -159,6 +173,7 @@ namespace ChessServer
         private bool white;
         private bool checkMate;
         private bool staleMate;
+        private bool drawByRepitition;
         private bool whiteToMove;
         private Socket player1;
         private IPEndPoint endPoint1;
@@ -183,6 +198,18 @@ namespace ChessServer
             allPositions.Add(position);
         }
 
+        public bool DrawByRepitition
+        {
+            get
+            {
+                return drawByRepitition;
+            }
+            set
+            {
+                drawByRepitition = value;
+            }
+        }
+        
         public IPEndPoint EndPoint1
         {
             get
@@ -331,6 +358,7 @@ namespace ChessServer
         {
             checkMate = false;
             staleMate = false;
+            drawByRepitition = false;
             player1 = null;
             player2 = null;
             WhiteToMove = true;
@@ -646,7 +674,7 @@ namespace ChessServer
                 {
                     continue;
                 }
-                state.StaleMate = true;
+                state.DrawByRepitition = true;
                 break;
             }
         }
@@ -704,6 +732,14 @@ namespace ChessServer
                         allGames.ElementAt(index / 2).Chat = state.Chat;
                         allGames.ElementAt(index / 2).Notation = state.Notation;
                         SendClientsGameState(allGames.ElementAt(index / 2), (Socket)checkRead[i]);
+                        if(allGames.ElementAt(index / 2).DrawByRepitition && (Socket)checkRead[i] == allGames.ElementAt(index / 2).Player1)
+                        {
+                            SendClientsGameState(allGames.ElementAt(index / 2), allGames.ElementAt(index / 2).Player1);
+                        }
+                        else if(allGames.ElementAt(index / 2).DrawByRepitition)
+                        {
+                            SendClientsGameState(allGames.ElementAt(index / 2), allGames.ElementAt(index / 2).Player2);
+                        }
                     }
                     catch(Exception except)
                     {
