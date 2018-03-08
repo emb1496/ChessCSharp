@@ -17,6 +17,32 @@ namespace ChessGUI
         private bool staleMate;
         private bool whiteToMove;
         private bool drawByRepitition;
+        private int whiteTimeLeft;
+        private int blackTimeLeft;
+
+        public int BlackTimeLeft
+        {
+            get
+            {
+                return blackTimeLeft;
+            }
+            set
+            {
+                blackTimeLeft = value;
+            }
+        }
+
+        public int WhiteTimeLeft
+        {
+            get
+            {
+                return whiteTimeLeft;
+            }
+            set
+            {
+                whiteTimeLeft = value;
+            }
+        }
 
         public bool DrawByRepitition
         {

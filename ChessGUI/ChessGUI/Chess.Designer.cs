@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.textBoxChat = new System.Windows.Forms.TextBox();
             this.textBoxNotation = new System.Windows.Forms.TextBox();
             this.textBoxInput = new System.Windows.Forms.TextBox();
@@ -35,6 +36,16 @@
             this.ButtonSendMessage = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.Label2 = new System.Windows.Forms.Label();
+            this.Timer1 = new System.Windows.Forms.Timer(this.components);
+            this.LowerTimeLabel = new System.Windows.Forms.Label();
+            this.ThreeHour = new System.Windows.Forms.RadioButton();
+            this.OneHour = new System.Windows.Forms.RadioButton();
+            this.ThirtyMin = new System.Windows.Forms.RadioButton();
+            this.FifteenMin = new System.Windows.Forms.RadioButton();
+            this.TenMin = new System.Windows.Forms.RadioButton();
+            this.FiveMin = new System.Windows.Forms.RadioButton();
+            this.OneMin = new System.Windows.Forms.RadioButton();
+            this.UpperTimeLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBoxChat
@@ -103,11 +114,121 @@
             this.Label2.TabIndex = 7;
             this.Label2.Text = "label";
             // 
+            // Timer1
+            // 
+            this.Timer1.Interval = 1000;
+            this.Timer1.Tick += new System.EventHandler(this.Timer1_Tick);
+            // 
+            // LowerTimeLabel
+            // 
+            this.LowerTimeLabel.AutoSize = true;
+            this.LowerTimeLabel.Location = new System.Drawing.Point(409, 529);
+            this.LowerTimeLabel.Name = "LowerTimeLabel";
+            this.LowerTimeLabel.Size = new System.Drawing.Size(0, 17);
+            this.LowerTimeLabel.TabIndex = 8;
+            // 
+            // ThreeHour
+            // 
+            this.ThreeHour.AutoSize = true;
+            this.ThreeHour.Checked = true;
+            this.ThreeHour.Location = new System.Drawing.Point(150, 59);
+            this.ThreeHour.Name = "ThreeHour";
+            this.ThreeHour.Size = new System.Drawing.Size(77, 21);
+            this.ThreeHour.TabIndex = 9;
+            this.ThreeHour.TabStop = true;
+            this.ThreeHour.Text = "3 hours";
+            this.ThreeHour.UseVisualStyleBackColor = true;
+            this.ThreeHour.CheckedChanged += new System.EventHandler(this.ThreeHour_CheckedChanged);
+            // 
+            // OneHour
+            // 
+            this.OneHour.AutoSize = true;
+            this.OneHour.Location = new System.Drawing.Point(150, 86);
+            this.OneHour.Name = "OneHour";
+            this.OneHour.Size = new System.Drawing.Size(70, 21);
+            this.OneHour.TabIndex = 10;
+            this.OneHour.Text = "1 hour";
+            this.OneHour.UseVisualStyleBackColor = true;
+            this.OneHour.CheckedChanged += new System.EventHandler(this.OneHour_CheckedChanged);
+            // 
+            // ThirtyMin
+            // 
+            this.ThirtyMin.AutoSize = true;
+            this.ThirtyMin.Location = new System.Drawing.Point(150, 113);
+            this.ThirtyMin.Name = "ThirtyMin";
+            this.ThirtyMin.Size = new System.Drawing.Size(71, 21);
+            this.ThirtyMin.TabIndex = 11;
+            this.ThirtyMin.Text = "30 min";
+            this.ThirtyMin.UseVisualStyleBackColor = true;
+            this.ThirtyMin.CheckedChanged += new System.EventHandler(this.ThirtyMin_CheckedChanged);
+            // 
+            // FifteenMin
+            // 
+            this.FifteenMin.AutoSize = true;
+            this.FifteenMin.Location = new System.Drawing.Point(150, 140);
+            this.FifteenMin.Name = "FifteenMin";
+            this.FifteenMin.Size = new System.Drawing.Size(71, 21);
+            this.FifteenMin.TabIndex = 12;
+            this.FifteenMin.Text = "15 min";
+            this.FifteenMin.UseVisualStyleBackColor = true;
+            this.FifteenMin.CheckedChanged += new System.EventHandler(this.FifteenMin_CheckedChanged);
+            // 
+            // TenMin
+            // 
+            this.TenMin.AutoSize = true;
+            this.TenMin.Location = new System.Drawing.Point(150, 167);
+            this.TenMin.Name = "TenMin";
+            this.TenMin.Size = new System.Drawing.Size(71, 21);
+            this.TenMin.TabIndex = 13;
+            this.TenMin.Text = "10 min";
+            this.TenMin.UseVisualStyleBackColor = true;
+            this.TenMin.CheckedChanged += new System.EventHandler(this.TenMin_CheckedChanged);
+            // 
+            // FiveMin
+            // 
+            this.FiveMin.AutoSize = true;
+            this.FiveMin.Location = new System.Drawing.Point(150, 194);
+            this.FiveMin.Name = "FiveMin";
+            this.FiveMin.Size = new System.Drawing.Size(63, 21);
+            this.FiveMin.TabIndex = 14;
+            this.FiveMin.Text = "5 min";
+            this.FiveMin.UseVisualStyleBackColor = true;
+            this.FiveMin.CheckedChanged += new System.EventHandler(this.FiveMin_CheckedChanged);
+            // 
+            // OneMin
+            // 
+            this.OneMin.AutoSize = true;
+            this.OneMin.Location = new System.Drawing.Point(150, 221);
+            this.OneMin.Name = "OneMin";
+            this.OneMin.Size = new System.Drawing.Size(63, 21);
+            this.OneMin.TabIndex = 15;
+            this.OneMin.Text = "1 min";
+            this.OneMin.UseVisualStyleBackColor = true;
+            this.OneMin.CheckedChanged += new System.EventHandler(this.OneMin_CheckedChanged);
+            // 
+            // UpperTimeLabel
+            // 
+            this.UpperTimeLabel.AutoSize = true;
+            this.UpperTimeLabel.Location = new System.Drawing.Point(474, 13);
+            this.UpperTimeLabel.Name = "UpperTimeLabel";
+            this.UpperTimeLabel.Size = new System.Drawing.Size(46, 17);
+            this.UpperTimeLabel.TabIndex = 16;
+            this.UpperTimeLabel.Text = "label3";
+            // 
             // Chess
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1317, 684);
+            this.Controls.Add(this.UpperTimeLabel);
+            this.Controls.Add(this.OneMin);
+            this.Controls.Add(this.FiveMin);
+            this.Controls.Add(this.TenMin);
+            this.Controls.Add(this.FifteenMin);
+            this.Controls.Add(this.ThirtyMin);
+            this.Controls.Add(this.OneHour);
+            this.Controls.Add(this.ThreeHour);
+            this.Controls.Add(this.LowerTimeLabel);
             this.Controls.Add(this.Label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.ButtonSendMessage);
@@ -132,6 +253,16 @@
         private System.Windows.Forms.Button ButtonSendMessage;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label Label2;
+        private System.Windows.Forms.Timer Timer1;
+        private System.Windows.Forms.Label LowerTimeLabel;
+        private System.Windows.Forms.RadioButton ThreeHour;
+        private System.Windows.Forms.RadioButton OneHour;
+        private System.Windows.Forms.RadioButton ThirtyMin;
+        private System.Windows.Forms.RadioButton FifteenMin;
+        private System.Windows.Forms.RadioButton TenMin;
+        private System.Windows.Forms.RadioButton FiveMin;
+        private System.Windows.Forms.RadioButton OneMin;
+        private System.Windows.Forms.Label UpperTimeLabel;
     }
 }
 

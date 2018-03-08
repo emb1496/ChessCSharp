@@ -30,18 +30,12 @@ namespace ChessGUI
         NetworkStream ns;
         StreamReader sr;
         StreamWriter sw;
-        GameState state;
+        GameState state = new GameState();
 
         public Chess()
         {
-            ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(ip);
-            ns = new NetworkStream(socket);
-            sr = new StreamReader(ns);
-            sw = new StreamWriter(ns);
-            string message = sr.ReadLine();
-            state = JsonConvert.DeserializeObject<GameState>(message);
+            state.WhiteTimeLeft = 10800;
+            state.BlackTimeLeft = 10800;
             InitializeComponent();
         }
 
@@ -95,6 +89,7 @@ namespace ChessGUI
                         }
                         Drawing(board);
                         Clicks(true);
+                        Timer1.Start();
                     }
                 }));
             }
@@ -986,6 +981,8 @@ namespace ChessGUI
                 {
                     if (squares[i, j].BackColor != Color.Black && squares[i, j].BackColor != Color.White)
                     {
+                        Timer1.Stop();
+                        state.WhiteToMove = !state.WhiteToMove;
                         int tempI = Convert.ToInt32(origin.ElementAt(0) - 48);
                         int tempJ = Convert.ToInt32(origin.ElementAt(1) - 48);
                         ParseForPawns();
@@ -1148,10 +1145,41 @@ namespace ChessGUI
         {
             try
             {
+                ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                socket.Connect(ip);
+                ns = new NetworkStream(socket);
+                sr = new StreamReader(ns);
+                sw = new StreamWriter(ns);
+                string message = sr.ReadLine();
+                GameState temp = new GameState();
+                temp = JsonConvert.DeserializeObject<GameState>(message);
+                temp.WhiteTimeLeft = state.WhiteTimeLeft;
+                temp.BlackTimeLeft = state.BlackTimeLeft;
+                state = temp;
                 button1.Visible = false;
+                ThreeHour.Visible = false;
+                OneHour.Visible = false;
+                ThirtyMin.Visible = false;
+                FifteenMin.Visible = false;
+                TenMin.Visible = false;
+                FiveMin.Visible = false;
+                OneMin.Visible = false;
                 button1.Width = 0;
                 button1.Height = 0;
                 board = state.Board;
+                if (playerName == String.Empty)
+                {
+                    if (state.White)
+                    {
+                        playerName = "White";
+                    }
+                    else
+                    {
+                        playerName = "Black";
+                    }
+                }
+                Label2.Text = playerName;
                 if (!state.White)
                 {
                     ReverseBoard();
@@ -1161,6 +1189,10 @@ namespace ChessGUI
                 if (!state.White && state.WhiteToMove)
                 {
                     Clicks(false);
+                }
+                else
+                {
+                    Timer1.Start();
                 }
                 Thread t = new Thread(ProcessServerMessages);
                 t.Start();
@@ -1175,18 +1207,6 @@ namespace ChessGUI
         private void Chess_Load(object sender, EventArgs e)
         {
             playerName = Microsoft.VisualBasic.Interaction.InputBox("Enter your name", "Name");
-            if (playerName == String.Empty)
-            {
-                if (state.White)
-                {
-                    playerName = "White";
-                }
-                else
-                {
-                    playerName = "Black";
-                }
-            }
-            Label2.Text = playerName;
         }
 
         private void ButtonSendMessage_Click(object sender, EventArgs e)
@@ -1209,8 +1229,105 @@ namespace ChessGUI
                 }
                 sw.Flush();
             }
-            //Thread t = new Thread(ProcessServerMessages);
-            //t.Start();
+        }
+
+        private void Timer1_Tick(object sender, EventArgs e)
+        {
+            LowerTimeLabel.Text = String.Empty;
+            if(state.White && state.WhiteToMove && state.WhiteTimeLeft > 10 && Timer1.Interval != 10)
+            {
+                if(state.WhiteTimeLeft > 3600)
+                {
+                    state.WhiteTimeLeft--;
+                    LowerTimeLabel.Text += state.WhiteTimeLeft / 3600 + ":" + state.WhiteTimeLeft / 60 % 60 + ":" + state.WhiteTimeLeft % 60;
+                }
+                else
+                {
+                    state.WhiteTimeLeft--;
+                    LowerTimeLabel.Text += state.WhiteTimeLeft / 60 % 60 + ":" + state.WhiteTimeLeft % 60;
+                }
+                if(state.WhiteTimeLeft == 10)
+                {
+                    Timer1.Interval = 10;
+                    state.WhiteTimeLeft *= 100;
+                }
+            }
+            else if(state.White && state.WhiteToMove && state.WhiteTimeLeft > 0 && Timer1.Interval == 10)
+            {
+                state.WhiteTimeLeft--;
+                LowerTimeLabel.Text += state.WhiteTimeLeft / 100 % 60 + "." + state.WhiteTimeLeft % 100;
+            }
+            else if(state.White && !state.WhiteToMove)
+            {
+                if(Timer1.Interval == 10)
+                {
+                    UpperTimeLabel.Text += state.BlackTimeLeft / 100 % 60 + "." + state.BlackTimeLeft % 100;
+                }
+                if (state.BlackTimeLeft > 3600)
+                {
+                    state.BlackTimeLeft--;
+                    UpperTimeLabel.Text += state.BlackTimeLeft / 3600 + ":" + state.BlackTimeLeft / 60 % 60 + ":" + state.BlackTimeLeft % 60;
+                }
+                else
+                {
+                    state.BlackTimeLeft--;
+                    UpperTimeLabel.Text += state.BlackTimeLeft / 60 % 60 + ":" + state.BlackTimeLeft % 60;
+                }
+                if (state.BlackTimeLeft == 10)
+                {
+                    Timer1.Interval = 10;
+                    state.BlackTimeLeft *= 100;
+                }
+            }
+
+            else
+            {
+                Timer1.Stop();
+                LowerTimeLabel.Text = "Time's up";
+                MessageBox.Show("Out of time");
+            }
+        }
+
+        private void OneMin_CheckedChanged(object sender, EventArgs e)
+        {
+            state.WhiteTimeLeft = 60;
+            state.BlackTimeLeft = 60;
+        }
+
+        private void FiveMin_CheckedChanged(object sender, EventArgs e)
+        {
+            state.WhiteTimeLeft = 300;
+            state.BlackTimeLeft = 300;
+        }
+
+        private void TenMin_CheckedChanged(object sender, EventArgs e)
+        {
+            state.WhiteTimeLeft = 600;
+            state.BlackTimeLeft = 600;
+        }
+
+        private void FifteenMin_CheckedChanged(object sender, EventArgs e)
+        {
+            state.WhiteTimeLeft = 900;
+            state.BlackTimeLeft = 900;
+        }
+
+        private void ThirtyMin_CheckedChanged(object sender, EventArgs e)
+        {
+            state.WhiteTimeLeft = 1800;
+            state.BlackTimeLeft = 1800;
+        }
+
+        private void OneHour_CheckedChanged(object sender, EventArgs e)
+        {
+            state.WhiteTimeLeft = 3600;
+            state.BlackTimeLeft = 3600;
+        }
+
+        private void ThreeHour_CheckedChanged(object sender, EventArgs e)
+        {
+            state.WhiteTimeLeft = 10800;
+            state.BlackTimeLeft = 10800;
         }
     }
 }

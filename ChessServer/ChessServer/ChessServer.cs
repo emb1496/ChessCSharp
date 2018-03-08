@@ -25,6 +25,32 @@ namespace ChessServer
         private bool drawByRepitition;
         private bool whiteToMove;
         private bool waitingForSecondPlayer;
+        private int blackTimeLeft;
+        private int whiteTimeLeft;
+
+        public int BlackTimeLeft
+        {
+            get
+            {
+                return blackTimeLeft;
+            }
+            set
+            {
+                blackTimeLeft = value;
+            }
+        }
+
+        public int WhiteTimeLeft
+        {
+            get
+            {
+                return whiteTimeLeft;
+            }
+            set
+            {
+                whiteTimeLeft = value;
+            }
+        }
 
         public bool DrawByRepitition
         {
@@ -161,6 +187,8 @@ namespace ChessServer
             waitingForSecondPlayer = true;
             allPositions = new List<Piece[,]>();
             drawByRepitition = false;
+            whiteTimeLeft = 10000;
+            blackTimeLeft = 10000;
         }
     }
 
@@ -180,6 +208,32 @@ namespace ChessServer
         private Socket player2;
         private IPEndPoint endPoint2;
         private bool waitingForSecondPlayer;
+        private int blackTimeLeft;
+        private int whiteTimeLeft;
+
+        public int BlackTimeLeft
+        {
+            get
+            {
+                return blackTimeLeft;
+            }
+            set
+            {
+                blackTimeLeft = value;
+            }
+        }
+
+        public int WhiteTimeLeft
+        {
+            get
+            {
+                return whiteTimeLeft;
+            }
+            set
+            {
+                whiteTimeLeft = value;
+            }
+        }
 
         public List<Piece[,]> AllPositions
         {
@@ -366,6 +420,8 @@ namespace ChessServer
             notation = String.Empty;
             waitingForSecondPlayer = true;
             allPositions = new List<Piece[,]>();
+            whiteTimeLeft = 10000;
+            blackTimeLeft = 10000;
         }
     }
 
@@ -703,10 +759,6 @@ namespace ChessServer
                         checkWrite.Add(socket);
                         checkError.Add(socket);
                     }
-                }
-
-                if (myClients.Count > 0)
-                {
                     Socket.Select(checkRead, null, checkError, -1);
                 }
             
@@ -723,8 +775,10 @@ namespace ChessServer
                         state = JsonConvert.DeserializeObject<SendState>(message);
                         if(!IsSameBoard(state.Board, allGames.ElementAt(index / 2).Board))
                         {
-                            allGames.ElementAt(index / 2).WhiteToMove = !state.WhiteToMove;
+                            allGames.ElementAt(index / 2).WhiteToMove = state.WhiteToMove;
                             allGames.ElementAt(index / 2).AddToAllPositions(allGames.ElementAt(index / 2).Board);
+                            allGames.ElementAt(index / 2).WhiteTimeLeft = state.WhiteTimeLeft;
+                            allGames.ElementAt(index / 2).BlackTimeLeft = state.BlackTimeLeft;
                             CheckForDrawByRepitition(allGames.ElementAt(index / 2));
                         }
 
