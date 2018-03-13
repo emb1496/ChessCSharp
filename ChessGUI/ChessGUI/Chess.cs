@@ -23,6 +23,7 @@ namespace ChessGUI
         string destination = String.Empty;
         string message = String.Empty;
         string playerName = String.Empty;
+        int port = 1234;
         Square[,] squares = new Square[8, 8];
         Square[,] promotionSquares = new Square[2, 2];
         IPEndPoint ip;
@@ -78,18 +79,26 @@ namespace ChessGUI
                 }
                 Invoke(new Action(() =>
                 {
-                    textBoxChat.Text = state.Chat;
-                    if (!IsSameBoard(board, state.Board))
+                    if (state.WaitingForSecondPlayer)
                     {
-                        textBoxNotation.Text = state.Notation;
-                        board = state.Board;
-                        if (!state.White)
+                        Clicks(false);
+                        textBoxChat.Text = "Waiting for second player";
+                    }
+                    else
+                    {
+                        textBoxChat.Text = state.Chat;
+                        if (!IsSameBoard(board, state.Board))
                         {
-                            ReverseBoard();
+                            textBoxNotation.Text = state.Notation;
+                            board = state.Board;
+                            if (!state.White)
+                            {
+                                ReverseBoard();
+                            }
+                            Drawing(board);
+                            Clicks(true);
+                            Timer1.Start();
                         }
-                        Drawing(board);
-                        Clicks(true);
-                        Timer1.Start();
                     }
                 }));
             }
@@ -897,6 +906,149 @@ namespace ChessGUI
             return returnVal;
         }
 
+        private string GetOtherPieces(int destI, int destJ, int origI, int origJ)
+        {
+            string otherSquares = String.Empty;
+            Piece[,] copy = new Piece[8, 8];
+            for(int i = 0; i < 8; i++)
+            {
+                for(int j = 0; j < 8; j++)
+                {
+                    if(state.Board[i,j].Value != state.Board[origI, origJ].Value || state.Board[i,j].White != state.Board[origI, origJ].White)
+                    {
+                        continue;
+                    }
+                    MakeCopy(state.Board, copy);
+                    otherSquares += FindLegalMoves(copy, i, j);
+                    if((i != origI || j != origJ) && otherSquares != String.Empty)
+                    {
+                        return i.ToString() + j.ToString();
+                    }
+                }
+            }
+            return otherSquares;
+        }
+
+        private char ConvertJToLetter(int j)
+        {
+            char toRet = '\0';
+            if (!state.White)
+            {
+                j = 7 - j;
+            }
+            switch (j)
+            {
+                case 0:
+                    toRet = 'a';
+                    break;
+                case 1:
+                    toRet = 'b';
+                    break;
+                case 2:
+                    toRet = 'c';
+                    break;
+                case 3:
+                    toRet = 'd';
+                    break;
+                case 4:
+                    toRet = 'e';
+                    break;
+                case 5:
+                    toRet = 'f';
+                    break;
+                case 6:
+                    toRet = 'g';
+                    break;
+                case 7:
+                    toRet = 'h';
+                    break;
+                default:
+                    break;
+            }
+            return toRet;
+        }
+
+        private void AddToNotation(int destI, int destJ, int origI, int origJ)
+        {
+            string move = String.Empty;
+            if (state.AllPositions.Count % 2 == 0)
+            {
+                move += (state.AllPositions.Count / 2 + 1).ToString() + ".  ";
+            }
+            switch(state.Board[origI, origJ].Value)
+            {
+                case 1:
+                    break;
+                case 3:
+                    move += 'B';
+                    break;
+                case 4:
+                    move += 'N';
+                    break;
+                case 5:
+                    move += 'R';
+                    break;
+                case 8:
+                    move += 'Q';
+                    break;
+                case 9:
+                    move += 'K';
+                    break;
+                default:
+                    break;
+            }
+            string others = GetOtherPieces(destI, destJ, origI, origJ);
+            if (others != String.Empty)
+            {
+                int i = Convert.ToInt32(others.ElementAt(0) - 48);
+                int j = Convert.ToInt32(others.ElementAt(1) - 48);
+                if(i == origI)
+                {
+                    move += ConvertJToLetter(origJ);
+                }
+                else
+                {
+                    move += origI.ToString();
+                }
+            }
+            if(state.Board[destI, destJ].Value > 0)
+            {
+                move += 'x';
+            }
+            move += ConvertJToLetter(destJ);
+            if (!state.White)
+            {
+                destI = 7 - destI;
+            }
+            move += (destI).ToString();
+            state.Notation += move;
+        }
+
+
+        private void AddExtrasToNotation()
+        {
+            string extra = String.Empty;
+            Piece[,] copy = new Piece[8, 8];
+            MakeCopy(state.Board, copy);
+            if (state.CheckMate)
+            {
+                extra += "#";
+            }
+            else if (IsCheck(copy, !state.White))
+            {
+                extra += "+";
+            }
+            if (state.White)
+            {
+                extra += '\t';
+            }
+            else
+            {
+                extra += "\r\n";
+            }
+            state.Notation += extra;
+            textBoxNotation.Text = state.Notation;
+        }
         void Square_Click(object sender, EventArgs e)
         {
             if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove))
@@ -981,12 +1133,13 @@ namespace ChessGUI
                 {
                     if (squares[i, j].BackColor != Color.Black && squares[i, j].BackColor != Color.White)
                     {
-                        Timer1.Stop();
                         state.WhiteToMove = !state.WhiteToMove;
                         int tempI = Convert.ToInt32(origin.ElementAt(0) - 48);
                         int tempJ = Convert.ToInt32(origin.ElementAt(1) - 48);
                         ParseForPawns();
+                        AddToNotation(i, j, tempI, tempJ);
                         MakeMove(i, j, tempI, tempJ);
+                        AddExtrasToNotation();
                         state.Board = board;
                         ResetColors();
                         Drawing(board);
@@ -1145,13 +1298,17 @@ namespace ChessGUI
         {
             try
             {
-                ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
+                ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
+                byte[] buffer = new byte[10];
+                sbyte byte1 = Convert.ToSByte(state.TimePortOffset);
+                buffer[0] = Convert.ToByte(byte1);
+                socket.Send(buffer, SocketFlags.None);
                 ns = new NetworkStream(socket);
                 sr = new StreamReader(ns);
                 sw = new StreamWriter(ns);
-                string message = sr.ReadLine();
+                message = sr.ReadLine();
                 GameState temp = new GameState();
                 temp = JsonConvert.DeserializeObject<GameState>(message);
                 temp.WhiteTimeLeft = state.WhiteTimeLeft;
@@ -1207,6 +1364,7 @@ namespace ChessGUI
         private void Chess_Load(object sender, EventArgs e)
         {
             playerName = Microsoft.VisualBasic.Interaction.InputBox("Enter your name", "Name");
+            state.TimePortOffset = 75;
         }
 
         private void ButtonSendMessage_Click(object sender, EventArgs e)
@@ -1234,56 +1392,40 @@ namespace ChessGUI
         private void Timer1_Tick(object sender, EventArgs e)
         {
             LowerTimeLabel.Text = String.Empty;
-            if(state.White && state.WhiteToMove && state.WhiteTimeLeft > 10 && Timer1.Interval != 10)
-            {
-                if(state.WhiteTimeLeft > 3600)
-                {
-                    state.WhiteTimeLeft--;
-                    LowerTimeLabel.Text += state.WhiteTimeLeft / 3600 + ":" + state.WhiteTimeLeft / 60 % 60 + ":" + state.WhiteTimeLeft % 60;
-                }
-                else
-                {
-                    state.WhiteTimeLeft--;
-                    LowerTimeLabel.Text += state.WhiteTimeLeft / 60 % 60 + ":" + state.WhiteTimeLeft % 60;
-                }
-                if(state.WhiteTimeLeft == 10)
-                {
-                    Timer1.Interval = 10;
-                    state.WhiteTimeLeft *= 100;
-                }
-            }
-            else if(state.White && state.WhiteToMove && state.WhiteTimeLeft > 0 && Timer1.Interval == 10)
+            UpperTimeLabel.Text = String.Empty;
+            if (state.WhiteToMove)
             {
                 state.WhiteTimeLeft--;
-                LowerTimeLabel.Text += state.WhiteTimeLeft / 100 % 60 + "." + state.WhiteTimeLeft % 100;
             }
-            else if(state.White && !state.WhiteToMove)
+            else
             {
-                if(Timer1.Interval == 10)
+                state.BlackTimeLeft--;
+            }
+            if(state.WhiteTimeLeft > 0 && state.BlackTimeLeft > 0)
+            {
+                if (state.White)
                 {
-                    UpperTimeLabel.Text += state.BlackTimeLeft / 100 % 60 + "." + state.BlackTimeLeft % 100;
-                }
-                if (state.BlackTimeLeft > 3600)
-                {
-                    state.BlackTimeLeft--;
-                    UpperTimeLabel.Text += state.BlackTimeLeft / 3600 + ":" + state.BlackTimeLeft / 60 % 60 + ":" + state.BlackTimeLeft % 60;
+                    LowerTimeLabel.Text = state.WhiteTimeLeftToString();
+                    UpperTimeLabel.Text = state.BlackTimeLeftToString();
                 }
                 else
                 {
-                    state.BlackTimeLeft--;
-                    UpperTimeLabel.Text += state.BlackTimeLeft / 60 % 60 + ":" + state.BlackTimeLeft % 60;
-                }
-                if (state.BlackTimeLeft == 10)
-                {
-                    Timer1.Interval = 10;
-                    state.BlackTimeLeft *= 100;
+                    LowerTimeLabel.Text = state.BlackTimeLeftToString();
+                    UpperTimeLabel.Text = state.WhiteTimeLeftToString();
                 }
             }
-
             else
             {
                 Timer1.Stop();
-                LowerTimeLabel.Text = "Time's up";
+                if(state.WhiteTimeLeft > 0)
+                {
+
+                }
+                else
+                {
+
+                }
+                //LowerTimeLabel.Text = "Time's up";
                 MessageBox.Show("Out of time");
             }
         }
@@ -1292,42 +1434,49 @@ namespace ChessGUI
         {
             state.WhiteTimeLeft = 60;
             state.BlackTimeLeft = 60;
+            state.TimePortOffset = 1;
         }
 
         private void FiveMin_CheckedChanged(object sender, EventArgs e)
         {
             state.WhiteTimeLeft = 300;
             state.BlackTimeLeft = 300;
+            state.TimePortOffset = 5;
         }
 
         private void TenMin_CheckedChanged(object sender, EventArgs e)
         {
             state.WhiteTimeLeft = 600;
             state.BlackTimeLeft = 600;
+            state.TimePortOffset = 10;
         }
 
         private void FifteenMin_CheckedChanged(object sender, EventArgs e)
         {
             state.WhiteTimeLeft = 900;
             state.BlackTimeLeft = 900;
+            state.TimePortOffset = 15;
         }
 
         private void ThirtyMin_CheckedChanged(object sender, EventArgs e)
         {
             state.WhiteTimeLeft = 1800;
             state.BlackTimeLeft = 1800;
+            state.TimePortOffset = 30;
         }
 
         private void OneHour_CheckedChanged(object sender, EventArgs e)
         {
             state.WhiteTimeLeft = 3600;
             state.BlackTimeLeft = 3600;
+            state.TimePortOffset = 60;
         }
 
         private void ThreeHour_CheckedChanged(object sender, EventArgs e)
         {
             state.WhiteTimeLeft = 10800;
             state.BlackTimeLeft = 10800;
+            state.TimePortOffset = 75;
         }
     }
 }

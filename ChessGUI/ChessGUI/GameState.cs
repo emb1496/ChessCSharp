@@ -19,6 +19,32 @@ namespace ChessGUI
         private bool drawByRepitition;
         private int whiteTimeLeft;
         private int blackTimeLeft;
+        private int timePortOffset;
+        private bool watingForSecondPlayer;
+
+        public int TimePortOffset
+        {
+            get
+            {
+                return timePortOffset;
+            }
+            set
+            {
+                timePortOffset = value;
+            }
+        }
+
+        public bool WaitingForSecondPlayer
+        {
+            get
+            {
+                return watingForSecondPlayer;
+            }
+            set
+            {
+                watingForSecondPlayer = value;
+            }
+        }
 
         public int BlackTimeLeft
         {
@@ -41,6 +67,30 @@ namespace ChessGUI
             set
             {
                 whiteTimeLeft = value;
+            }
+        }
+
+        public string BlackTimeLeftToString()
+        {
+            if(blackTimeLeft > 3600)
+            {
+                return BlackTimeLeft / 3600 + ":" + (BlackTimeLeft / 60 % 60).ToString("00") + ":" + (BlackTimeLeft % 60).ToString("00");
+            }
+            else
+            {
+                return BlackTimeLeft / 60 % 60 + ":" + (BlackTimeLeft % 60).ToString("00");
+            }
+        }
+
+        public string WhiteTimeLeftToString()
+        {
+            if (WhiteTimeLeft > 3600)
+            {
+                return WhiteTimeLeft / 3600 + ":" + (WhiteTimeLeft / 60 % 60).ToString("00") + ":" + (WhiteTimeLeft % 60).ToString("00");
+            }
+            else
+            {
+                return WhiteTimeLeft / 60 % 60 + ":" + (WhiteTimeLeft % 60).ToString("00");
             }
         }
 

@@ -27,6 +27,19 @@ namespace ChessServer
         private bool waitingForSecondPlayer;
         private int blackTimeLeft;
         private int whiteTimeLeft;
+        private int timePortOffset;
+
+        public int TimePortOffset
+        {
+            get
+            {
+                return timePortOffset;
+            }
+            set
+            {
+                timePortOffset = value;
+            }
+        }
 
         public int BlackTimeLeft
         {
@@ -554,10 +567,12 @@ namespace ChessServer
 
     class ChessServer
     {
-        private static List<GameState> allGames = new List<GameState>();
+        // make six or seven lists to handle all the different games
+        private static List<List<GameState>> allGames = new List<List<GameState>>();
         private static List<IPEndPoint> myEndPoints = new List<IPEndPoint>();
         private static List<Socket> myClients = new List<Socket>();
-        private static Socket socket;
+        private static Socket listeningSocket;
+        private static object myLock = new object();
 
         private static void ProcessClientRequests()
         {
@@ -566,19 +581,30 @@ namespace ChessServer
             IPAddress iPAddress = IPAddress.Parse("127.0.0.1");
             IPEndPoint ip = new IPEndPoint(iPAddress, 1234);
             IPEndPoint newEndPoint = null;
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            listeningSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Socket client = null;
+            byte[] buffer = new byte[10];
             try
             {
-                socket.Bind(ip);
-                socket.Listen(20);
+                listeningSocket.Bind(ip);
+                listeningSocket.Listen(20);
                 while (true)
                 {
-                    client = socket.Accept();
+                    client = listeningSocket.Accept();
                     myClients.Add(client);
                     newEndPoint = (IPEndPoint)client.RemoteEndPoint;
                     myEndPoints.Add(newEndPoint);
-                    ProcessNewGame();
+                    int x = 2;
+                    x = client.Receive(buffer, 10, SocketFlags.None);
+                    x = 0;
+                    foreach(byte b in buffer)
+                    {
+                        x += Convert.ToInt32(b);
+                    }
+                    lock (myLock)
+                    {
+                        ProcessNewGame(x);
+                    }
                     newEndPoint = null;
                     client = null;
                 }
@@ -589,28 +615,58 @@ namespace ChessServer
             }
         }
 
-        private static void ProcessNewGame()
+        private static void ProcessNewGame(int x)
         {
-            if(myClients.Count % 2 == 1)
+            int which = 0;
+            switch (x)
             {
-                GenerateNewGamestate();
-                allGames.Last().Player1 = myClients.Last();
-                allGames.Last().WaitingForSecondPlayer = true;
-                allGames.Last().EndPoint1 = myEndPoints.Last();
-                SendClientsGameState(allGames.Last(), null);
+                case 1:
+                    which = 0;
+                    break;
+                case 3:
+                    which = 1;
+                    break;
+                case 5:
+                    which = 2;
+                    break;
+                case 10:
+                    which = 3;
+                    break;
+                case 15:
+                    which = 4;
+                    break;
+                case 30:
+                    which = 5;
+                    break;
+                case 60:
+                    which = 6;
+                    break;
+                case 75:
+                    which = 7;
+                    break;
+                default:
+                    break;
+            }
+            if(allGames[which].Count % 2 == 0)
+            {
+                GenerateNewGamestate(which);
+                allGames[which].Last().Player1 = myClients.Last();
+                allGames[which].Last().WaitingForSecondPlayer = true;
+                allGames[which].Last().EndPoint1 = myEndPoints.Last();
+                SendClientsGameState(allGames[which].Last(), null);
             }
             else
             {
-                allGames.Last().Player2 = myClients.Last();
-                allGames.Last().WaitingForSecondPlayer = false;
-                allGames.Last().EndPoint2 = myEndPoints.Last();
-                allGames.Last().AddToAllPositions(allGames.Last().Board);
-                SendClientsGameState(allGames.Last(), allGames.Last().Player1);
+                allGames[which].Last().Player2 = myClients.Last();
+                allGames[which].Last().WaitingForSecondPlayer = false;
+                allGames[which].Last().EndPoint2 = myEndPoints.Last();
+                allGames[which].Last().AddToAllPositions(allGames[which].Last().Board);
+                SendClientsGameState(allGames[which].Last(), allGames[which].Last().Player1);
             }
         }
 
         // returns index of most recent board
-        private static void GenerateNewGamestate()
+        private static void GenerateNewGamestate(int which)
         {
             Piece[,] board = new Piece[8, 8];
             for (int i = 0; i < 8; i++)
@@ -651,7 +707,7 @@ namespace ChessServer
             GameState gameState = new GameState();
             gameState.Board = board;
             gameState.WhiteToMove = true;
-            allGames.Add(gameState);
+            allGames[which].Add(gameState);
         }
 
         private static void SendClientsGameState(GameState state, Socket socket)
@@ -668,6 +724,8 @@ namespace ChessServer
             sendState.StaleMate = state.StaleMate;
             sendState.WaitingForSecondPlayer = state.WaitingForSecondPlayer;
             sendState.WhiteToMove = state.WhiteToMove;
+            sendState.WhiteTimeLeft = state.WhiteTimeLeft;
+            sendState.BlackTimeLeft = state.BlackTimeLeft;
             if(state.Player1 != socket)
             {
                 sendState.White = true;
@@ -735,73 +793,95 @@ namespace ChessServer
             }
         }
 
-        private static void Play()
+        private static void Play(Object inde)
         {
+            int index = Convert.ToInt32(inde);
             ArrayList checkRead = new ArrayList();
             ArrayList checkWrite = new ArrayList();
             ArrayList checkError = new ArrayList();
-
             Piece[,] board = new Piece[8, 8];
             char[] buffer = new char[1024];
             byte[] ByteBuff = new byte[1024];
-            while (allGames.Count == 0) ;
+            while (allGames[index].Count == 0) ;
             while (true)
             {
                 // reset checkRead and checkWrite and checkError
-                if(myClients.Count > 0)
+            
+                if(allGames[index].Count> 0)
                 {
                     checkRead.RemoveRange(0, checkRead.Count);
                     checkWrite.RemoveRange(0, checkWrite.Count);
                     checkError.RemoveRange(0, checkError.Count);
-                    foreach (Socket socket in myClients)
+                    foreach (GameState a_State in allGames[index])
                     {
-                        checkRead.Add(socket);
-                        checkWrite.Add(socket);
-                        checkError.Add(socket);
+                        Socket socket1 = a_State.Player1;
+                        checkRead.Add(socket1);
+                        checkWrite.Add(socket1);
+                        checkError.Add(socket1);
+                        if (a_State.Player2 != null)
+                        {
+                            Socket socket2 = a_State.Player2;
+                            checkRead.Add(socket2);
+                            checkWrite.Add(socket2);
+                            checkError.Add(socket2);
+                        }
                     }
                     Socket.Select(checkRead, null, checkError, -1);
                 }
-            
+
                 for (int i = 0; i < checkRead.Count; i++)
                 {
-                    int index = myClients.IndexOf((Socket)checkRead[i]);
+                    List<GameState> temp = new List<GameState>();
+                    temp = allGames[index];
                     try
                     {
-                        NetworkStream ns = new NetworkStream(myClients.ElementAt(index));
+                        if(((Socket)checkRead[i]).Poll(1000, SelectMode.SelectRead) == false)
+                        {
+                            ((Socket)checkRead[i]).Disconnect(true);
+                            myClients.Remove((Socket)checkRead[i]);
+                            continue;
+                        }
+                        NetworkStream ns = new NetworkStream((Socket)checkRead[i]);
                         StreamReader sr = new StreamReader(ns);
                         StreamWriter sw = new StreamWriter(ns);
                         string message = sr.ReadLine();
                         SendState state = new SendState();
                         state = JsonConvert.DeserializeObject<SendState>(message);
-                        if(!IsSameBoard(state.Board, allGames.ElementAt(index / 2).Board))
+                        // find which index in temp we are referencing?
+                        int newIndex = 0;
+                        foreach(GameState tempState in temp)
                         {
-                            allGames.ElementAt(index / 2).WhiteToMove = state.WhiteToMove;
-                            allGames.ElementAt(index / 2).AddToAllPositions(allGames.ElementAt(index / 2).Board);
-                            allGames.ElementAt(index / 2).WhiteTimeLeft = state.WhiteTimeLeft;
-                            allGames.ElementAt(index / 2).BlackTimeLeft = state.BlackTimeLeft;
-                            CheckForDrawByRepitition(allGames.ElementAt(index / 2));
+                            if (tempState.Player1 == (Socket)checkRead[i] || tempState.Player2 == (Socket)checkRead[i])
+                            {
+                                break;
+                            }
+                            newIndex++;
+                        }
+                        if(!IsSameBoard(state.Board, temp.ElementAt(newIndex).Board))
+                        {
+                            temp.ElementAt(newIndex).WhiteToMove = state.WhiteToMove;
+                            temp.ElementAt(newIndex).WhiteTimeLeft = state.WhiteTimeLeft;
+                            temp.ElementAt(newIndex).BlackTimeLeft = state.BlackTimeLeft;
+                            temp.ElementAt(newIndex).AddToAllPositions(temp.ElementAt(newIndex).Board);
+                            CheckForDrawByRepitition(temp.ElementAt(newIndex));
                         }
 
-                        allGames.ElementAt(index / 2).Board = state.Board;
-                        allGames.ElementAt(index / 2).Chat = state.Chat;
-                        allGames.ElementAt(index / 2).Notation = state.Notation;
-                        SendClientsGameState(allGames.ElementAt(index / 2), (Socket)checkRead[i]);
-                        if(allGames.ElementAt(index / 2).DrawByRepitition && (Socket)checkRead[i] == allGames.ElementAt(index / 2).Player1)
+                        temp.ElementAt(newIndex).Board = state.Board;
+                        temp.ElementAt(newIndex).Chat = state.Chat;
+                        temp.ElementAt(newIndex).Notation = state.Notation;
+                        SendClientsGameState(temp.ElementAt(newIndex), (Socket)checkRead[i]);
+                        if(temp.ElementAt(newIndex).DrawByRepitition && (Socket)checkRead[i] == temp.ElementAt(newIndex).Player1)
                         {
-                            SendClientsGameState(allGames.ElementAt(index / 2), allGames.ElementAt(index / 2).Player1);
+                            SendClientsGameState(temp.ElementAt(newIndex), temp.ElementAt(newIndex).Player1);
                         }
-                        else if(allGames.ElementAt(index / 2).DrawByRepitition)
+                        else if(temp.ElementAt(newIndex).DrawByRepitition)
                         {
-                            SendClientsGameState(allGames.ElementAt(index / 2), allGames.ElementAt(index / 2).Player2);
+                            SendClientsGameState(temp.ElementAt(newIndex), temp.ElementAt(newIndex).Player2);
                         }
                     }
                     catch(Exception except)
                     {
-                        if(except.HResult == -2147467259)
-                        {
-                            myClients.ElementAt(i).Disconnect(true);
-                            myClients.Remove(myClients.ElementAt(i));
-                        }
+                        Console.WriteLine(except.Message);
                     }
                 }
             }
@@ -811,14 +891,30 @@ namespace ChessServer
         {
             try
             {
-                while (true)
+                for (int i = 0; i <= 7; i++)
                 {
-                    Thread t = new Thread(ProcessClientRequests);
-                    t.Start();
-                    Play();
+                    allGames.Add(new List<GameState>());
                 }
+                Thread t = new Thread(ProcessClientRequests);
+                t.Start();
+                Thread t1 = new Thread(Play);
+                Thread t2 = new Thread(Play);
+                Thread t3 = new Thread(Play);
+                Thread t4 = new Thread(Play);
+                Thread t5 = new Thread(Play);
+                Thread t6 = new Thread(Play);
+                Thread t7 = new Thread(Play);
+                Thread t8 = new Thread(Play);
+                t1.Start(0);
+                t2.Start(1);
+                t3.Start(2);
+                t4.Start(3);
+                t5.Start(4);
+                t6.Start(5);
+                t7.Start(6);
+                t8.Start(7);
             }
-             catch (Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
             }
