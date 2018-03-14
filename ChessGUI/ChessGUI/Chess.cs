@@ -86,6 +86,7 @@ namespace ChessGUI
                     }
                     else
                     {
+                        Clicks(true);
                         textBoxChat.Text = state.Chat;
                         if (!IsSameBoard(board, state.Board))
                         {
@@ -986,7 +987,7 @@ namespace ChessGUI
         private void AddToNotation(int destI, int destJ, int origI, int origJ)
         {
             string move = String.Empty;
-            if (state.AllPositions.Count % 2 == 0)
+            if (state.AllPositions.Count % 2 == 1)
             {
                 move += (state.AllPositions.Count / 2 + 1).ToString() + ".  ";
             }
@@ -1031,11 +1032,11 @@ namespace ChessGUI
                 move += 'x';
             }
             move += ConvertJToLetter(destJ);
-            if (!state.White)
+            if (state.White)
             {
                 destI = 7 - destI;
             }
-            move += (destI).ToString();
+            move += (destI + 1).ToString();
             state.Notation += move;
         }
 
@@ -1077,6 +1078,15 @@ namespace ChessGUI
             }
             try
             {
+                if (state.WaitingForSecondPlayer)
+                {
+                    Clicks(false);
+                    return;
+                }
+                else
+                {
+                    Clicks(true);
+                }
                 int i = (sender as Square).posY;
                 int j = (sender as Square).posX;
                 if(i >= 100 && j >= 100)
@@ -1364,7 +1374,10 @@ namespace ChessGUI
                 }
                 else
                 {
-                    Timer1.Start();
+                    if (!temp.WaitingForSecondPlayer)
+                    {
+                        Timer1.Start();
+                    }
                 }
                 Thread t = new Thread(ProcessServerMessages);
                 t.Start();

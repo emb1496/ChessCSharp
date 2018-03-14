@@ -661,7 +661,7 @@ namespace ChessServer
                 allGames[which].Last().WaitingForSecondPlayer = false;
                 allGames[which].Last().EndPoint2 = myEndPoints.Last();
                 allGames[which].Last().AddToAllPositions(allGames[which].Last().Board);
-                SendClientsGameState(allGames[which].Last(), allGames[which].Last().Player1);
+                SendClientsGameState(allGames[which].Last(), null);
             }
         }
 
@@ -813,19 +813,22 @@ namespace ChessServer
                     checkError.RemoveRange(0, checkError.Count);
                     foreach (GameState a_State in allGames[index])
                     {
-                        Socket socket1 = a_State.Player1;
-                        checkRead.Add(socket1);
-                        checkWrite.Add(socket1);
-                        checkError.Add(socket1);
                         if (a_State.Player2 != null)
                         {
+                            Socket socket1 = a_State.Player1;
+                            checkRead.Add(socket1);
+                            checkWrite.Add(socket1);
+                            checkError.Add(socket1);
                             Socket socket2 = a_State.Player2;
                             checkRead.Add(socket2);
                             checkWrite.Add(socket2);
                             checkError.Add(socket2);
                         }
                     }
-                    Socket.Select(checkRead, null, checkError, -1);
+                    if (checkRead.Count > 0)
+                    {
+                        Socket.Select(checkRead, null, checkError, -1);
+                    }
                 }
 
                 for (int i = 0; i < checkRead.Count; i++)
