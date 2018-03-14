@@ -665,7 +665,6 @@ namespace ChessServer
             }
         }
 
-        // returns index of most recent board
         private static void GenerateNewGamestate(int which)
         {
             Piece[,] board = new Piece[8, 8];

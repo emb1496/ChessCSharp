@@ -909,6 +909,7 @@ namespace ChessGUI
         private string GetOtherPieces(int destI, int destJ, int origI, int origJ)
         {
             string otherSquares = String.Empty;
+            string[] otherStrings;
             Piece[,] copy = new Piece[8, 8];
             for(int i = 0; i < 8; i++)
             {
@@ -919,11 +920,25 @@ namespace ChessGUI
                         continue;
                     }
                     MakeCopy(state.Board, copy);
-                    otherSquares += FindLegalMoves(copy, i, j);
-                    if((i != origI || j != origJ) && otherSquares != String.Empty)
+                    otherSquares = FindLegalMoves(copy, i, j);
+                    otherStrings = otherSquares.Split(' ', ',');
+                    foreach(string square in otherStrings)
                     {
-                        return i.ToString() + j.ToString();
+                        if (square.Length < 2)
+                        {
+                            continue;
+                        }
+                        int destI2 = Convert.ToInt32(square.ElementAt(0) - 48);
+                        int destJ2 = Convert.ToInt32(square.ElementAt(1) - 48);
+                        if(destI2 == destI && destJ2 == destJ)
+                        {
+                            if ((i != origI || j != origJ) && otherSquares != String.Empty)
+                            {
+                                return i.ToString() + j.ToString();
+                            }
+                        }
                     }
+                    otherSquares = String.Empty;
                 }
             }
             return otherSquares;
@@ -1024,7 +1039,6 @@ namespace ChessGUI
             state.Notation += move;
         }
 
-
         private void AddExtrasToNotation()
         {
             string extra = String.Empty;
@@ -1049,6 +1063,7 @@ namespace ChessGUI
             state.Notation += extra;
             textBoxNotation.Text = state.Notation;
         }
+
         void Square_Click(object sender, EventArgs e)
         {
             if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove))
