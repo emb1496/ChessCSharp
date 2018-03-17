@@ -365,19 +365,19 @@ namespace ChessGUI
             Piece[,] copy = new Piece[8, 8];
             int length;
             // check up to 8 squares around the king
-            if (i - 1 > 0 && j - 1 > 0 && (tempBoard[i - 1, j - 1].Value == 0 || board[i - 1, j - 1].White != tempBoard[i, j].White))
+            if (i - 1 >= 0 && j - 1 >= 0 && (tempBoard[i - 1, j - 1].Value == 0 || board[i - 1, j - 1].White != tempBoard[i, j].White))
             {
                 moves += (i - 1).ToString() + (j - 1).ToString() + ", ";
             }
-            if (i - 1 > 0 && (tempBoard[i - 1, j].Value == 0 || tempBoard[i - 1, j].White != tempBoard[i, j].White))
+            if (i - 1 >= 0 && (tempBoard[i - 1, j].Value == 0 || tempBoard[i - 1, j].White != tempBoard[i, j].White))
             {
                 moves += (i - 1).ToString() + j.ToString() + ", ";
             }
-            if (i - 1 > 0 && j + 1 < 8 && (board[i - 1, j + 1].Value == 0 || tempBoard[i - 1, j + 1].White != tempBoard[i, j].White))
+            if (i - 1 >= 0 && j + 1 < 8 && (board[i - 1, j + 1].Value == 0 || tempBoard[i - 1, j + 1].White != tempBoard[i, j].White))
             {
                 moves += (i - 1).ToString() + (j + 1).ToString() + ", ";
             }
-            if (j - 1 > 0 && (tempBoard[i, j - 1].Value == 0 || tempBoard[i, j - 1].White != tempBoard[i, j].White))
+            if (j - 1 >= 0 && (tempBoard[i, j - 1].Value == 0 || tempBoard[i, j - 1].White != tempBoard[i, j].White))
             {
                 moves += i.ToString() + (j - 1).ToString() + ", ";
             }
@@ -385,7 +385,7 @@ namespace ChessGUI
             {
                 moves += i.ToString() + (j + 1).ToString() + ", ";
             }
-            if (i + 1 < 8 && j - 1 > 0 && (tempBoard[i + 1, j - 1].Value == 0 || tempBoard[i + 1, j - 1].White != tempBoard[i, j].White))
+            if (i + 1 < 8 && j - 1 >= 0 && (tempBoard[i + 1, j - 1].Value == 0 || tempBoard[i + 1, j - 1].White != tempBoard[i, j].White))
             {
                 moves += (i + 1).ToString() + (j - 1).ToString() + ", ";
             }
@@ -443,9 +443,6 @@ namespace ChessGUI
                     }
                 }
             }
-            
-
-
             return moves;
         }
 
