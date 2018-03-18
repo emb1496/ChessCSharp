@@ -119,11 +119,11 @@ namespace ChessGUI
             }
 
             // two square move check
-            if (i == 6 && board[i,j].HasMoved == false && brilliantNum < 0 && tempBoard[i + brilliantNum, j].Value == 0)
+            if (i == 6 && board[i,j].HasMoved == false && brilliantNum < 0 && tempBoard[5, j].Value == 0 && tempBoard[i + brilliantNum, j].Value == 0)
             {
                 moves += (i + brilliantNum).ToString() + j.ToString() + ", ";
             }
-            else if (i == 1 && board[i,j].HasMoved == false && brilliantNum > 0 && tempBoard[i + brilliantNum, j].Value == 0)
+            else if (i == 1 && board[i,j].HasMoved == false && brilliantNum > 0 && tempBoard[2, j].Value == 0 && tempBoard[i + brilliantNum, j].Value == 0)
             {
                 moves += (i + brilliantNum).ToString() + j.ToString() + ", ";
             }
