@@ -82,7 +82,8 @@ namespace ChessGUI
                     if (state.WaitingForSecondPlayer)
                     {
                         Clicks(false);
-                        textBoxChat.Text = "Waiting for second player";
+                        state.Chat += "Waiting for second player";
+                        textBoxChat.Text = state.Chat;
                     }
                     else
                     {

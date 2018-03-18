@@ -704,6 +704,43 @@ namespace ChessServer
                 }
             }
             GameState gameState = new GameState();
+            switch (which)
+            {
+                case 0:
+                    gameState.WhiteTimeLeft = 60;
+                    gameState.BlackTimeLeft = 60;
+                    break;
+                case 1:
+                    gameState.WhiteTimeLeft = 180;
+                    gameState.BlackTimeLeft = 180;
+                    break;
+                case 2:
+                    gameState.WhiteTimeLeft = 300;
+                    gameState.BlackTimeLeft = 300;
+                    break;
+                case 3:
+                    gameState.WhiteTimeLeft = 600;
+                    gameState.BlackTimeLeft = 600;
+                    break;
+                case 4:
+                    gameState.WhiteTimeLeft = 900;
+                    gameState.BlackTimeLeft = 900;
+                    break;
+                case 5:
+                    gameState.WhiteTimeLeft = 1800;
+                    gameState.BlackTimeLeft = 1800;
+                    break;
+                case 6:
+                    gameState.WhiteTimeLeft = 3600;
+                    gameState.BlackTimeLeft = 3600;
+                    break;
+                case 7:
+                    gameState.WhiteTimeLeft = 10800;
+                    gameState.BlackTimeLeft = 10800;
+                    break;
+                default:
+                    break;
+            }
             gameState.Board = board;
             gameState.WhiteToMove = true;
             allGames[which].Add(gameState);
