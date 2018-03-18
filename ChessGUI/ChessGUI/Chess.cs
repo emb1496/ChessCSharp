@@ -1019,9 +1019,13 @@ namespace ChessGUI
                 {
                     move += ConvertJToLetter(origJ);
                 }
+                else if(j != origJ)
+                {
+                    move += ConvertJToLetter(origJ);
+                }
                 else
                 {
-                    move += origI.ToString();
+                    move += (origI + 1).ToString();
                 }
             }
             if(state.Board[destI, destJ].Value > 0)
