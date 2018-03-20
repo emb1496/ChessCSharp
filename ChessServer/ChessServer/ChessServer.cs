@@ -587,7 +587,7 @@ namespace ChessServer
             try
             {
                 listeningSocket.Bind(ip);
-                listeningSocket.Listen(20);
+                listeningSocket.Listen(100000);
                 while (true)
                 {
                     client = listeningSocket.Accept();
@@ -838,7 +838,6 @@ namespace ChessServer
             Piece[,] board = new Piece[8, 8];
             char[] buffer = new char[1024];
             byte[] ByteBuff = new byte[1024];
-            while (allGames[index].Count == 0) ;
             while (true)
             {
                 // reset checkRead and checkWrite and checkError
@@ -901,7 +900,7 @@ namespace ChessServer
                             temp.ElementAt(newIndex).WhiteToMove = state.WhiteToMove;
                             temp.ElementAt(newIndex).WhiteTimeLeft = state.WhiteTimeLeft;
                             temp.ElementAt(newIndex).BlackTimeLeft = state.BlackTimeLeft;
-                            temp.ElementAt(newIndex).AddToAllPositions(temp.ElementAt(newIndex).Board);
+                            temp.ElementAt(newIndex).AllPositions = state.AllPositions;
                             CheckForDrawByRepitition(temp.ElementAt(newIndex));
                         }
 
@@ -944,14 +943,46 @@ namespace ChessServer
                 Thread t6 = new Thread(Play);
                 Thread t7 = new Thread(Play);
                 Thread t8 = new Thread(Play);
-                t1.Start(0);
-                t2.Start(1);
-                t3.Start(2);
-                t4.Start(3);
-                t5.Start(4);
-                t6.Start(5);
-                t7.Start(6);
-                t8.Start(7);
+                while(t1.ThreadState == ThreadState.Unstarted || t2.ThreadState == ThreadState.Unstarted || t3.ThreadState == ThreadState.Unstarted || t4.ThreadState == ThreadState.Unstarted || t5.ThreadState == ThreadState.Unstarted || t6.ThreadState == ThreadState.Unstarted || t7.ThreadState == ThreadState.Unstarted || t8.ThreadState == ThreadState.Unstarted)
+                {
+                    if(t1.ThreadState == ThreadState.Unstarted && allGames[0].Count != 0)
+                    {
+                        t1.Start(0);
+                    }
+                    if (t2.ThreadState == ThreadState.Unstarted && allGames[1].Count != 0)
+                    {
+                        t2.Start(1);
+                    }
+
+                    if (t3.ThreadState == ThreadState.Unstarted && allGames[2].Count != 0)
+                    {
+                        t3.Start(2);
+                    }
+
+                    if (t4.ThreadState == ThreadState.Unstarted && allGames[3].Count != 0)
+                    {
+                        t4.Start(3);
+                    }
+                    if (t5.ThreadState == ThreadState.Unstarted && allGames[4].Count != 0)
+                    {
+                        t5.Start(4);
+                    }
+
+                    if (t6.ThreadState == ThreadState.Unstarted && allGames[5].Count != 0)
+                    {
+                        t6.Start(5);
+                    }
+
+                    if (t7.ThreadState == ThreadState.Unstarted && allGames[6].Count != 0)
+                    {
+                        t7.Start(6);
+                    }
+
+                    if (t8.ThreadState == ThreadState.Unstarted && allGames[7].Count != 0)
+                    {
+                        t8.Start(7);
+                    }
+                }
             }
             catch (Exception e)
             {

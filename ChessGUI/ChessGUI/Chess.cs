@@ -24,6 +24,8 @@ namespace ChessGUI
         string message = String.Empty;
         string playerName = String.Empty;
         int port = 1234;
+        int currPosition = 0;
+        int indexShowing = 0;
         Square[,] squares = new Square[8, 8];
         Square[,] promotionSquares = new Square[2, 2];
         IPEndPoint ip;
@@ -65,6 +67,8 @@ namespace ChessGUI
             {
                 string message = sr.ReadLine();
                 state = JsonConvert.DeserializeObject<GameState>(message);
+                currPosition = state.AllPositions.Count - 1;
+                indexShowing = currPosition;
                 if (state.CheckMate)
                 {
                     MessageBox.Show("CheckMate");
@@ -87,7 +91,12 @@ namespace ChessGUI
                     }
                     else
                     {
+                        ButtonBackOne.Enabled = true;
+                        ButtonStartOfGame.Enabled = true;
+                        ButtonForwardOne.Enabled = true;
+                        ButtonCurrentMove.Enabled = true;
                         Clicks(true);
+                        Timer1.Start();
                         textBoxChat.Text = state.Chat;
                         if (!IsSameBoard(board, state.Board))
                         {
@@ -99,7 +108,6 @@ namespace ChessGUI
                             }
                             Drawing(board);
                             Clicks(true);
-                            Timer1.Start();
                         }
                     }
                 }));
@@ -1168,6 +1176,17 @@ namespace ChessGUI
                         MakeMove(i, j, tempI, tempJ);
                         AddExtrasToNotation();
                         state.Board = board;
+                        if(!state.White)
+                        {
+                            ReverseBoard();
+                        }
+                        state.AddToAllPositions(board);
+                        if(!state.White)
+                        {
+                            ReverseBoard();
+                        }
+                        indexShowing++;
+                        currPosition++;
                         ResetColors();
                         Drawing(board);
                         Clicks(false);
@@ -1268,7 +1287,7 @@ namespace ChessGUI
                     squares[i, j] = new Square();
                     squares[i, j].TopLevel = false;
                     squares[i, j].Parent = this;
-                    squares[i, j].Location = new Point(j * 50 + 13, i * 50 + 13);
+                    squares[i, j].Location = new Point(j * 55 + 13, i * 55 + 50);
                     squares[i, j].posX = j;
                     squares[i, j].posY = i;
                     squares[i, j].Size = new Size(50, 50);
@@ -1507,6 +1526,127 @@ namespace ChessGUI
             state.WhiteTimeLeft = 10800;
             state.BlackTimeLeft = 10800;
             state.TimePortOffset = 75;
+        }
+
+        private void ButtonStartOfGame_Click(object sender, EventArgs e)
+        {
+            board = state.AllPositions.ElementAt(0);
+            if (!state.White)
+            {
+                ReverseBoard();
+            }
+            Drawing(board);
+            indexShowing = 0;
+            if(currPosition == 0)
+            {
+                Clicks(true);
+                ButtonForwardOne.Enabled = false;
+                ButtonCurrentMove.Enabled = false;
+            }
+            else
+            {
+                Clicks(false);
+                ButtonStartOfGame.Enabled = false;
+                ButtonBackOne.Enabled = false;
+                ButtonForwardOne.Enabled = true;
+                ButtonCurrentMove.Enabled = true;
+            }
+        }
+
+        private void ButtonBackOne_Click(object sender, EventArgs e)
+        {
+            if(indexShowing == 0)
+            {
+                ButtonStartOfGame.Enabled = false;
+                ButtonBackOne.Enabled = false;
+                ButtonForwardOne.Enabled = true;
+                ButtonCurrentMove.Enabled = true;
+                return;
+            }
+            indexShowing--;
+            board = state.AllPositions.ElementAt(indexShowing);
+            if(!state.White)
+            {
+                ReverseBoard();
+            }
+            Drawing(board);
+            Clicks(false);
+            if (indexShowing == 0)
+            {
+                ButtonStartOfGame.Enabled = false;
+                ButtonBackOne.Enabled = false;
+                ButtonForwardOne.Enabled = true;
+                ButtonCurrentMove.Enabled = true;
+                return;
+            }
+            else if(indexShowing < state.AllPositions.Count - 1)
+            {
+                ButtonStartOfGame.Enabled = true;
+                ButtonBackOne.Enabled = true;
+                ButtonForwardOne.Enabled = true;
+                ButtonCurrentMove.Enabled = true;
+            }
+        }
+
+        private void ButtonForwardOne_Click(object sender, EventArgs e)
+        {
+            if(indexShowing == state.AllPositions.Count - 1)
+            {
+                if(state.White == state.WhiteToMove)
+                {
+                    Clicks(true);
+                }
+                ButtonStartOfGame.Enabled = true;
+                ButtonBackOne.Enabled = true;
+                ButtonForwardOne.Enabled = false;
+                ButtonCurrentMove.Enabled = false;
+                return;
+            }
+            indexShowing++;
+            board = state.AllPositions.ElementAt(indexShowing);
+            if(!state.White)
+            {
+                ReverseBoard();
+            }
+            Drawing(board);
+            if (indexShowing == state.AllPositions.Count - 1)
+            {
+                if(state.White == state.WhiteToMove)
+                {
+                    Clicks(true);
+                }
+                ButtonStartOfGame.Enabled = true;
+                ButtonBackOne.Enabled = true;
+                ButtonForwardOne.Enabled = false;
+                ButtonCurrentMove.Enabled = false;
+                return;
+            }
+            else if(indexShowing > 0)
+            {
+                ButtonStartOfGame.Enabled = true;
+                ButtonBackOne.Enabled = true;
+                ButtonForwardOne.Enabled = true;
+                ButtonCurrentMove.Enabled = true;
+            }
+        }
+
+        private void ButtonCurrentMove_Click(object sender, EventArgs e)
+        {
+            indexShowing = state.AllPositions.Count - 1;
+            if(state.White && state.WhiteToMove)
+            {
+                Clicks(true);
+            }
+            ButtonStartOfGame.Enabled = true;
+            ButtonBackOne.Enabled = true;
+            ButtonForwardOne.Enabled = false;
+            ButtonCurrentMove.Enabled = false;
+            board = state.AllPositions.ElementAt(indexShowing);
+            if(!state.White)
+            {
+                ReverseBoard();
+            }
+            Drawing(board);
         }
     }
 }

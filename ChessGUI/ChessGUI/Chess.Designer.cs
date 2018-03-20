@@ -46,16 +46,20 @@
             this.FiveMin = new System.Windows.Forms.RadioButton();
             this.OneMin = new System.Windows.Forms.RadioButton();
             this.UpperTimeLabel = new System.Windows.Forms.Label();
+            this.ButtonStartOfGame = new System.Windows.Forms.Button();
+            this.ButtonBackOne = new System.Windows.Forms.Button();
+            this.ButtonForwardOne = new System.Windows.Forms.Button();
+            this.ButtonCurrentMove = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxChat
             // 
-            this.textBoxChat.Location = new System.Drawing.Point(556, 13);
+            this.textBoxChat.Location = new System.Drawing.Point(616, 13);
             this.textBoxChat.Multiline = true;
             this.textBoxChat.Name = "textBoxChat";
             this.textBoxChat.ReadOnly = true;
             this.textBoxChat.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxChat.Size = new System.Drawing.Size(408, 474);
+            this.textBoxChat.Size = new System.Drawing.Size(348, 474);
             this.textBoxChat.TabIndex = 0;
             // 
             // textBoxNotation
@@ -70,11 +74,11 @@
             // 
             // textBoxInput
             // 
-            this.textBoxInput.Location = new System.Drawing.Point(556, 493);
+            this.textBoxInput.Location = new System.Drawing.Point(616, 493);
             this.textBoxInput.Multiline = true;
             this.textBoxInput.Name = "textBoxInput";
             this.textBoxInput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxInput.Size = new System.Drawing.Size(408, 179);
+            this.textBoxInput.Size = new System.Drawing.Size(348, 179);
             this.textBoxInput.TabIndex = 3;
             // 
             // button1
@@ -122,7 +126,7 @@
             // LowerTimeLabel
             // 
             this.LowerTimeLabel.AutoSize = true;
-            this.LowerTimeLabel.Location = new System.Drawing.Point(409, 529);
+            this.LowerTimeLabel.Location = new System.Drawing.Point(409, 629);
             this.LowerTimeLabel.Name = "LowerTimeLabel";
             this.LowerTimeLabel.Size = new System.Drawing.Size(0, 17);
             this.LowerTimeLabel.TabIndex = 8;
@@ -215,11 +219,59 @@
             this.UpperTimeLabel.TabIndex = 16;
             this.UpperTimeLabel.Text = "label3";
             // 
+            // ButtonStartOfGame
+            // 
+            this.ButtonStartOfGame.Enabled = false;
+            this.ButtonStartOfGame.Location = new System.Drawing.Point(970, 516);
+            this.ButtonStartOfGame.Name = "ButtonStartOfGame";
+            this.ButtonStartOfGame.Size = new System.Drawing.Size(75, 48);
+            this.ButtonStartOfGame.TabIndex = 17;
+            this.ButtonStartOfGame.Text = "|<";
+            this.ButtonStartOfGame.UseVisualStyleBackColor = true;
+            this.ButtonStartOfGame.Click += new System.EventHandler(this.ButtonStartOfGame_Click);
+            // 
+            // ButtonBackOne
+            // 
+            this.ButtonBackOne.Enabled = false;
+            this.ButtonBackOne.Location = new System.Drawing.Point(1051, 516);
+            this.ButtonBackOne.Name = "ButtonBackOne";
+            this.ButtonBackOne.Size = new System.Drawing.Size(75, 48);
+            this.ButtonBackOne.TabIndex = 18;
+            this.ButtonBackOne.Text = "<";
+            this.ButtonBackOne.UseVisualStyleBackColor = true;
+            this.ButtonBackOne.Click += new System.EventHandler(this.ButtonBackOne_Click);
+            // 
+            // ButtonForwardOne
+            // 
+            this.ButtonForwardOne.Enabled = false;
+            this.ButtonForwardOne.Location = new System.Drawing.Point(1132, 516);
+            this.ButtonForwardOne.Name = "ButtonForwardOne";
+            this.ButtonForwardOne.Size = new System.Drawing.Size(75, 48);
+            this.ButtonForwardOne.TabIndex = 19;
+            this.ButtonForwardOne.Text = ">";
+            this.ButtonForwardOne.UseVisualStyleBackColor = true;
+            this.ButtonForwardOne.Click += new System.EventHandler(this.ButtonForwardOne_Click);
+            // 
+            // ButtonCurrentMove
+            // 
+            this.ButtonCurrentMove.Enabled = false;
+            this.ButtonCurrentMove.Location = new System.Drawing.Point(1213, 516);
+            this.ButtonCurrentMove.Name = "ButtonCurrentMove";
+            this.ButtonCurrentMove.Size = new System.Drawing.Size(75, 48);
+            this.ButtonCurrentMove.TabIndex = 20;
+            this.ButtonCurrentMove.Text = ">|";
+            this.ButtonCurrentMove.UseVisualStyleBackColor = true;
+            this.ButtonCurrentMove.Click += new System.EventHandler(this.ButtonCurrentMove_Click);
+            // 
             // Chess
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1317, 684);
+            this.Controls.Add(this.ButtonCurrentMove);
+            this.Controls.Add(this.ButtonForwardOne);
+            this.Controls.Add(this.ButtonBackOne);
+            this.Controls.Add(this.ButtonStartOfGame);
             this.Controls.Add(this.UpperTimeLabel);
             this.Controls.Add(this.OneMin);
             this.Controls.Add(this.FiveMin);
@@ -263,6 +315,10 @@
         private System.Windows.Forms.RadioButton FiveMin;
         private System.Windows.Forms.RadioButton OneMin;
         private System.Windows.Forms.Label UpperTimeLabel;
+        private System.Windows.Forms.Button ButtonStartOfGame;
+        private System.Windows.Forms.Button ButtonBackOne;
+        private System.Windows.Forms.Button ButtonForwardOne;
+        private System.Windows.Forms.Button ButtonCurrentMove;
     }
 }
 

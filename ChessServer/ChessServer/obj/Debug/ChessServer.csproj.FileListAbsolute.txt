@@ -25,3 +25,7 @@ C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\
 C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.csproj.CoreCompileInputs.cache
 C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.exe
 C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.pdb
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Debug\ChessServer.exe.manifest
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Debug\ChessServer.application
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.exe.manifest
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Debug\ChessServer.application
