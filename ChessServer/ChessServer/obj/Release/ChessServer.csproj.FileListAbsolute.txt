@@ -20,3 +20,16 @@ C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\
 C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Release\ChessServer.application
 C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Release\ChessServer.exe.manifest
 C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Release\ChessServer.application
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Release\ChessServer.exe.config
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Release\ChessServer.exe.manifest
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Release\ChessServer.application
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Release\ChessServer.exe
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Release\ChessServer.pdb
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Release\Newtonsoft.Json.dll
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\bin\Release\Newtonsoft.Json.xml
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Release\ChessServer.csprojResolveAssemblyReference.cache
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Release\ChessServer.csproj.CoreCompileInputs.cache
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Release\ChessServer.exe.manifest
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Release\ChessServer.application
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Release\ChessServer.exe
+C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessServer\ChessServer\obj\Release\ChessServer.pdb

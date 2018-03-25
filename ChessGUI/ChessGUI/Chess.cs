@@ -1344,7 +1344,7 @@ namespace ChessGUI
         {
             try
             {
-                ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
+                ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
                 byte[] buffer = new byte[10];

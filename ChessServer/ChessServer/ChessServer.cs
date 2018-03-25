@@ -579,7 +579,7 @@ namespace ChessServer
             //IPHostEntry iPHost = Dns.GetHostEntry("cs.ramapo.edu");
             //IPAddress iPAddress = iPHost.AddressList[0];
             IPAddress iPAddress = IPAddress.Parse("127.0.0.1");
-            IPEndPoint ip = new IPEndPoint(iPAddress, 1234);
+            IPEndPoint ip = new IPEndPoint(iPAddress, 7777);
             IPEndPoint newEndPoint = null;
             listeningSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Socket client = null;
@@ -647,7 +647,7 @@ namespace ChessServer
                 default:
                     break;
             }
-            if(allGames[which].Count % 2 == 0)
+            if(allGames[which].Count == 0 || allGames[which].Last().Player2 != null)
             {
                 GenerateNewGamestate(which);
                 allGames[which].Last().Player1 = myClients.Last();
