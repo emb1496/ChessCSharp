@@ -602,61 +602,53 @@ namespace ChessGUI
             int f = 0;
             foreach (string square in movesArray)
             {
-                if (square != "")
+                if (square == "")
                 {
-                    int iVal = Convert.ToInt32(square.ElementAt(0)) - 48;
-                    int jVal = Convert.ToInt32(square.ElementAt(1)) - 48;
-                    if(board[i,j].Value == 9 && Math.Abs(jVal - j) == 2)
+                    continue;
+                }
+                int iVal = Convert.ToInt32(square.ElementAt(0)) - 48;
+                int jVal = Convert.ToInt32(square.ElementAt(1)) - 48;
+                if(board[i,j].Value == 9 && Math.Abs(jVal - j) == 2)
+                {
+                    if(jVal > j)
                     {
-                        if(jVal > j)
+                        MakeCopy(board, copy);
+                        copy[i, j + 1] = copy[i, j];
+                        copy[i, j] = new Piece();
+                        if(IsCheck(copy, state.White))
                         {
-                            MakeCopy(board, copy);
-                            copy[i, j + 1] = copy[i, j];
-                            copy[i, j] = new Piece();
-                            if(IsCheck(copy, state.White))
-                            {
-                                continue;
-                            }
-                            copy[i, j + 2] = copy[i, j + 1];
-                            copy[i, j + 1] = new Piece();
-                            if(IsCheck(copy, state.White))
-                            {
-                                continue;
-                            }
+                            continue;
                         }
-                        else
+                        copy[i, j + 2] = copy[i, j + 1];
+                        copy[i, j + 1] = new Piece();
+                        if(IsCheck(copy, state.White))
                         {
-                            MakeCopy(board, copy);
-                            copy[i, j - 1] = copy[i, j];
-                            copy[i, j] = new Piece();
-                            if (IsCheck(copy, state.White))
-                            {
-                                continue;
-                            }
-                            copy[i, j - 2] = copy[i, j - 1];
-                            copy[i, j - 1] = new Piece();
-                            if (IsCheck(copy, state.White))
-                            {
-                                continue;
-                            }
+                            continue;
                         }
-                    }
-                    MakeCopy(board, copy);
-                    copy[iVal, jVal] = copy[i, j];
-                    copy[i, j] = new Piece();
-                    if (IsCheck(copy, state.White))
-                    {
-
-                    }
-                    else if (f % 2 == 0)
-                    {
-                        squares[iVal, jVal].BackColor = Color.Green;
                     }
                     else
                     {
-                        squares[iVal, jVal].BackColor = Color.YellowGreen;
+                        MakeCopy(board, copy);
+                        copy[i, j - 1] = copy[i, j];
+                        copy[i, j] = new Piece();
+                        if (IsCheck(copy, state.White))
+                        {
+                            continue;
+                        }
+                        copy[i, j - 2] = copy[i, j - 1];
+                        copy[i, j - 1] = new Piece();
+                        if (IsCheck(copy, state.White))
+                        {
+                            continue;
+                        }
                     }
-                    f++;
+                }
+                MakeCopy(board, copy);
+                copy[iVal, jVal] = copy[i, j];
+                copy[i, j] = new Piece();
+                if (!IsCheck(copy, state.White))
+                {
+                    squares[iVal, jVal].BackColor = Color.Green;
                 }
             }
         }
@@ -1014,13 +1006,25 @@ namespace ChessGUI
                     move += 'Q';
                     break;
                 case 9:
+                    if(Math.Abs(destJ - origJ) > 1)
+                    {
+                        if((!state.White && destJ != 5) || (state.White && destJ == 6))
+                        {
+                            move += "O-O";
+                        }
+                        else
+                        {
+                            move += "O-O-O";
+                        }
+                        break;
+                    }
                     move += 'K';
                     break;
                 default:
                     break;
             }
             string others = GetOtherPieces(destI, destJ, origI, origJ);
-            if (others != String.Empty)
+            if (others != String.Empty && move[0] != 'O')
             {
                 int i = Convert.ToInt32(others.ElementAt(0) - 48);
                 int j = Convert.ToInt32(others.ElementAt(1) - 48);
@@ -1037,16 +1041,19 @@ namespace ChessGUI
                     move += (origI + 1).ToString();
                 }
             }
-            if(state.Board[destI, destJ].Value > 0)
+            if(move.Length == 0 || move.ElementAt(move.Length-1) != 'O')
             {
-                move += 'x';
+                if (state.Board[destI, destJ].Value > 0)
+                {
+                    move += 'x';
+                }
+                move += ConvertJToLetter(destJ);
+                if (state.White)
+                {
+                    destI = 7 - destI;
+                }
+                move += (destI + 1).ToString();
             }
-            move += ConvertJToLetter(destJ);
-            if (state.White)
-            {
-                destI = 7 - destI;
-            }
-            move += (destI + 1).ToString();
             state.Notation += move;
         }
 
@@ -1344,7 +1351,7 @@ namespace ChessGUI
         {
             try
             {
-                ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7777);
+                ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
                 byte[] buffer = new byte[10];
