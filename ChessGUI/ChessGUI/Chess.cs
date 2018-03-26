@@ -1195,6 +1195,7 @@ namespace ChessGUI
                         indexShowing++;
                         currPosition++;
                         ResetColors();
+                        ResetColors();
                         Drawing(board);
                         Clicks(false);
                         if (IsCheckMate())
