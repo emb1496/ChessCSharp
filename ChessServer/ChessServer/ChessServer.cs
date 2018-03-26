@@ -587,7 +587,7 @@ namespace ChessServer
             try
             {
                 listeningSocket.Bind(ip);
-                listeningSocket.Listen(100000);
+                listeningSocket.Listen(10);
                 while (true)
                 {
                     client = listeningSocket.Accept();
@@ -667,7 +667,12 @@ namespace ChessServer
                 default:
                     break;
             }
-            if(tempStateHolder.ElementAt(which).Player1 == null)
+            if(tempStateHolder.ElementAt(which).Player2 != null)
+            {
+                tempStateHolder[which].Player1 = null;
+                tempStateHolder[which].Player2 = null;
+            }
+            if (tempStateHolder.ElementAt(which).Player1 == null)
             {
                 GenerateNewGamestate(which);
                 tempStateHolder.ElementAt(which).Player1 = myClients.Last();
@@ -686,8 +691,8 @@ namespace ChessServer
                 SendClientsGameState(state, tempStateHolder.ElementAt(which).Player1, tempStateHolder.ElementAt(which).Player2, null);
                 Thread thread = new Thread(() => Play(tempStateHolder[which].Player1, tempStateHolder[which].Player2, state));
                 thread.Start();
-                tempStateHolder[which].Player1 = null;
-                tempStateHolder[which].Player2 = null;
+//                tempStateHolder[which].Player1 = null;
+//                tempStateHolder[which].Player2 = null;
             }
         }
 
@@ -851,8 +856,8 @@ namespace ChessServer
             Socket black = (Socket)blackSocket;
             SendState gameState = (SendState)initialGameState;
             ArrayList checkRead = new ArrayList();
-            ArrayList checkWrite = new ArrayList();
-            ArrayList checkError = new ArrayList();
+//            ArrayList checkWrite = new ArrayList();
+//            ArrayList checkError = new ArrayList();
             Piece[,] board = new Piece[8, 8];
             char[] buffer = new char[1024];
             byte[] ByteBuff = new byte[1024];
@@ -860,13 +865,11 @@ namespace ChessServer
             {
                 // reset checkRead and checkWrite and checkError
                 checkRead.RemoveRange(0, checkRead.Count);
-                checkWrite.RemoveRange(0, checkWrite.Count);
-                checkError.RemoveRange(0, checkError.Count);
                 checkRead.Add(white);
                 checkRead.Add(black);
                 if (checkRead.Count == 2)
                 {
-                    Socket.Select(checkRead, null, checkError, -1);
+                    Socket.Select(checkRead, null, null, -1);
                 }
                 else if(!gameState.WaitingForSecondPlayer && checkRead.Count == 1)
                 {
