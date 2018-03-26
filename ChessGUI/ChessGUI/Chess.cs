@@ -408,11 +408,11 @@ namespace ChessGUI
             }
 
             MakeCopy(board, copy);
-            // check for castliing(king cannot castle through check and cannot castle if he or the rook has moved )
+            // check for castling(king cannot castle through check and cannot castle if he or the rook has moved )
             if (!board[i, j].HasMoved)
             {
                 // have to be seperate ifs to make sure king and queenside can happen same move
-                if (j + 2 < 8 && board[i, j + 1].Value == 0 && board[i, j + 2].Value == 0)
+                if (j + 2 < 8 && j + 1 < 8 && board[i, j + 1].Value == 0 && board[i, j + 2].Value == 0)
                 {
                     length = 1;
                     // how far are we castling?
@@ -422,7 +422,7 @@ namespace ChessGUI
                     }
 
                     // final checks that the rook has not moved that its the same color on the edge 
-                    if(board[i,j + length].Value==5 && board[i, j + length].HasMoved == false && board[i, j + length].White == board[i, j].White && j + length == 7)
+                    if(j + length < 8 && board[i,j + length].Value==5 && board[i, j + length].HasMoved == false && board[i, j + length].White == board[i, j].White && j + length == 7)
                     {
                         if(length == 4)
                         {
@@ -433,15 +433,15 @@ namespace ChessGUI
                 }
                 if(j - 2 >= 0 && board[i, j - 1].Value == 0 && board[i, j - 2].Value == 0)
                 {
-                    length = 1;
+                    length = -1;
                     // how far are we castling?
-                    while (j - length < 8 && board[i, j - length].Value == 0)
+                    while (j + length >= 0 && board[i, j + length].Value == 0)
                     {
-                        length++;
+                        length--;
                     }
 
                     // final checks that the rook has not moved that its the same color on the edge 
-                    if (board[i, j - length].Value == 5 && board[i , j - length].HasMoved == false && board[i , j - length].White == board[i, j].White && j - length == 0)
+                    if (j + length >= 0 && board[i, j - length].Value == 5 && board[i , j - length].HasMoved == false && board[i , j - length].White == board[i, j].White && j - length == 0)
                     {
                         // now to make sure we are not castling through check
                         if(length == 4)

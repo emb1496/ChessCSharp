@@ -679,14 +679,12 @@ namespace ChessServer
             else
             {
                 tempStateHolder.ElementAt(which).Player2 = myClients.Last();
-                
                 tempStateHolder.ElementAt(which).WaitingForSecondPlayer = false;
                 tempStateHolder.ElementAt(which).EndPoint2 = myEndPoints.Last();
                 tempStateHolder.ElementAt(which).AddToAllPositions(tempStateHolder.ElementAt(which).Board);
                 state = ConvertGameStateToSendState(tempStateHolder.ElementAt(which));
                 SendClientsGameState(state, tempStateHolder.ElementAt(which).Player1, tempStateHolder.ElementAt(which).Player2, null);
-                Thread thread = new Thread(() =>
-                    Play(tempStateHolder[which].Player1, tempStateHolder[which].Player2, state));
+                Thread thread = new Thread(() => Play(tempStateHolder[which].Player1, tempStateHolder[which].Player2, state));
                 thread.Start();
                 tempStateHolder[which].Player1 = null;
                 tempStateHolder[which].Player2 = null;
@@ -866,9 +864,13 @@ namespace ChessServer
                 checkError.RemoveRange(0, checkError.Count);
                 checkRead.Add(white);
                 checkRead.Add(black);
-                if (checkRead.Count > 0)
+                if (checkRead.Count == 2)
                 {
                     Socket.Select(checkRead, null, checkError, -1);
+                }
+                else if(!gameState.WaitingForSecondPlayer && checkRead.Count == 1)
+                {
+                    // missing player!!!
                 }
 
                 for (int i = 0; i < checkRead.Count; i++)
@@ -888,7 +890,7 @@ namespace ChessServer
                         SendState state = new SendState();
                         state = JsonConvert.DeserializeObject<SendState>(message);
                         
-
+                        // has the board changed if so the following is the change to be made
                         if(!IsSameBoard(state.Board, gameState.Board))
                         {
                             gameState.WhiteToMove = state.WhiteToMove;
@@ -898,6 +900,7 @@ namespace ChessServer
                             CheckForDrawByRepitition(gameState);
                         }
 
+                        // update the rest and send it out
                         gameState.Board = state.Board;
                         gameState.Chat = state.Chat;
                         gameState.Notation = state.Notation;
@@ -927,8 +930,7 @@ namespace ChessServer
                 {
                     tempStateHolder.Add(new GameState());
                 }
-                Thread t = new Thread(ProcessClientRequests);
-                t.Start();
+                ProcessClientRequests();
             }
             catch (Exception e)
             {
