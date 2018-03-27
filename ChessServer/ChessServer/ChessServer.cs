@@ -13,23 +13,27 @@ using System.Collections;
 namespace ChessServer
 {
 
+    /// <summary>
+    /// This class is a gamestate without any sockets or endpoints. This is what will be send and recieved by the server client programs
+    /// </summary>
     public class SendState
     {
-        private List<Piece[,]> allPositions;
-        private string chat;
-        private Piece[,] board;
-        private string notation;
-        private bool white;
-        private bool checkMate;
-        private bool staleMate;
-        private bool drawByRepitition;
-        private bool whiteToMove;
-        private bool waitingForSecondPlayer;
-        private int blackTimeLeft;
-        private int whiteTimeLeft;
-        private int timePortOffset;
-        private bool serverError;
-        private bool gameOver;
+        // all private variables to gamestate
+        private List<Piece[,]> allPositions;    // history of all positions
+        private string chat;                    // chat string
+        private Piece[,] board;                 // current board
+        private string notation;                // notation string
+        private bool white;                     // is user white?
+        private bool checkMate;                 // is it checkmate
+        private bool staleMate;                 // is it stalemate
+        private bool drawByRepitition;          // is it draw by repititon
+        private bool whiteToMove;               // is it white to mive
+        private bool waitingForSecondPlayer;    // Are we waiting for a second client
+        private int blackTimeLeft;              // Time left in game
+        private int whiteTimeLeft;              // ""
+        private int timePortOffset;             // Marks the length of the game
+        private bool serverError;               // Did we lose a client
+        private bool gameOver;                  // Is the game still going
 
         public bool GameOver
         {
@@ -215,7 +219,11 @@ namespace ChessServer
                 notation = value;
             }
         }
-
+        
+        /// <summary>
+        /// Sendstate constructor
+        /// Initializes to a state capable of playing chess with
+        /// </summary>
         public SendState()
         {
             checkMate = false;
@@ -232,6 +240,9 @@ namespace ChessServer
         }
     }
 
+    /// <summary>
+    /// This is a class of gamestates with sockets, it is used for initial load in and then the contents are pushed to a SendState and the sockets are passed to PLAY()
+    /// </summary>
     public class GameState
     {
         private List<Piece[,]> allPositions;
@@ -629,6 +640,38 @@ namespace ChessServer
         private static Socket listeningSocket;
         private static object myLock = new object();
 
+        /*
+         * ChessServer.ChessServer.ProcessClientRequests()
+         * 
+         * NAME
+         * 
+         *     ChessServer.ChessServer.ProcessClientRequests - adds in new clients
+         * 
+         * SYNOPSIS
+         * 
+         *      void ProcessClientRequests();
+         * 
+         * DESCRIPTION
+         * 
+         *      This function opens a listening socket then runs in a forever loop.
+         *      The forever loop accepts a new client and recieves 10 bytes from them
+         *      Those ten bytes determine what kind of a game it is and the function
+         *      locks the threads and calls ProcessNewGame with the 10 byte value sent
+         *      
+         * RETURNS
+         * 
+         *      void
+         *      
+         * AUTHOR
+         *  
+         *      Elliott Barinberg
+         *      
+         * DATE
+         * 
+         *      10:22 AM 3/27/2018
+         * 
+         */
+         /**/
         private static void ProcessClientRequests()
         {
             //IPHostEntry iPHost = Dns.GetHostEntry("cs.ramapo.edu");
@@ -669,210 +712,316 @@ namespace ChessServer
                 Console.WriteLine(e.Message);
             }
         }
+        /*private static void ProcessClientRequests();*/
 
-        private static SendState ConvertGameStateToSendState(GameState gameState)
+        /*
+         * ChessServer.ChessServer.ConvertGameStateToSendState(GameState gameState)
+         * 
+         * NAME
+         * 
+         *     ChessServer.ChessServer.ConvertGameStateToSendState - converts 2 sockets containing gamestate to sendable SendState
+         * 
+         * SYNOPSIS
+         * 
+         *      SendState ChessServer.ConvertGameStateToSendState(GameState a_gameState);
+         *      a_gameState -> gamestate which needs to be converted
+         *       
+         * DESCRIPTION
+         * 
+         *      This function creates a new SendState out of the members of a_gameState and returns it
+         *      
+         * RETURNS
+         * 
+         *      SendState equivilant to the gamestate which was passed
+         *      
+         * AUTHOR
+         *  
+         *      Elliott Barinberg
+         *      
+         * DATE
+         * 
+         *      10:22 AM 3/27/2018
+         * 
+         */
+        /**/
+        private static SendState ConvertGameStateToSendState(GameState a_gameState)
         {
-            SendState state = new SendState
+            SendState m_state = new SendState
             {
-                AllPositions = gameState.AllPositions,
-                BlackTimeLeft = gameState.BlackTimeLeft,
-                Board = gameState.Board,
-                Chat = gameState.Chat,
-                CheckMate = gameState.CheckMate,
-                DrawByRepitition = gameState.DrawByRepitition,
-                Notation = gameState.Notation,
-                StaleMate = gameState.StaleMate,
-                WaitingForSecondPlayer = gameState.WaitingForSecondPlayer,
-                WhiteTimeLeft = gameState.WhiteTimeLeft,
-                WhiteToMove = gameState.WhiteToMove
+                AllPositions = a_gameState.AllPositions,
+                BlackTimeLeft = a_gameState.BlackTimeLeft,
+                Board = a_gameState.Board,
+                Chat = a_gameState.Chat,
+                CheckMate = a_gameState.CheckMate,
+                DrawByRepitition = a_gameState.DrawByRepitition,
+                Notation = a_gameState.Notation,
+                StaleMate = a_gameState.StaleMate,
+                WaitingForSecondPlayer = a_gameState.WaitingForSecondPlayer,
+                WhiteTimeLeft = a_gameState.WhiteTimeLeft,
+                WhiteToMove = a_gameState.WhiteToMove
             };
-            return state;
+            return m_state;
         }
+        /*private static SendState ConvertGameStateToSendState(GameState a_gameState);*/
 
-        private static void ProcessNewGame(int x)
+        /*
+         * ChessServer.ChessServer.ProcessNewGame(int a_message)
+         * 
+         * NAME
+         * 
+         *     ChessServer.ChessServer.ProcessNewGame - converts the client message into the gamestate which it belongs in
+         * 
+         * SYNOPSIS
+         * 
+         *      SendState ChessServer.ProcessNewGame(int a_message);
+         *      a_message -> int describing how long of a game to play
+         *       
+         * DESCRIPTION
+         * 
+         *      This function first converts the game length sent by the client into an index of gamestate in tempgamestate
+         *      Then if there is one client it will wait for the second
+         *      If there is a second client it launches a thread with gamestate and clients in Play
+         *      
+         * RETURNS
+         * 
+         *      void
+         *      
+         * AUTHOR
+         *  
+         *      Elliott Barinberg
+         *      
+         * DATE
+         * 
+         *      10:22 AM 3/27/2018
+         * 
+         */
+         /**/
+        private static void ProcessNewGame(int a_message)
         {
-            int which = 0;
+            int m_index = 0;
             SendState state = new SendState();
-            switch (x)
+            switch (a_message)
             {
                 case 1:
-                    which = 0;
+                    m_index = 0;
                     break;
                 case 3:
-                    which = 1;
+                    m_index = 1;
                     break;
                 case 5:
-                    which = 2;
+                    m_index = 2;
                     break;
                 case 10:
-                    which = 3;
+                    m_index = 3;
                     break;
                 case 15:
-                    which = 4;
+                    m_index = 4;
                     break;
                 case 30:
-                    which = 5;
+                    m_index = 5;
                     break;
                 case 60:
-                    which = 6;
+                    m_index = 6;
                     break;
                 case 75:
-                    which = 7;
+                    m_index = 7;
                     break;
                 default:
                     break;
             }
-            if(tempStateHolder.ElementAt(which).Player2 != null)
+            if(tempStateHolder.ElementAt(m_index).Player2 != null)
             {
-                tempStateHolder[which].Player1 = null;
-                tempStateHolder[which].Player2 = null;
+                tempStateHolder[m_index].Player1 = null;
+                tempStateHolder[m_index].Player2 = null;
             }
-            if (tempStateHolder.ElementAt(which).Player1 == null)
+            if (tempStateHolder.ElementAt(m_index).Player1 == null)
             {
-                GenerateNewGamestate(which);
-                tempStateHolder.ElementAt(which).Player1 = myClients.Last();
-                tempStateHolder.ElementAt(which).WaitingForSecondPlayer = true;
-                tempStateHolder.ElementAt(which).EndPoint1 = myEndPoints.Last();
-                state = ConvertGameStateToSendState(tempStateHolder.ElementAt(which));
-                SendClientsGameState(state, tempStateHolder.ElementAt(which).Player1, null, null);
+                GenerateNewGamestate(m_index);
+                tempStateHolder.ElementAt(m_index).Player1 = myClients.Last();
+                tempStateHolder.ElementAt(m_index).WaitingForSecondPlayer = true;
+                tempStateHolder.ElementAt(m_index).EndPoint1 = myEndPoints.Last();
+                state = ConvertGameStateToSendState(tempStateHolder.ElementAt(m_index));
+                SendClientsGameState(state, tempStateHolder.ElementAt(m_index).Player1, null, null);
             }
             else
             {
-                tempStateHolder.ElementAt(which).Player2 = myClients.Last();
-                tempStateHolder.ElementAt(which).WaitingForSecondPlayer = false;
-                tempStateHolder.ElementAt(which).EndPoint2 = myEndPoints.Last();
-                tempStateHolder.ElementAt(which).AddToAllPositions(tempStateHolder.ElementAt(which).Board);
-                state = ConvertGameStateToSendState(tempStateHolder.ElementAt(which));
-                SendClientsGameState(state, tempStateHolder.ElementAt(which).Player1, tempStateHolder.ElementAt(which).Player2, null);
-                Thread thread = new Thread(() => Play(tempStateHolder[which].Player1, tempStateHolder[which].Player2, state));
+                tempStateHolder.ElementAt(m_index).Player2 = myClients.Last();
+                tempStateHolder.ElementAt(m_index).WaitingForSecondPlayer = false;
+                tempStateHolder.ElementAt(m_index).EndPoint2 = myEndPoints.Last();
+                tempStateHolder.ElementAt(m_index).AddToAllPositions(tempStateHolder.ElementAt(m_index).Board);
+                state = ConvertGameStateToSendState(tempStateHolder.ElementAt(m_index));
+                SendClientsGameState(state, tempStateHolder.ElementAt(m_index).Player1, tempStateHolder.ElementAt(m_index).Player2, null);
+                Thread thread = new Thread(() => Play(tempStateHolder[m_index].Player1, tempStateHolder[m_index].Player2, state));
                 thread.Start();
             }
         }
+        /*private static void ProcessNewGame(int a_message);*/
 
-        private static void GenerateNewGamestate(int which)
+        /*
+         * ChessServer.ChessServer.GenerateNewGamestate(int a_index)
+         * 
+         * NAME
+         * 
+         *     ChessServer.ChessServer.GenerateNewGamestate - makes initial chess position and basic gamestate settings get set
+         * 
+         * SYNOPSIS
+         * 
+         *      SendState ChessServer.GenerateNewGamestate(int a_index);
+         *      a_index -> index of tempGameState where the game should be stored
+         *       
+         * DESCRIPTION
+         * 
+         *      This function first converts generates the board
+         *      Then it assigns the time and basic settings and adds it to tempStateHolder[index]
+         *      
+         * RETURNS
+         * 
+         *      void
+         *      
+         * AUTHOR
+         *  
+         *      Elliott Barinberg
+         *      
+         * DATE
+         * 
+         *      10:22 AM 3/27/2018
+         * 
+         */
+         /**/
+        private static void GenerateNewGamestate(int a_index)
         {
-            Piece[,] board = new Piece[8, 8];
+            Piece[,] m_board = new Piece[8, 8];
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    board[i, j] = new Empty();
+                    m_board[i, j] = new Empty();
                 }
             }
-            board[0, 0] = new Rook(false);
-            board[0, 1] = new Knight(false);
-            board[0, 2] = new Bishop(false);
-            board[0, 3] = new Queen(false);
-            board[0, 4] = new King(false);
-            board[0, 5] = new Bishop(false);
-            board[0, 6] = new Knight(false);
-            board[0, 7] = new Rook(false);
+            m_board[0, 0] = new Rook(false);
+            m_board[0, 1] = new Knight(false);
+            m_board[0, 2] = new Bishop(false);
+            m_board[0, 3] = new Queen(false);
+            m_board[0, 4] = new King(false);
+            m_board[0, 5] = new Bishop(false);
+            m_board[0, 6] = new Knight(false);
+            m_board[0, 7] = new Rook(false);
             for (int i = 0; i < 8; i++)
             {
-                board[1, i] = new Pawn(false);
-                board[6, i] = new Pawn(true);
+                m_board[1, i] = new Pawn(false);
+                m_board[6, i] = new Pawn(true);
             }
-            board[7, 0] = new Rook(true);
-            board[7, 1] = new Knight(true);
-            board[7, 2] = new Bishop(true);
-            board[7, 3] = new Queen(true);
-            board[7, 4] = new King(true);
-            board[7, 5] = new Bishop(true);
-            board[7, 6] = new Knight(true);
-            board[7, 7] = new Rook(true);
+            m_board[7, 0] = new Rook(true);
+            m_board[7, 1] = new Knight(true);
+            m_board[7, 2] = new Bishop(true);
+            m_board[7, 3] = new Queen(true);
+            m_board[7, 4] = new King(true);
+            m_board[7, 5] = new Bishop(true);
+            m_board[7, 6] = new Knight(true);
+            m_board[7, 7] = new Rook(true);
             for(int i = 0; i < 8; i++)
             {
                 for(int j = 0; j < 8; j++)
                 {
-                    board[i, j].HasMoved = false;
+                    m_board[i, j].HasMoved = false;
                 }
             }
-            GameState gameState = new GameState();
-            switch (which)
+            GameState m_gameState = new GameState();
+            switch (a_index)
             {
                 case 0:
-                    gameState.WhiteTimeLeft = 60;
-                    gameState.BlackTimeLeft = 60;
+                    m_gameState.WhiteTimeLeft = 60;
+                    m_gameState.BlackTimeLeft = 60;
                     break;
                 case 1:
-                    gameState.WhiteTimeLeft = 180;
-                    gameState.BlackTimeLeft = 180;
+                    m_gameState.WhiteTimeLeft = 180;
+                    m_gameState.BlackTimeLeft = 180;
                     break;
                 case 2:
-                    gameState.WhiteTimeLeft = 300;
-                    gameState.BlackTimeLeft = 300;
+                    m_gameState.WhiteTimeLeft = 300;
+                    m_gameState.BlackTimeLeft = 300;
                     break;
                 case 3:
-                    gameState.WhiteTimeLeft = 600;
-                    gameState.BlackTimeLeft = 600;
+                    m_gameState.WhiteTimeLeft = 600;
+                    m_gameState.BlackTimeLeft = 600;
                     break;
                 case 4:
-                    gameState.WhiteTimeLeft = 900;
-                    gameState.BlackTimeLeft = 900;
+                    m_gameState.WhiteTimeLeft = 900;
+                    m_gameState.BlackTimeLeft = 900;
                     break;
                 case 5:
-                    gameState.WhiteTimeLeft = 1800;
-                    gameState.BlackTimeLeft = 1800;
+                    m_gameState.WhiteTimeLeft = 1800;
+                    m_gameState.BlackTimeLeft = 1800;
                     break;
                 case 6:
-                    gameState.WhiteTimeLeft = 3600;
-                    gameState.BlackTimeLeft = 3600;
+                    m_gameState.WhiteTimeLeft = 3600;
+                    m_gameState.BlackTimeLeft = 3600;
                     break;
                 case 7:
-                    gameState.WhiteTimeLeft = 10800;
-                    gameState.BlackTimeLeft = 10800;
+                    m_gameState.WhiteTimeLeft = 10800;
+                    m_gameState.BlackTimeLeft = 10800;
                     break;
                 default:
                     break;
             }
-            gameState.Board = board;
-            gameState.WhiteToMove = true;
-            tempStateHolder[which] = gameState;
+            m_gameState.Board = m_board;
+            m_gameState.WhiteToMove = true;
+            tempStateHolder[a_index] = m_gameState;
         }
+        /*private static void GenerateNewGamestate(int a_index);*/
 
-        private static void SendClientsGameState(SendState state, Socket white, Socket black, Socket socket)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="white"></param>
+        /// <param name="black"></param>
+        /// <param name="socket"></param>
+        private static void SendClientsGameState(SendState a_state, Socket a_white, Socket a_black, Socket a_socket)
         {
-
-            NetworkStream ns;
-            StreamReader sr;
-            StreamWriter sw;
-            if(white != socket)
+            NetworkStream m_networkStream;
+            StreamWriter m_streamWriter;
+            if(a_white != a_socket)
             {
-                state.White = true;
-                string message = JsonConvert.SerializeObject(state);
-                ns = new NetworkStream(white);
-                sr = new StreamReader(ns);
-                sw = new StreamWriter(ns);
-                sw.WriteLine(message);
-                sw.Flush();
+                a_state.White = true;
+                string message = JsonConvert.SerializeObject(a_state);
+                m_networkStream = new NetworkStream(a_white);
+                m_streamWriter = new StreamWriter(m_networkStream);
+                m_streamWriter.WriteLine(message);
+                m_streamWriter.Flush();
             }
-            if (black == null)
+            if (a_black == null)
             {
                 return;
             }
-            if(black != socket)
+            if(a_black != a_socket)
             {
-                state.White = false;
-                string message = JsonConvert.SerializeObject(state);
-                ns = new NetworkStream(black);
-                sr = new StreamReader(ns);
-                sw = new StreamWriter(ns);
-                sw.WriteLine(message);
-                sw.Flush();
+                a_state.White = false;
+                string message = JsonConvert.SerializeObject(a_state);
+                m_networkStream = new NetworkStream(a_black);
+                m_streamWriter = new StreamWriter(m_networkStream);
+                m_streamWriter.WriteLine(message);
+                m_streamWriter.Flush();
             }
         }
 
-        private static bool IsSameBoard(Piece[,] board1, Piece[,] board2)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="board1"></param>
+        /// <param name="board2"></param>
+        /// <returns></returns>
+        private static bool IsSameBoard(Piece[,] a_board1, Piece[,] a_board2)
         {
             for(int i = 0; i < 8; i++)
             {
                 for(int j = 0; j < 8; j++)
                 {
-                    if(board1[i, j].White != board2[i, j].White)
+                    if(a_board1[i, j].White != a_board2[i, j].White)
                     {
                         return false;
                     }
-                    if(board1[i, j].Value != board2[i, j].Value)
+                    if(a_board1[i, j].Value != a_board2[i, j].Value)
                     {
                         return false;
                     }
@@ -881,33 +1030,43 @@ namespace ChessServer
             return true;
         }
 
-        private static void CheckForDrawByRepitition(SendState state)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="state"></param>
+        private static void CheckForDrawByRepitition(SendState a_state)
         {
-            int count;
-            for(int i = 0; i < state.AllPositions.Count; i++)
+            int m_count;
+            for(int i = 0; i < a_state.AllPositions.Count; i++)
             {
-                count = 0;
-                for(int j = i + 1; j < state.AllPositions.Count; j++)
+                m_count = 0;
+                for(int j = i + 1; j < a_state.AllPositions.Count; j++)
                 {
-                    if(IsSameBoard(state.AllPositions.ElementAt(i), state.AllPositions.ElementAt(j)))
+                    if(IsSameBoard(a_state.AllPositions.ElementAt(i), a_state.AllPositions.ElementAt(j)))
                     {
-                        count++;
+                        m_count++;
                     }
                 }
-                if(count < 2)
+                if(m_count < 2)
                 {
                     continue;
                 }
-                state.DrawByRepitition = true;
+                a_state.DrawByRepitition = true;
                 break;
             }
         }
 
-        private static void Play(Object whiteSocket, Object blackSocket, Object initialGameState)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="whiteSocket"></param>
+        /// <param name="blackSocket"></param>
+        /// <param name="initialGameState"></param>
+        private static void Play(Object a_whiteSocket, Object a_blackSocket, Object a_initialGameState)
         {
-            Socket white = (Socket)whiteSocket;
-            Socket black = (Socket)blackSocket;
-            SendState gameState = (SendState)initialGameState;
+            Socket white = (Socket)a_whiteSocket;
+            Socket black = (Socket)a_blackSocket;
+            SendState gameState = (SendState)a_initialGameState;
             Exception endGame = new Exception("Game over");
             ArrayList checkRead = new ArrayList();
             Piece[,] board = new Piece[8, 8];
@@ -995,6 +1154,10 @@ namespace ChessServer
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             try

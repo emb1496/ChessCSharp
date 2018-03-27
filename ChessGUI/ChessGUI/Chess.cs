@@ -18,6 +18,7 @@ namespace ChessGUI
 
     public partial class Chess : Form
     {
+        // class necessary state variables
         Piece[,] board = new Piece[8, 8];
         string origin = String.Empty;
         string destination = String.Empty;
@@ -34,6 +35,7 @@ namespace ChessGUI
         StreamReader sr;
         StreamWriter sw;
         GameState state = new GameState();
+
 
         public Chess()
         {
