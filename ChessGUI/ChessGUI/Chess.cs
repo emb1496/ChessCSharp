@@ -61,6 +61,69 @@ namespace ChessGUI
             return true;
         }
 
+        private void OfferNewGame()
+        {
+            DialogResult userInput;
+            string message = String.Empty;
+            if (state.CheckMate)
+            {
+                message = "Checkmate, would you like to play again?";
+            }
+            else if (state.StaleMate)
+            {
+                message = "Stalemate, would you like to play again?";
+            }
+            else if (state.DrawByRepitition)
+            {
+                message = "Draw by repitition, would you like to play again?";
+            }
+            else if(state.BlackTimeLeft == 0)
+            {
+                message = "Black ran out of time, however white does not have sufficient materials,\r\nthe result is a draw,\r\nwould you like to play again?";
+                for (int i = 0; i < 8; i++)
+                {
+                    for(int j = 0; j < 8; j++)
+                    {
+                        if(board[i,j].White && board[i,j].Value > 0 && board[i, j].Value != 9)
+                        {
+                            message = "Black ran out of time, white wins, would you like to play again?";
+                            break;
+                        }
+                    }
+                }
+            }
+            else if(state.WhiteTimeLeft == 0)
+            {
+                message = "White ran out of time, however black does not have sufficient materials,\r\nthe result is a draw,\r\nwould you like to play again?";
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        if (!board[i, j].White && board[i, j].Value > 0 && board[i, j].Value != 9)
+                        {
+                            message = "White ran out of time, black wins, would you like to play again?";
+                            break;
+                        }
+                    }
+                }
+            }
+            userInput = MessageBox.Show(message, "New Game?", MessageBoxButtons.YesNo);
+            if(userInput == DialogResult.Yes)
+            {
+                HideSquares();
+                state.Chat = String.Empty;
+                state.Notation = String.Empty;
+                state.AllPositions.Clear();
+                state.WhiteTimeLeft = 10800;
+                state.BlackTimeLeft = 10800;
+                InitializeComponent();
+            }
+            else
+            {
+                Environment.Exit(0);
+            }
+        }
+
         private void ProcessServerMessages()
         {
             while (true)
@@ -69,17 +132,9 @@ namespace ChessGUI
                 state = JsonConvert.DeserializeObject<GameState>(message);
                 currPosition = state.AllPositions.Count - 1;
                 indexShowing = currPosition;
-                if (state.CheckMate)
+                if (state.CheckMate || state.StaleMate || state.DrawByRepitition)
                 {
-                    MessageBox.Show("CheckMate");
-                }
-                else if (state.StaleMate)
-                {
-                    MessageBox.Show("StaleMate");
-                }
-                else if (state.DrawByRepitition)
-                {
-                    MessageBox.Show("Draw By Repitition");
+                    OfferNewGame();
                 }
                 Invoke(new Action(() =>
                 {
@@ -1474,16 +1529,7 @@ namespace ChessGUI
             else
             {
                 Timer1.Stop();
-                if(state.WhiteTimeLeft > 0)
-                {
-
-                }
-                else
-                {
-
-                }
-                //LowerTimeLabel.Text = "Time's up";
-                MessageBox.Show("Out of time");
+                OfferNewGame();
             }
         }
 
