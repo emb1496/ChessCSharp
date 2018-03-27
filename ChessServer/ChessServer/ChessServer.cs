@@ -28,6 +28,32 @@ namespace ChessServer
         private int blackTimeLeft;
         private int whiteTimeLeft;
         private int timePortOffset;
+        private bool serverError;
+        private bool gameOver;
+
+        public bool GameOver
+        {
+            get
+            {
+                return gameOver;
+            }
+            set
+            {
+                gameOver = value;
+            }
+        }
+
+        public bool ServerError
+        {
+            get
+            {
+                return serverError;
+            }
+            set
+            {
+                serverError = value;
+            }
+        }
 
         public int TimePortOffset
         {
@@ -202,6 +228,7 @@ namespace ChessServer
             drawByRepitition = false;
             whiteTimeLeft = 10000;
             blackTimeLeft = 10000;
+            serverError = false;
         }
     }
 
@@ -223,6 +250,32 @@ namespace ChessServer
         private bool waitingForSecondPlayer;
         private int blackTimeLeft;
         private int whiteTimeLeft;
+        private bool serverError;
+        private bool gameOver;
+
+        public bool GameOver
+        {
+            get
+            {
+                return gameOver;
+            }
+            set
+            {
+                gameOver = value;
+            }
+        }
+
+        public bool ServerError
+        {
+            get
+            {
+                return serverError;
+            }
+            set
+            {
+                serverError = value;
+            }
+        }
 
         public int BlackTimeLeft
         {
@@ -432,9 +485,11 @@ namespace ChessServer
             chat = String.Empty;
             notation = String.Empty;
             waitingForSecondPlayer = true;
+            serverError = false;
             allPositions = new List<Piece[,]>();
             whiteTimeLeft = 10000;
             blackTimeLeft = 10000;
+            gameOver = false;
         }
     }
 
@@ -594,8 +649,8 @@ namespace ChessServer
                     myClients.Add(client);
                     newEndPoint = (IPEndPoint)client.RemoteEndPoint;
                     myEndPoints.Add(newEndPoint);
-                    int x = 2;
-                    x = client.Receive(buffer, 10, SocketFlags.None);
+                    int x = 0;
+                    while ((x += client.Receive(buffer, 10, SocketFlags.None)) < 10) ;
                     x = 0;
                     foreach(byte b in buffer)
                     {
@@ -691,8 +746,6 @@ namespace ChessServer
                 SendClientsGameState(state, tempStateHolder.ElementAt(which).Player1, tempStateHolder.ElementAt(which).Player2, null);
                 Thread thread = new Thread(() => Play(tempStateHolder[which].Player1, tempStateHolder[which].Player2, state));
                 thread.Start();
-//                tempStateHolder[which].Player1 = null;
-//                tempStateHolder[which].Player2 = null;
             }
         }
 
@@ -855,30 +908,32 @@ namespace ChessServer
             Socket white = (Socket)whiteSocket;
             Socket black = (Socket)blackSocket;
             SendState gameState = (SendState)initialGameState;
+            Exception endGame = new Exception("Game over");
             ArrayList checkRead = new ArrayList();
-//            ArrayList checkWrite = new ArrayList();
-//            ArrayList checkError = new ArrayList();
             Piece[,] board = new Piece[8, 8];
             char[] buffer = new char[1024];
             byte[] ByteBuff = new byte[1024];
             while (true)
             {
-                // reset checkRead and checkWrite and checkError
-                checkRead.RemoveRange(0, checkRead.Count);
-                checkRead.Add(white);
-                checkRead.Add(black);
-                if (checkRead.Count == 2)
+                try
                 {
-                    Socket.Select(checkRead, null, null, -1);
-                }
-                else if(!gameState.WaitingForSecondPlayer && checkRead.Count == 1)
-                {
-                    // missing player!!!
-                }
+                    // reset checkRead and checkWrite and checkError
+                    checkRead.RemoveRange(0, checkRead.Count);
+                    checkRead.Add(white);
+                    checkRead.Add(black);
+                    if (checkRead.Count == 2)
+                    {
+                        Socket.Select(checkRead, null, null, -1);
+                    }
+                    else if(!gameState.WaitingForSecondPlayer && checkRead.Count == 1)
+                    {
+                        gameState.ServerError = true;
+                        SendClientsGameState(gameState, white, black, null);
+                        throw endGame;
+                        // missing player!!!
+                    }
 
-                for (int i = 0; i < checkRead.Count; i++)
-                {
-                    try
+                    for (int i = 0; i < checkRead.Count; i++)
                     {
                         if(((Socket)checkRead[i]).Poll(1000, SelectMode.SelectRead) == false)
                         {
@@ -901,6 +956,12 @@ namespace ChessServer
                             gameState.BlackTimeLeft = state.BlackTimeLeft;
                             gameState.AllPositions = state.AllPositions;
                             CheckForDrawByRepitition(gameState);
+                            if (gameState.DrawByRepitition)
+                            {
+                                gameState.GameOver = true;
+                                SendClientsGameState(gameState, white, black, null);
+                                throw endGame;
+                            }
                         }
 
                         // update the rest and send it out
@@ -911,15 +972,24 @@ namespace ChessServer
                         if(gameState.DrawByRepitition && (Socket)checkRead[i] == white)
                         {
                             SendClientsGameState(gameState, white, black, white);
+                            throw endGame;
                         }
                         else if(gameState.DrawByRepitition)
                         {
                             SendClientsGameState(gameState, white, black, black);
+                            throw endGame;
                         }
                     }
-                    catch(Exception except)
+                }
+                catch (Exception e)
+                {
+                    if(e.Message == "Game over")
                     {
-                        Console.WriteLine(except.Message);
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine(e.Message);
                     }
                 }
             }

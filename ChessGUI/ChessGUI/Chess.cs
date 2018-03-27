@@ -63,6 +63,10 @@ namespace ChessGUI
 
         private void OfferNewGame()
         {
+            if(squares[0,0].Visible == false)
+            {
+                return;
+            }
             DialogResult userInput;
             string message = String.Empty;
             if (state.CheckMate)
@@ -87,6 +91,8 @@ namespace ChessGUI
                         if(board[i,j].White && board[i,j].Value > 0 && board[i, j].Value != 9)
                         {
                             message = "Black ran out of time, white wins, would you like to play again?";
+                            i = 8;
+                            j = 8;
                             break;
                         }
                     }
@@ -102,21 +108,32 @@ namespace ChessGUI
                         if (!board[i, j].White && board[i, j].Value > 0 && board[i, j].Value != 9)
                         {
                             message = "White ran out of time, black wins, would you like to play again?";
+                            i = 8;
+                            j = 8;
                             break;
                         }
                     }
                 }
             }
-            userInput = MessageBox.Show(message, "New Game?", MessageBoxButtons.YesNo);
-            if(userInput == DialogResult.Yes)
+            userInput = MessageBox.Show(message, "New Game?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            if (userInput == DialogResult.Yes)
             {
-                HideSquares();
-                state.Chat = String.Empty;
-                state.Notation = String.Empty;
-                state.AllPositions.Clear();
-                state.WhiteTimeLeft = 10800;
-                state.BlackTimeLeft = 10800;
-                InitializeComponent();
+                Invoke(new Action(() =>
+                {
+                    HideSquares();
+                    state.Chat = String.Empty;
+                    state.Notation = String.Empty;
+                    textBoxChat.Text = String.Empty;
+                    textBoxNotation.Text = String.Empty;
+                    state.AllPositions.Clear();
+                    state.WhiteTimeLeft = 10800;
+                    state.BlackTimeLeft = 10800;
+                    state.TimePortOffset = 75;
+                    UpperTimeLabel.Visible = false;
+                    LowerTimeLabel.Visible = false;
+                    Timer1.Stop();
+                    InitializeComponent();
+                }));
             }
             else
             {
@@ -163,6 +180,11 @@ namespace ChessGUI
                             }
                             Drawing(board);
                             Clicks(true);
+                        }
+                        if (state.GameOver)
+                        {
+                            Timer1.Stop();
+                            OfferNewGame();
                         }
                     }
                 }));
@@ -496,12 +518,12 @@ namespace ChessGUI
                     }
 
                     // final checks that the rook has not moved that its the same color on the edge 
-                    if (j + length >= 0 && board[i, j - length].Value == 5 && board[i , j - length].HasMoved == false && board[i , j - length].White == board[i, j].White && j - length == 0)
+                    if (j + length >= 0 && board[i, j + length].Value == 5 && board[i , j + length].HasMoved == false && board[i , j + length].White == board[i, j].White && j + length == 0)
                     {
                         // now to make sure we are not castling through check
-                        if(length == 4)
+                        if(length == -4)
                         {
-                            length--;
+                            length++;
                         }
                         moves += i.ToString() + (j - 2).ToString() + ", ";
                     }
@@ -558,6 +580,10 @@ namespace ChessGUI
 
         private bool IsStaleMate()
         {
+            if (CheckForKingsOnly())
+            {
+                return true;
+            }
             Piece[,] copy = new Piece[8, 8];
             MakeCopy(board, copy);
             string moves = String.Empty;
@@ -1137,6 +1163,21 @@ namespace ChessGUI
             textBoxNotation.Text = state.Notation;
         }
 
+        private bool CheckForKingsOnly()
+        {
+            for(int i = 0; i < 8; i++)
+            {
+                for(int j = 0; j < 8; j++)
+                {
+                    if(state.Board[i,j].Value != 0 && state.Board[i,j].Value != 9)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         void Square_Click(object sender, EventArgs e)
         {
             if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove))
@@ -1197,13 +1238,13 @@ namespace ChessGUI
                     Clicks(false);
                     if (IsCheckMate())
                     {
+                        state.GameOver = true;
                         state.CheckMate = true;
-                        MessageBox.Show("Checkmate");
                     }
                     else if (IsStaleMate())
                     {
+                        state.GameOver = true;
                         state.StaleMate = true;
-                        MessageBox.Show("Stalemate");
                     }
                     if (!state.White)
                     {
@@ -1217,6 +1258,10 @@ namespace ChessGUI
                         ReverseBoard();
                     }
                     origin = String.Empty;
+                    if (state.GameOver)
+                    {
+                        OfferNewGame();
+                    }
                 }
                 else if (origin == String.Empty)
                 {
@@ -1256,12 +1301,12 @@ namespace ChessGUI
                         if (IsCheckMate())
                         {
                             state.CheckMate = true;
-                            MessageBox.Show("Checkmate");
+                            state.GameOver = true;
                         }
                         else if (IsStaleMate())
                         {
                             state.StaleMate = true;
-                            MessageBox.Show("Stalemate");
+                            state.GameOver = true;
                         }
                         if (!state.White)
                         {
@@ -1275,6 +1320,10 @@ namespace ChessGUI
                             ReverseBoard();
                         }
                         origin = String.Empty;
+                        if (state.GameOver)
+                        {
+                            OfferNewGame();
+                        }
                     }
                     else
                     {
