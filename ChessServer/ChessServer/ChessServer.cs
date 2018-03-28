@@ -34,6 +34,19 @@ namespace ChessServer
         private int timePortOffset;             // Marks the length of the game
         private bool serverError;               // Did we lose a client
         private bool gameOver;                  // Is the game still going
+        private bool opponentDisconnected;      // opponent still connected to game
+
+        public bool OpponentDisconnected
+        {
+            get
+            {
+                return opponentDisconnected;
+            }
+            set
+            {
+                opponentDisconnected = value;
+            }
+        }
 
         public bool GameOver
         {
@@ -237,6 +250,7 @@ namespace ChessServer
             whiteTimeLeft = 10000;
             blackTimeLeft = 10000;
             serverError = false;
+            opponentDisconnected = false;
         }
     }
 
@@ -263,6 +277,19 @@ namespace ChessServer
         private int whiteTimeLeft;
         private bool serverError;
         private bool gameOver;
+        private bool opponentDisconnected;      
+
+        public bool OpponentDisconnected
+        {
+            get
+            {
+                return opponentDisconnected;
+            }
+            set
+            {
+                opponentDisconnected = value;
+            }
+        }
 
         public bool GameOver
         {
@@ -501,6 +528,7 @@ namespace ChessServer
             whiteTimeLeft = 10000;
             blackTimeLeft = 10000;
             gameOver = false;
+            opponentDisconnected = false;
         }
     }
 
@@ -970,18 +998,47 @@ namespace ChessServer
         }
         /*private static void GenerateNewGamestate(int a_index);*/
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="state"></param>
-        /// <param name="white"></param>
-        /// <param name="black"></param>
-        /// <param name="socket"></param>
+        /*
+         * ChessServer.ChessServer.SendClientsGameState(SendState a_state, Socket a_white, Socket a_black, Socket a_socket)
+         * 
+         * NAME
+         * 
+         *     ChessServer.ChessServer.SendClientsGameState - function to write state to appropriate clients
+         * 
+         * SYNOPSIS
+         * 
+         *      void SendClientsGameState(SendState a_state, Socket a_white, Socket a_black, Socket a_socket);
+         *      a_state -> sendstate to serialize and send
+         *      a_white -> white player socket
+         *      a_black -> black player socket
+         *      a_socket -> socket not to send data to
+         *      
+         * DESCRIPTION
+         * 
+         *      This function first checks that a_white is a_socket, if not it will activate the network
+         *      stream using a_white convert the sendstate to a message with the player as white and send the state
+         *      Then if a_black exists and is not equal to a_socket it does the same for the socket a_black with one
+         *      minor change to the state to have the client be the black player
+         *            
+         * RETURNS
+         * 
+         *      void
+         *      
+         * AUTHOR
+         *  
+         *      Elliott Barinberg
+         *      
+         * DATE
+         * 
+         *      10:22 AM 3/27/2018
+         * 
+         */
+        /**/
         private static void SendClientsGameState(SendState a_state, Socket a_white, Socket a_black, Socket a_socket)
         {
             NetworkStream m_networkStream;
             StreamWriter m_streamWriter;
-            if(a_white != a_socket)
+            if(a_white != a_socket && a_white.Connected)
             {
                 a_state.White = true;
                 string message = JsonConvert.SerializeObject(a_state);
@@ -994,7 +1051,7 @@ namespace ChessServer
             {
                 return;
             }
-            if(a_black != a_socket)
+            if(a_black != a_socket && a_black.Connected)
             {
                 a_state.White = false;
                 string message = JsonConvert.SerializeObject(a_state);
@@ -1004,13 +1061,41 @@ namespace ChessServer
                 m_streamWriter.Flush();
             }
         }
+        /*private static void SendClientsGameState(SendState a_state, Socket a_white, Socket a_black, Socket a_socket);*/
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="board1"></param>
-        /// <param name="board2"></param>
-        /// <returns></returns>
+        /*
+         * ChessServer.ChessServer.IsSameBoard(Piece[,] a_board1, Piece[,] a_board2)
+         * 
+         * NAME
+         * 
+         *     ChessServer.ChessServer.IsSameBoard - function to determine if 2 boards are the same arrangement of pieces
+         *      
+         * SYNOPSIS
+         * 
+         *      void IsSameBoard(Piece[,] a_board1, Piece[,] a_board2);
+         *      a_board1 -> [8,8] array of Pieces representing the first chess board
+         *      a_board2 -> [8,8] array of Pieces representing the second chess board
+         *      
+         * DESCRIPTION
+         * 
+         *      This function will loop through both boards and check the the pieces at each given index are the same value and color
+         *      If at any point there is a difference it will return false but if the loops finish without differences it will return true
+         *            
+         * RETURNS
+         * 
+         *      false - if same board
+         *      true - if different boards
+         *      
+         * AUTHOR
+         *  
+         *      Elliott Barinberg
+         *      
+         * DATE
+         * 
+         *      10:22 AM 3/27/2018
+         * 
+         */
+        /**/
         private static bool IsSameBoard(Piece[,] a_board1, Piece[,] a_board2)
         {
             for(int i = 0; i < 8; i++)
@@ -1029,11 +1114,42 @@ namespace ChessServer
             }
             return true;
         }
+        /*private static bool IsSameBoard(Piece[,] a_board1, Piece[,] a_board2);*/
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="state"></param>
+        /*
+         * ChessServer.ChessServer.CheckForDrawByRepitition(SendState a_state)
+         * 
+         * NAME
+         * 
+         *     ChessServer.ChessServer.CheckForDrawByRepitition - function to determine if the same board has occured 3 times
+         *      
+         * SYNOPSIS
+         * 
+         *      void CheckForDrawByRepitition(SendState a_state);
+         *      a_state -> current state of game to check
+         *      
+         * DESCRIPTION
+         * 
+         *      This function will loop through the list of board in a_state.AllPositions
+         *      From there it loops through the rest of the boards and checks if they are the same
+         *      If so it increments m_count
+         *      If by the end of the list m_count >= 2 it sets a_state.DrawByRepitition to true and breaks
+         *      Otherwise it just continues on with no change to the state
+         *            
+         * RETURNS
+         * 
+         *      void
+         *      
+         * AUTHOR
+         *  
+         *      Elliott Barinberg
+         *      
+         * DATE
+         * 
+         *      10:22 AM 3/27/2018
+         * 
+         */
+        /**/
         private static void CheckForDrawByRepitition(SendState a_state)
         {
             int m_count;
@@ -1055,60 +1171,86 @@ namespace ChessServer
                 break;
             }
         }
+        /*private static void CheckForDrawByRepitition(SendState a_state);*/
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="whiteSocket"></param>
-        /// <param name="blackSocket"></param>
-        /// <param name="initialGameState"></param>
+        /*
+         * ChessServer.ChessServer.Play(Object a_whiteSocket, Object a_blackSocket, Object a_initialGameState)
+         * 
+         * NAME
+         * 
+         *     ChessServer.ChessServer.Play - function to keep a game going between 2 users
+         *      
+         * SYNOPSIS
+         * 
+         *      void Play(Object a_whiteSocket, Object a_blackSocket, Object a_initialGameState);
+         *      a_whiteSocket -> white socket passed as thread parameter
+         *      a_blackSocket -> black socket passed as thread parameter
+         *      a_initialGameState -> inital SendState passed as thread parameter
+         *      
+         * DESCRIPTION
+         * 
+         *      This function will be the main gameplay function
+         *      It will be spawned in a new thread and then it converts the arguments back into the objects they actually are (Socket, Socket, SendState)
+         *      Then in a forever loop it will call select on both sockets
+         *      Whichever responds it will read the gamestate from
+         *      If the board changed between gamestates it will check for draw by repitition
+         *      after updating whose move it is and how much time is left, if no change in board the above will not happen
+         *      the board, chat, and notation will be updated and sent to the other client
+         *      If the game is over an exception will be thrown to take the function out of the forever loop
+         *      
+         *            
+         * RETURNS
+         * 
+         *      void
+         *      
+         * AUTHOR
+         *  
+         *      Elliott Barinberg
+         *      
+         * DATE
+         * 
+         *      10:22 AM 3/27/2018
+         * 
+         */
+        /**/
         private static void Play(Object a_whiteSocket, Object a_blackSocket, Object a_initialGameState)
         {
-            Socket white = (Socket)a_whiteSocket;
-            Socket black = (Socket)a_blackSocket;
-            SendState gameState = (SendState)a_initialGameState;
-            Exception endGame = new Exception("Game over");
-            ArrayList checkRead = new ArrayList();
-            Piece[,] board = new Piece[8, 8];
-            char[] buffer = new char[1024];
-            byte[] ByteBuff = new byte[1024];
+            Socket m_white = (Socket)a_whiteSocket;
+            Socket m_black = (Socket)a_blackSocket;
+            SendState m_gameState = (SendState)a_initialGameState;
+            Exception m_endGame = new Exception("Game over");
+            ArrayList m_checkRead = new ArrayList();
+            NetworkStream m_networkStream;
+            StreamReader m_streamReader;
+            string m_message = String.Empty;
             while (true)
             {
                 try
                 {
-                    // reset checkRead and checkWrite and checkError
-                    checkRead.RemoveRange(0, checkRead.Count);
-                    checkRead.Add(white);
-                    checkRead.Add(black);
-                    if (checkRead.Count == 2)
+                    // reset checkRead 
+                    m_checkRead.RemoveRange(0, m_checkRead.Count);
+                    m_checkRead.Add(m_white);
+                    m_checkRead.Add(m_black);
+                    if (m_checkRead.Count == 2 && m_white.Connected && m_black.Connected)
                     {
-                        Socket.Select(checkRead, null, null, -1);
+                        Socket.Select(m_checkRead, null, null, -1);
                     }
-                    else if(!gameState.WaitingForSecondPlayer && checkRead.Count == 1)
+                    else
                     {
-                        gameState.ServerError = true;
-                        SendClientsGameState(gameState, white, black, null);
-                        throw endGame;
-                        // missing player!!!
+                        m_gameState.ServerError = true;
+                        SendClientsGameState(m_gameState, m_white, m_black, null);
                     }
 
-                    for (int i = 0; i < checkRead.Count; i++)
+                    for (int i = 0; i < m_checkRead.Count; i++)
                     {
-                        if(((Socket)checkRead[i]).Poll(1000, SelectMode.SelectRead) == false)
-                        {
-                            ((Socket)checkRead[i]).Disconnect(true);
-                            myClients.Remove((Socket)checkRead[i]);
-                            continue;
-                        }
-                        NetworkStream ns = new NetworkStream((Socket)checkRead[i]);
-                        StreamReader sr = new StreamReader(ns);
-                        StreamWriter sw = new StreamWriter(ns);
-                        string message = sr.ReadLine();
+                        m_networkStream = new NetworkStream((Socket)m_checkRead[i]);
+                        m_streamReader = new StreamReader(m_networkStream);
+                        m_message = m_streamReader.ReadLine(); // throws exception if socket disconnected
                         SendState state = new SendState();
-                        state = JsonConvert.DeserializeObject<SendState>(message);
+                        state = JsonConvert.DeserializeObject<SendState>(m_message);
                         
                         // has the board changed if so the following is the change to be made
-                        if(!IsSameBoard(state.Board, gameState.Board))
+                        if(!IsSameBoard(state.Board, m_gameState.Board))
                         {
                             gameState.WhiteToMove = state.WhiteToMove;
                             gameState.WhiteTimeLeft = state.WhiteTimeLeft;
@@ -1124,19 +1266,19 @@ namespace ChessServer
                         }
 
                         // update the rest and send it out
-                        gameState.Board = state.Board;
-                        gameState.Chat = state.Chat;
-                        gameState.Notation = state.Notation;
-                        SendClientsGameState(gameState, white, black, (Socket)checkRead[i]);
-                        if(gameState.DrawByRepitition && (Socket)checkRead[i] == white)
+                        m_gameState.Board = state.Board;
+                        m_gameState.Chat = state.Chat;
+                        m_gameState.Notation = state.Notation;
+                        SendClientsGameState(m_gameState, m_white, m_black, (Socket)m_checkRead[i]);
+                        if(m_gameState.DrawByRepitition && (Socket)m_checkRead[i] == m_white)
                         {
-                            SendClientsGameState(gameState, white, black, white);
-                            throw endGame;
+                            SendClientsGameState(m_gameState, m_white, m_black, m_white);
+                            throw m_endGame;
                         }
-                        else if(gameState.DrawByRepitition)
+                        else if(m_gameState.DrawByRepitition)
                         {
-                            SendClientsGameState(gameState, white, black, black);
-                            throw endGame;
+                            SendClientsGameState(m_gameState, m_white, m_black, m_black);
+                            throw m_endGame;
                         }
                     }
                 }
@@ -1144,16 +1286,28 @@ namespace ChessServer
                 {
                     if(e.Message == "Game over")
                     {
+                        // game ended naturally
+                        break;
+                    }
+                    else if(e.HResult == -2146232800)
+                    {
+                        // disconnect
+                        m_gameState.GameOver = true;
+                        m_gameState.OpponentDisconnected = true;
+                        SendClientsGameState(m_gameState, m_white, m_black, null);
                         break;
                     }
                     else
                     {
+                        // should not be
                         Console.WriteLine(e.Message);
                     }
                 }
             }
         }
+        /*private static void Play(Object a_whiteSocket, Object a_blackSocket, Object a_initialGameState);*/
 
+       
         /// <summary>
         /// 
         /// </summary>

@@ -85,7 +85,7 @@ namespace ChessGUI
             }
             else if(state.BlackTimeLeft == 0)
             {
-                message = "Black ran out of time, however white does not have sufficient materials,\r\nthe result is a draw,\r\nwould you like to play again?";
+                message = "Black ran out of time, however white does not have sufficient materials, the result is a draw, would you like to play again?";
                 for (int i = 0; i < 8; i++)
                 {
                     for(int j = 0; j < 8; j++)
@@ -102,7 +102,7 @@ namespace ChessGUI
             }
             else if(state.WhiteTimeLeft == 0)
             {
-                message = "White ran out of time, however black does not have sufficient materials,\r\nthe result is a draw,\r\nwould you like to play again?";
+                message = "White ran out of time, however black does not have sufficient materials, the result is a draw, would you like to play again?";
                 for (int i = 0; i < 8; i++)
                 {
                     for (int j = 0; j < 8; j++)
@@ -116,6 +116,14 @@ namespace ChessGUI
                         }
                     }
                 }
+            }
+            else if (state.ServerError)
+            {
+                message = "Server Error, we apologize for the inconvenience, would you like to play again?";
+            }
+            else if(state.OpponentDisconnected)
+            {
+                message = "Your opponent has disconnected, would you like to play again?";
             }
             userInput = MessageBox.Show(message, "New Game?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             if (userInput == DialogResult.Yes)

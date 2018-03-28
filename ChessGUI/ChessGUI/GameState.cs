@@ -22,6 +22,32 @@ namespace ChessGUI
         private int timePortOffset;
         private bool watingForSecondPlayer;
         private bool gameOver;
+        private bool serverError;
+        private bool opponentDisconnected;
+
+        public bool ServerError
+        {
+            get
+            {
+                return serverError;
+            }
+            set
+            {
+                serverError = value;
+            }
+        }
+
+        public bool OpponentDisconnected
+        {
+            get
+            {
+                return opponentDisconnected;
+            }
+            set
+            {
+                opponentDisconnected = value;
+            }
+        }
 
         public bool GameOver
         {
