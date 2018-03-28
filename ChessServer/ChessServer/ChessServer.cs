@@ -14,7 +14,7 @@ namespace ChessServer
 {
 
     /// <summary>
-    /// This class is a gamestate without any sockets or endpoints. This is what will be send and recieved by the server client programs
+    /// This class is a gamestate without any sockets or endpoints. This is what will be sent and recieved by the server client programs
     /// </summary>
     public class SendState
     {
@@ -253,7 +253,7 @@ namespace ChessServer
             opponentDisconnected = false;
         }
     }
-
+    
     /// <summary>
     /// This is a class of gamestates with sockets, it is used for initial load in and then the contents are pushed to a SendState and the sockets are passed to PLAY()
     /// </summary>
@@ -532,6 +532,9 @@ namespace ChessServer
         }
     }
 
+    /// <summary>
+    /// This is a class with attributes for value, color and whether or not a piece has moved
+    /// </summary>
     public class Piece
     {
         private int value;
@@ -574,91 +577,14 @@ namespace ChessServer
             }
         }
 
-        public Piece()
+        // cunstructor
+        public Piece(int val, bool isWhite)
         {
-            value = -1;
-            white = false;
-        }
-
-        public string toString()
-        {
-            string s = "";
-            s += value.ToString();
-            if(this.white == true)
-            {
-                s += "w ";
-            }
-            else
-            {
-                s += "b ";
-            }
-            return s;
+            value = val;
+            white = isWhite;
         }
     }
-
-    public class Empty : Piece
-    {
-        public Empty()
-        {
-            Value = 0;
-            White = false;
-        }
-    }
-
-    public class Pawn : Piece
-    {
-        public Pawn(bool white)
-        {
-            Value = 1;
-            White = white;
-        }
-    }
-
-    public class Bishop : Piece
-    {
-        public Bishop(bool white)
-        {
-            Value = 3;
-            White = white;
-        }
-    }
-
-    public class Knight : Piece
-    {
-        public Knight(bool white)
-        {
-            Value = 4;
-            White = white;
-        }
-    }
-
-    public class Rook : Piece
-    {
-        public Rook(bool white)
-        {
-            Value = 5;
-            White = white;
-        }
-    }
-
-    public class Queen : Piece
-    {
-        public Queen(bool white)
-        {
-            Value = 8;
-            White = white;
-        }
-    }
-
-    public class King : Piece
-    {
-        public King(bool white)
-        {
-            Value = 9;
-            White = white;
-        }
-    }
-
+    
     class ChessServer
     {
         // make six or seven lists to handle all the different games
@@ -923,30 +849,30 @@ namespace ChessServer
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    m_board[i, j] = new Empty();
+                    m_board[i, j] = new Piece(0, false);
                 }
             }
-            m_board[0, 0] = new Rook(false);
-            m_board[0, 1] = new Knight(false);
-            m_board[0, 2] = new Bishop(false);
-            m_board[0, 3] = new Queen(false);
-            m_board[0, 4] = new King(false);
-            m_board[0, 5] = new Bishop(false);
-            m_board[0, 6] = new Knight(false);
-            m_board[0, 7] = new Rook(false);
+            m_board[0, 0] = new Piece(5, false);
+            m_board[0, 1] = new Piece(4, false);
+            m_board[0, 2] = new Piece(3, false);
+            m_board[0, 3] = new Piece(8, false);
+            m_board[0, 4] = new Piece(9, false);
+            m_board[0, 5] = new Piece(3, false);
+            m_board[0, 6] = new Piece(4, false);
+            m_board[0, 7] = new Piece(5, false);
             for (int i = 0; i < 8; i++)
             {
-                m_board[1, i] = new Pawn(false);
-                m_board[6, i] = new Pawn(true);
+                m_board[1, i] = new Piece(1, false);
+                m_board[6, i] = new Piece(1, true);
             }
-            m_board[7, 0] = new Rook(true);
-            m_board[7, 1] = new Knight(true);
-            m_board[7, 2] = new Bishop(true);
-            m_board[7, 3] = new Queen(true);
-            m_board[7, 4] = new King(true);
-            m_board[7, 5] = new Bishop(true);
-            m_board[7, 6] = new Knight(true);
-            m_board[7, 7] = new Rook(true);
+            m_board[7, 0] = new Piece(5, false);
+            m_board[7, 1] = new Piece(4, false);
+            m_board[7, 2] = new Piece(3, false);
+            m_board[7, 3] = new Piece(8, false);
+            m_board[7, 4] = new Piece(9, false);
+            m_board[7, 5] = new Piece(3, false);
+            m_board[7, 6] = new Piece(4, false);
+            m_board[7, 7] = new Piece(5, false);
             for(int i = 0; i < 8; i++)
             {
                 for(int j = 0; j < 8; j++)
