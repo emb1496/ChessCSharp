@@ -1252,16 +1252,16 @@ namespace ChessServer
                         // has the board changed if so the following is the change to be made
                         if(!IsSameBoard(state.Board, m_gameState.Board))
                         {
-                            gameState.WhiteToMove = state.WhiteToMove;
-                            gameState.WhiteTimeLeft = state.WhiteTimeLeft;
-                            gameState.BlackTimeLeft = state.BlackTimeLeft;
-                            gameState.AllPositions = state.AllPositions;
-                            CheckForDrawByRepitition(gameState);
-                            if (gameState.DrawByRepitition)
+                            m_gameState.WhiteToMove = state.WhiteToMove;
+                            m_gameState.WhiteTimeLeft = state.WhiteTimeLeft;
+                            m_gameState.BlackTimeLeft = state.BlackTimeLeft;
+                            m_gameState.AllPositions = state.AllPositions;
+                            CheckForDrawByRepitition(m_gameState);
+                            if (m_gameState.DrawByRepitition)
                             {
-                                gameState.GameOver = true;
-                                SendClientsGameState(gameState, white, black, null);
-                                throw endGame;
+                                m_gameState.GameOver = true;
+                                SendClientsGameState(m_gameState, m_white, m_black, null);
+                                throw m_endGame;
                             }
                         }
 
@@ -1307,12 +1307,37 @@ namespace ChessServer
         }
         /*private static void Play(Object a_whiteSocket, Object a_blackSocket, Object a_initialGameState);*/
 
-       
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="args"></param>
-        static void Main(string[] args)
+
+        /*
+         * ChessServer.ChessServer.Main()
+         * 
+         * NAME
+         * 
+         *     ChessServer.ChessServer.Main - function to start the program
+         *      
+         * SYNOPSIS
+         * 
+         *      void Main();
+         *      
+         * DESCRIPTION
+         * 
+         *      This function will add 8 spaces to tempStateHolder and call ProcessClientRequests()
+         *            
+         * RETURNS
+         * 
+         *      void
+         *      
+         * AUTHOR
+         *  
+         *      Elliott Barinberg
+         *      
+         * DATE
+         * 
+         *      10:22 AM 3/27/2018
+         * 
+         */
+        /**/
+        static void Main()
         {
             try
             {
@@ -1327,5 +1352,6 @@ namespace ChessServer
                 Console.WriteLine(e);
             }
         }
+        /*static void Main();*/
     }
 }
