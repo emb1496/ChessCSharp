@@ -19,24 +19,28 @@ namespace ChessGUI
     public partial class Chess : Form
     {
         // class necessary state variables
-        Piece[,] board = new Piece[8, 8];
-        string origin = String.Empty;
-        string destination = String.Empty;
-        string message = String.Empty;
-        string playerName = String.Empty;
-        int port = 1234;
-        int currPosition = 0;
-        int indexShowing = 0;
-        Square[,] squares = new Square[8, 8];
-        Square[,] promotionSquares = new Square[2, 2];
-        IPEndPoint ip;
-        Socket socket;
-        NetworkStream ns;
-        StreamReader sr;
-        StreamWriter sw;
-        GameState state = new GameState();
+        private Piece[,] board = new Piece[8, 8];
+        private string origin = String.Empty;
+        private string destination = String.Empty;
+        private string messageFromServer = String.Empty;
+        private string playerName = String.Empty;
+        private int currPosition = 0; // how many moves were made
+        private int indexShowing = 0; // which board in all positions is showing on the drawing now
+        private Square[,] squares = new Square[8, 8]; // squares for the board to be rendered on
+        private Square[,] promotionSquares = new Square[2, 2]; // squares to have the user pick what he wants to promote to
+        private IPEndPoint ip;
+        private Socket socket;
+        private NetworkStream ns;
+        private StreamReader sr;
+        private StreamWriter sw;
+        private GameState state = new GameState();
+        private string messageToUser = String.Empty; // this deals with offer new game, this is the message shown
+        private DialogResult userInput;              // also for offer new game, this is the user response
 
-
+        /// <summary>
+        /// Initializes the form after setting the time left to maximum amount, the form loads with 3 hours as the checked option so
+        /// on load in the game sets that time to 3 hours, if the user changes the button it will change
+        /// </summary>
         public Chess()
         {
             state.WhiteTimeLeft = 10800;
@@ -44,17 +48,24 @@ namespace ChessGUI
             InitializeComponent();
         }
 
-        private bool IsSameBoard(Piece[,] board1, Piece[,] board2)
+        /// <summary>
+        /// Checks if 2 boards are the same position by checking that each spot is same color and value on both boards
+        /// If they are different returns false, it the loop finished then it returns true
+        /// </summary>
+        /// <param name="a_board1"></param>
+        /// <param name="a_board2"></param>
+        /// <returns>boolean, true if the boards are same false if they are different</returns>
+        private bool IsSameBoard(Piece[,] a_board1, Piece[,] a_board2)
         {
             for(int i = 0; i < 8; i++)
             {
                 for(int j = 0; j < 8; j++)
                 {
-                    if(board1[i,j].Value != board2[i, j].Value)
+                    if(a_board1[i,j].Value != a_board2[i, j].Value)
                     {
                         return false;
                     }
-                    if(board1[i,j].White != board2[i, j].White)
+                    if(a_board1[i,j].White != a_board2[i, j].White)
                     {
                         return false;
                     }
@@ -63,36 +74,39 @@ namespace ChessGUI
             return true;
         }
 
+        /// <summary>
+        /// Only called once game is over, this checks why the game ended and builds a message to the user from that
+        /// Then it displays an interactive message box, if the user selects no then it will close the application
+        /// If the user selects yes it will reset to initial state and start again
+        /// </summary>
         private void OfferNewGame()
         {
             if(squares[0,0].Visible == false)
             {
                 return;
             }
-            DialogResult userInput;
-            string message = String.Empty;
             if (state.CheckMate)
             {
-                message = "Checkmate, would you like to play again?";
+                messageToUser = "Checkmate, would you like to play again?";
             }
             else if (state.StaleMate)
             {
-                message = "Stalemate, would you like to play again?";
+                messageToUser = "Stalemate, would you like to play again?";
             }
             else if (state.DrawByRepitition)
             {
-                message = "Draw by repitition, would you like to play again?";
+                messageToUser = "Draw by repitition, would you like to play again?";
             }
             else if(state.BlackTimeLeft == 0)
             {
-                message = "Black ran out of time, however white does not have sufficient materials, the result is a draw, would you like to play again?";
+                messageToUser = "Black ran out of time, however white does not have sufficient materials, the result is a draw, would you like to play again?";
                 for (int i = 0; i < 8; i++)
                 {
                     for(int j = 0; j < 8; j++)
                     {
                         if(board[i,j].White && board[i,j].Value > 0 && board[i, j].Value != 9)
                         {
-                            message = "Black ran out of time, white wins, would you like to play again?";
+                            messageToUser = "Black ran out of time, white wins, would you like to play again?";
                             i = 8;
                             j = 8;
                             break;
@@ -102,14 +116,14 @@ namespace ChessGUI
             }
             else if(state.WhiteTimeLeft == 0)
             {
-                message = "White ran out of time, however black does not have sufficient materials, the result is a draw, would you like to play again?";
+                messageToUser = "White ran out of time, however black does not have sufficient materials, the result is a draw, would you like to play again?";
                 for (int i = 0; i < 8; i++)
                 {
                     for (int j = 0; j < 8; j++)
                     {
                         if (!board[i, j].White && board[i, j].Value > 0 && board[i, j].Value != 9)
                         {
-                            message = "White ran out of time, black wins, would you like to play again?";
+                            messageToUser = "White ran out of time, black wins, would you like to play again?";
                             i = 8;
                             j = 8;
                             break;
@@ -119,13 +133,13 @@ namespace ChessGUI
             }
             else if (state.ServerError)
             {
-                message = "Server Error, we apologize for the inconvenience, would you like to play again?";
+                messageToUser = "Server Error, we apologize for the inconvenience, would you like to play again?";
             }
             else if(state.OpponentDisconnected)
             {
-                message = "Your opponent has disconnected, would you like to play again?";
+                messageToUser = "Your opponent has disconnected, would you like to play again?";
             }
-            userInput = MessageBox.Show(message, "New Game?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            userInput = MessageBox.Show(messageToUser, "New Game?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             if (userInput == DialogResult.Yes)
             {
                 Invoke(new Action(() =>
@@ -151,18 +165,21 @@ namespace ChessGUI
             }
         }
 
+        /// <summary>
+        /// In a forever loop this method calls ReadLine from the server then deserializes the message into a gamestate
+        /// It then resets the current position and index showing to correct values
+        /// If the game is over naturally it will call OfferNewGame
+        /// Otherwise it invokes an action where it enables review buttons makes sure the timer is running and updates the board and notation and chat
+        /// If the game is over due to server error or oppenent disconnect it will stop the timer and call OfferNewGame
+        /// </summary>
         private void ProcessServerMessages()
         {
             while (true)
             {
-                string message = sr.ReadLine();
-                state = JsonConvert.DeserializeObject<GameState>(message);
+                messageFromServer = sr.ReadLine();
+                state = JsonConvert.DeserializeObject<GameState>(messageFromServer);
                 currPosition = state.AllPositions.Count - 1;
                 indexShowing = currPosition;
-                if (state.CheckMate || state.StaleMate || state.DrawByRepitition)
-                {
-                    OfferNewGame();
-                }
                 Invoke(new Action(() =>
                 {
                     if (state.WaitingForSecondPlayer)
@@ -201,6 +218,8 @@ namespace ChessGUI
             }
         }
 
+
+        // legal moves functions
         private string PawnLegalMoves(Piece[,] tempBoard, int i, int j)
         {
             int brilliantNum = 0;
@@ -588,6 +607,95 @@ namespace ChessGUI
             return moves;
         }
 
+        private string FindLegalMoves(Piece[,] tempBoard, int i, int j)
+        {
+            string moves = String.Empty;
+            switch (tempBoard[i, j].Value)
+            {
+                case 1:
+                    moves = PawnLegalMoves(tempBoard, i, j);
+                    break;
+                case 3:
+                    moves = BishopLegalMoves(tempBoard, i, j);
+                    break;
+                case 4:
+                    moves = KnightLegalMoves(tempBoard, i, j);
+                    break;
+                case 5:
+                    moves = RookLegalMoves(tempBoard, i, j);
+                    break;
+                case 8:
+                    moves = QueenLegalMoves(tempBoard, i, j);
+                    break;
+                case 9:
+                    moves = KingLegalMoves(tempBoard, i, j);
+                    break;
+                default:
+                    break;
+            }
+            return moves;
+        }
+
+        private void ParseAndHighlight(int i, int j)
+        {
+            string moves = String.Empty;
+            moves = FindLegalMoves(board, i, j);
+            Piece[,] copy = new Piece[8, 8];
+            string[] movesArray = moves.Split(' ', ',');
+            foreach (string square in movesArray)
+            {
+                if (square == "")
+                {
+                    continue;
+                }
+                int iVal = Convert.ToInt32(square.ElementAt(0)) - 48;
+                int jVal = Convert.ToInt32(square.ElementAt(1)) - 48;
+                if (board[i, j].Value == 9 && Math.Abs(jVal - j) == 2)
+                {
+                    if (jVal > j)
+                    {
+                        MakeCopy(board, copy);
+                        copy[i, j + 1] = copy[i, j];
+                        copy[i, j] = new Piece();
+                        if (IsCheck(copy, state.White))
+                        {
+                            continue;
+                        }
+                        copy[i, j + 2] = copy[i, j + 1];
+                        copy[i, j + 1] = new Piece();
+                        if (IsCheck(copy, state.White))
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        MakeCopy(board, copy);
+                        copy[i, j - 1] = copy[i, j];
+                        copy[i, j] = new Piece();
+                        if (IsCheck(copy, state.White))
+                        {
+                            continue;
+                        }
+                        copy[i, j - 2] = copy[i, j - 1];
+                        copy[i, j - 1] = new Piece();
+                        if (IsCheck(copy, state.White))
+                        {
+                            continue;
+                        }
+                    }
+                }
+                MakeCopy(board, copy);
+                copy[iVal, jVal] = copy[i, j];
+                copy[i, j] = new Piece();
+                if (!IsCheck(copy, state.White))
+                {
+                    squares[iVal, jVal].BackColor = Color.Green;
+                }
+            }
+        }
+
+
         private bool IsStaleMate()
         {
             if (CheckForKingsOnly())
@@ -602,6 +710,7 @@ namespace ChessGUI
                 moves = GetAllLegalMoves();
                 if (moves == String.Empty)
                 {
+                    state.GameOver = true;
                     return true;
                 }
             }
@@ -618,6 +727,7 @@ namespace ChessGUI
                 moves = GetAllLegalMoves();
                 if (moves == String.Empty)
                 {
+                    state.GameOver = true;
                     return true;
                 }
             }
@@ -655,95 +765,7 @@ namespace ChessGUI
             return false;
         }
 
-        private string FindLegalMoves(Piece[,]tempBoard, int i, int j)
-        {
-            string moves = String.Empty;
-            switch (tempBoard[i, j].Value)
-            {
-                case 1:
-                    moves = PawnLegalMoves(tempBoard, i, j);
-                    break;
-                case 3:
-                    moves = BishopLegalMoves(tempBoard, i, j);
-                    break;
-                case 4:
-                    moves = KnightLegalMoves(tempBoard, i, j);
-                    break;
-                case 5:
-                    moves = RookLegalMoves(tempBoard, i, j);
-                    break;
-                case 8:
-                    moves = QueenLegalMoves(tempBoard, i, j);
-                    break;
-                case 9:
-                    moves = KingLegalMoves(tempBoard, i, j);
-                    break;
-                default:
-                    break;
-            }
-            return moves;
-        }
-
-        private void ParseAndHighlight(int i, int j)
-        {
-            string moves = String.Empty;
-            moves = FindLegalMoves(board, i, j);
-            Piece[,] copy = new Piece[8, 8];
-            string[] movesArray = moves.Split(' ', ',');
-            int f = 0;
-            foreach (string square in movesArray)
-            {
-                if (square == "")
-                {
-                    continue;
-                }
-                int iVal = Convert.ToInt32(square.ElementAt(0)) - 48;
-                int jVal = Convert.ToInt32(square.ElementAt(1)) - 48;
-                if(board[i,j].Value == 9 && Math.Abs(jVal - j) == 2)
-                {
-                    if(jVal > j)
-                    {
-                        MakeCopy(board, copy);
-                        copy[i, j + 1] = copy[i, j];
-                        copy[i, j] = new Piece();
-                        if(IsCheck(copy, state.White))
-                        {
-                            continue;
-                        }
-                        copy[i, j + 2] = copy[i, j + 1];
-                        copy[i, j + 1] = new Piece();
-                        if(IsCheck(copy, state.White))
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        MakeCopy(board, copy);
-                        copy[i, j - 1] = copy[i, j];
-                        copy[i, j] = new Piece();
-                        if (IsCheck(copy, state.White))
-                        {
-                            continue;
-                        }
-                        copy[i, j - 2] = copy[i, j - 1];
-                        copy[i, j - 1] = new Piece();
-                        if (IsCheck(copy, state.White))
-                        {
-                            continue;
-                        }
-                    }
-                }
-                MakeCopy(board, copy);
-                copy[iVal, jVal] = copy[i, j];
-                copy[i, j] = new Piece();
-                if (!IsCheck(copy, state.White))
-                {
-                    squares[iVal, jVal].BackColor = Color.Green;
-                }
-            }
-        }
-
+        
         private void ResetColors()
         {
             for (int i = 0; i < 8; i++)
@@ -880,6 +902,120 @@ namespace ChessGUI
                 }
             }
         }
+
+        private void Drawing(Piece[,] board)
+        {
+            string dir = Directory.GetCurrentDirectory();
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (board[i, j].White == true)
+                    {
+                        switch (board[i, j].Value)
+                        {
+                            case 0:
+                                squares[i, j].BackgroundImage = null; break;
+                            case 1:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\pW.gif"); break;
+                            case 3:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\BW.gif"); break;
+                            case 4:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\NW.gif"); break;
+                            case 5:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\RW.gif"); break;
+                            case 8:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\QW.gif"); break;
+                            case 9:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\KW.gif"); break;
+                        }
+                    }
+                    else
+                    {
+                        switch (board[i, j].Value)
+                        {
+                            case 0:
+                                squares[i, j].BackgroundImage = null; break;
+                            case 1:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\pB.gif"); break;
+                            case 3:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\BB.gif"); break;
+                            case 4:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\NB.gif"); break;
+                            case 5:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\RB.gif"); break;
+                            case 8:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\QB.gif"); break;
+                            case 9:
+                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\KB.gif"); break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void MakeSquares(Square[,] squares)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    squares[i, j] = new Square();
+                    squares[i, j].TopLevel = false;
+                    squares[i, j].Parent = this;
+                    squares[i, j].Location = new Point(j * 55 + 13, i * 55 + 50);
+                    squares[i, j].posX = j;
+                    squares[i, j].posY = i;
+                    squares[i, j].Size = new Size(50, 50);
+                    squares[i, j].Click += new EventHandler(Square_Click);
+                    if (i % 2 == 0)
+                    {
+                        if (j % 2 == 1)
+                        {
+                            squares[i, j].BackColor = Color.Black;
+                        }
+                        else
+                        {
+                            squares[i, j].BackColor = Color.White;
+                        }
+                    }
+                    else
+                    {
+                        if (j % 2 == 1)
+                        {
+                            squares[i, j].BackColor = Color.White;
+                        }
+                        else
+                        {
+                            squares[i, j].BackColor = Color.Black;
+                        }
+                    }
+                    squares[i, j].BackgroundImageLayout = ImageLayout.Center;
+                    squares[i, j].Show();
+                }
+            }
+        }
+
+        private void ReverseBoard()
+        {
+            Piece[,] temp = new Piece[8, 8];
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    temp[i, j] = board[i, j];
+                }
+            }
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    board[7 - i, 7 - j] = temp[i, j];
+                }
+            }
+            state.Board = board;
+        }
+
 
         private void PromotePawn(int i, int j)
         {
@@ -1349,118 +1485,6 @@ namespace ChessGUI
             }
         }
 
-        private void Drawing(Piece[,] board)
-        {
-            string dir = Directory.GetCurrentDirectory();
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (board[i, j].White == true)
-                    {
-                        switch (board[i, j].Value)
-                        {
-                            case 0:
-                                squares[i, j].BackgroundImage = null; break;
-                            case 1:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\pW.gif"); break;
-                            case 3:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\BW.gif"); break;
-                            case 4:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\NW.gif"); break;
-                            case 5:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\RW.gif"); break;
-                            case 8:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\QW.gif"); break;
-                            case 9:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\KW.gif"); break;
-                        }
-                    }
-                    else
-                    {
-                        switch (board[i, j].Value)
-                        {
-                            case 0:
-                                squares[i, j].BackgroundImage = null; break;
-                            case 1:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\pB.gif"); break;
-                            case 3:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\BB.gif"); break;
-                            case 4:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\NB.gif"); break;
-                            case 5:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\RB.gif"); break;
-                            case 8:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\QB.gif"); break;
-                            case 9:
-                                squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\KB.gif"); break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        private void MakeSquares(Square[,] squares)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    squares[i, j] = new Square();
-                    squares[i, j].TopLevel = false;
-                    squares[i, j].Parent = this;
-                    squares[i, j].Location = new Point(j * 55 + 13, i * 55 + 50);
-                    squares[i, j].posX = j;
-                    squares[i, j].posY = i;
-                    squares[i, j].Size = new Size(50, 50);
-                    squares[i, j].Click += new EventHandler(Square_Click);
-                    if (i % 2 == 0)
-                    {
-                        if (j % 2 == 1)
-                        {
-                            squares[i, j].BackColor = Color.Black;
-                        }
-                        else
-                        {
-                            squares[i, j].BackColor = Color.White;
-                        }
-                    }
-                    else
-                    {
-                        if (j % 2 == 1)
-                        {
-                            squares[i, j].BackColor = Color.White;
-                        }
-                        else
-                        {
-                            squares[i, j].BackColor = Color.Black;
-                        }
-                    }
-                    squares[i, j].BackgroundImageLayout = ImageLayout.Center;
-                    squares[i, j].Show();
-                }
-            }
-        }
-        
-        private void ReverseBoard()
-        {
-            Piece[,] temp = new Piece[8, 8];
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    temp[i, j] = board[i, j];
-                }
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    board[7 - i, 7 - j] = temp[i, j];
-                }
-            }
-            state.Board = board;
-        }
 
         private void Button1_Click(object sender, EventArgs e)
         {
@@ -1592,6 +1616,8 @@ namespace ChessGUI
             }
         }
 
+
+        // radio buttons setting time variables
         private void OneMin_CheckedChanged(object sender, EventArgs e)
         {
             state.WhiteTimeLeft = 60;
@@ -1641,6 +1667,8 @@ namespace ChessGUI
             state.TimePortOffset = 75;
         }
 
+
+        // buttons showing different boards
         private void ButtonStartOfGame_Click(object sender, EventArgs e)
         {
             board = state.AllPositions.ElementAt(0);
