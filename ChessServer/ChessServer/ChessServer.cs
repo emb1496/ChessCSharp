@@ -865,14 +865,14 @@ namespace ChessServer
                 m_board[1, i] = new Piece(1, false);
                 m_board[6, i] = new Piece(1, true);
             }
-            m_board[7, 0] = new Piece(5, false);
-            m_board[7, 1] = new Piece(4, false);
-            m_board[7, 2] = new Piece(3, false);
-            m_board[7, 3] = new Piece(8, false);
-            m_board[7, 4] = new Piece(9, false);
-            m_board[7, 5] = new Piece(3, false);
-            m_board[7, 6] = new Piece(4, false);
-            m_board[7, 7] = new Piece(5, false);
+            m_board[7, 0] = new Piece(5, true);
+            m_board[7, 1] = new Piece(4, true);
+            m_board[7, 2] = new Piece(3, true);
+            m_board[7, 3] = new Piece(8, true);
+            m_board[7, 4] = new Piece(9, true);
+            m_board[7, 5] = new Piece(3, true);
+            m_board[7, 6] = new Piece(4, true);
+            m_board[7, 7] = new Piece(5, true);
             for(int i = 0; i < 8; i++)
             {
                 for(int j = 0; j < 8; j++)

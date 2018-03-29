@@ -1020,112 +1020,131 @@ namespace ChessGUI
         }
         /*private void ShowSquares();*/
 
-        
-        private void Drawing(Piece[,] board)
+        /// <summary>
+        /// based on the board passed in this method will loop through the board and based on the color and value of the piece 
+        /// it will display the appropriate image
+        /// </summary>
+        /// <param name="a_board">8x8 chess board to draw</param>
+        private void Drawing(Piece[,] a_board)
         {
-            char pieceColor = '\0';
-            string dir = Directory.GetCurrentDirectory();
-            for (int i = 0; i < 8; i++)
+            char m_pieceColor = '\0';
+            string m_dir = Directory.GetCurrentDirectory();
+            for (int m_i = 0; m_i < 8; m_i++)
             {
-                for (int j = 0; j < 8; j++)
+                for (int m_j = 0; m_j < 8; m_j++)
                 {
-                    if (board[i, j].White == true)
+                    if (a_board[m_i, m_j].White == true)
                     {
-                        pieceColor = 'W';
+                        m_pieceColor = 'W';
                     }
                     else
                     {
-                        pieceColor = 'B';
+                        m_pieceColor = 'B';
                     }
-                    switch (board[i, j].Value)
+                    switch (a_board[m_i, m_j].Value)
                     {
                         case 0:
-                            squares[i, j].BackgroundImage = null;
+                            squares[m_i, m_j].BackgroundImage = null;
                             break;
                         case 1:
-                            squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\p" + pieceColor + ".gif");
+                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\p" + m_pieceColor + ".gif");
                             break;
                         case 3:
-                            squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\B" + pieceColor + ".gif");
+                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\B" + m_pieceColor + ".gif");
                             break;
                         case 4:
-                            squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\N" + pieceColor + ".gif");
+                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\N" + m_pieceColor + ".gif");
                             break;
                         case 5:
-                            squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\R" + pieceColor + ".gif");
+                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\R" + m_pieceColor + ".gif");
                             break;
                         case 8:
-                            squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\Q" + pieceColor + ".gif");
+                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\Q" + m_pieceColor + ".gif");
                             break;
                         case 9:
-                            squares[i, j].BackgroundImage = System.Drawing.Image.FromFile(dir + "\\Images\\K" + pieceColor + ".gif");
+                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\K" + m_pieceColor + ".gif");
                             break;
                     }
                 }
             }
         }
+        /*private void Drawing(Piece[,] a_board);*/
 
-        private void MakeSquares(Square[,] squares)
+        /// <summary>
+        /// Fills a_squares with 64 squares, sets their locations and attributes adds onClick event handler and sets the color
+        /// and image location to center
+        /// </summary>
+        /// <param name="a_squares">8x8 array of Square</param>
+        private void MakeSquares(Square[,] a_squares)
         {
-            for (int i = 0; i < 8; i++)
+            for (int m_i = 0; m_i < 8; m_i++)
             {
-                for (int j = 0; j < 8; j++)
+                for (int m_j = 0; m_j < 8; m_j++)
                 {
-                    squares[i, j] = new Square();
-                    squares[i, j].TopLevel = false;
-                    squares[i, j].Parent = this;
-                    squares[i, j].Location = new Point(j * 55 + 13, i * 55 + 50);
-                    squares[i, j].posX = j;
-                    squares[i, j].posY = i;
-                    squares[i, j].Size = new Size(50, 50);
-                    squares[i, j].Click += new EventHandler(Square_Click);
-                    if (i % 2 == 0)
+                    a_squares[m_i, m_j] = new Square
                     {
-                        if (j % 2 == 1)
+                        TopLevel = false,
+                        Parent = this,
+                        Location = new Point(m_j * 55 + 13, m_i * 55 + 50),
+                        posX = m_j,
+                        posY = m_i,
+                        Size = new Size(50, 50)
+                    };
+                    a_squares[m_i, m_j].Click += new EventHandler(Square_Click);
+                    if (m_i % 2 == 0)
+                    {
+                        if (m_j % 2 == 1)
                         {
-                            squares[i, j].BackColor = Color.Black;
+                            a_squares[m_i, m_j].BackColor = Color.Black;
                         }
                         else
                         {
-                            squares[i, j].BackColor = Color.White;
+                            a_squares[m_i, m_j].BackColor = Color.White;
                         }
                     }
                     else
                     {
-                        if (j % 2 == 1)
+                        if (m_j % 2 == 1)
                         {
-                            squares[i, j].BackColor = Color.White;
+                            a_squares[m_i, m_j].BackColor = Color.White;
                         }
                         else
                         {
-                            squares[i, j].BackColor = Color.Black;
+                            a_squares[m_i, m_j].BackColor = Color.Black;
                         }
                     }
-                    squares[i, j].BackgroundImageLayout = ImageLayout.Center;
-                    squares[i, j].Show();
+                    a_squares[m_i, m_j].BackgroundImageLayout = ImageLayout.Center;
+                    a_squares[m_i, m_j].Show();
                 }
             }
         }
+        /*private void MakeSquares(Square[,] a_squares)*/
 
+        /// <summary>
+        /// Reverses the board so that each original index maps to 7-index,
+        /// So we loop 0,0 -> 7,7 and make a copy of the board
+        /// Then we loop 7,7 -> 0,0 and set it to 7-row, 7-col
+        /// </summary>
         private void ReverseBoard()
         {
-            Piece[,] temp = new Piece[8, 8];
-            for (int i = 0; i < 8; i++)
+            Piece[,] m_temp = new Piece[8, 8];
+            for (int m_i = 0; m_i < 8; m_i++)
             {
-                for (int j = 0; j < 8; j++)
+                for (int m_j = 0; m_j < 8; m_j++)
                 {
-                    temp[i, j] = board[i, j];
+                    m_temp[m_i, m_j] = board[m_i, m_j];
                 }
             }
-            for (int i = 0; i < 8; i++)
+            for (int m_i = 0; m_i < 8; m_i++)
             {
-                for (int j = 0; j < 8; j++)
+                for (int m_j = 0; m_j < 8; m_j++)
                 {
-                    board[7 - i, 7 - j] = temp[i, j];
+                    board[7 - m_i, 7 - m_j] = m_temp[m_i, m_j];
                 }
             }
             state.Board = board;
         }
+        /*private void ReverseBoard();*/
 
 
         private void PromotePawn(int i, int j)
@@ -1137,13 +1156,15 @@ namespace ChessGUI
             {
                 for(int y = 0; y < 2; y++)
                 {
-                    promotionSquares[x, y] = new Square();
-                    promotionSquares[x, y].TopLevel = false;
-                    promotionSquares[x, y].Parent = this;
-                    promotionSquares[x, y].Location = new Point(x * 50 + 150, y * 50 + 150);
-                    promotionSquares[x, y].posX = 100 + counter;
-                    promotionSquares[x, y].posY = 100 + counter;
-                    promotionSquares[x, y].Size = new Size(50, 50);
+                    promotionSquares[x, y] = new Square
+                    {
+                        TopLevel = false,
+                        Parent = this,
+                        Location = new Point(x * 50 + 150, y * 50 + 150),
+                        posX = 100 + counter,
+                        posY = 100 + counter,
+                        Size = new Size(50, 50)
+                    };
                     promotionSquares[x, y].Click += new EventHandler(Square_Click);
                     if (counter % 2 == 0)
                     {
@@ -1492,6 +1513,8 @@ namespace ChessGUI
                     Drawing(board);
                     state.Board = board;
                     Drawing(board);
+                    ResetColors();
+                    ResetColors();
                     Clicks(false);
                     if (IsCheckMate())
                     {
@@ -1507,6 +1530,7 @@ namespace ChessGUI
                     {
                         ReverseBoard();
                     }
+                    state.WhiteToMove = !state.WhiteToMove;
                     string json = JsonConvert.SerializeObject(state);
                     sw.WriteLine(json);
                     sw.Flush();
@@ -1532,9 +1556,18 @@ namespace ChessGUI
                 {
                     if (squares[i, j].BackColor != Color.Black && squares[i, j].BackColor != Color.White)
                     {
-                        state.WhiteToMove = !state.WhiteToMove;
                         int tempI = Convert.ToInt32(origin.ElementAt(0) - 48);
                         int tempJ = Convert.ToInt32(origin.ElementAt(1) - 48);
+                        if(board[tempI, tempJ].Value == 1 && (i == 7 || i == 0))
+                        {
+                            MakeMove(i, j, tempI, tempJ);
+                            return;
+                        }
+                        else
+                        {
+                            state.WhiteToMove = !state.WhiteToMove;
+                        }
+
                         ParseForPawns();
                         AddToNotation(i, j, tempI, tempJ);
                         MakeMove(i, j, tempI, tempJ);
