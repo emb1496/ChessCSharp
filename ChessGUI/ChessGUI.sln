@@ -8,14 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DAD7E2C2-7A5C-4865-8D7B-3800A2EE6832}"
 	ProjectSection(SolutionItems) = preProject
 		ChessGUI\Images\BB.gif = ChessGUI\Images\BB.gif
-		ChessGUI\Images\BBishop.bmp = ChessGUI\Images\BBishop.bmp
-		ChessGUI\Images\BKing.bmp = ChessGUI\Images\BKing.bmp
-		ChessGUI\Images\BKnight.bmp = ChessGUI\Images\BKnight.bmp
-		ChessGUI\Images\BPawn.bmp = ChessGUI\Images\BPawn.bmp
-		ChessGUI\Images\BQueen.bmp = ChessGUI\Images\BQueen.bmp
-		ChessGUI\Images\BRook.bmp = ChessGUI\Images\BRook.bmp
 		ChessGUI\Images\BW.gif = ChessGUI\Images\BW.gif
-		ChessGUI\Images\KB.bmp = ChessGUI\Images\KB.bmp
 		ChessGUI\Images\KB.gif = ChessGUI\Images\KB.gif
 		ChessGUI\Images\KW.gif = ChessGUI\Images\KW.gif
 		ChessGUI\Images\NB.gif = ChessGUI\Images\NB.gif
@@ -27,12 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		ChessGUI\Images\QW.gif = ChessGUI\Images\QW.gif
 		ChessGUI\Images\RB.gif = ChessGUI\Images\RB.gif
 		ChessGUI\Images\RW.gif = ChessGUI\Images\RW.gif
-		ChessGUI\Images\WBishop.bmp = ChessGUI\Images\WBishop.bmp
-		ChessGUI\Images\WKing.bmp = ChessGUI\Images\WKing.bmp
-		ChessGUI\Images\WKnight.bmp = ChessGUI\Images\WKnight.bmp
-		ChessGUI\Images\WPawn.bmp = ChessGUI\Images\WPawn.bmp
-		ChessGUI\Images\WQueen.bmp = ChessGUI\Images\WQueen.bmp
-		ChessGUI\Images\WRook.bmp = ChessGUI\Images\WRook.bmp
 	EndProjectSection
 EndProject
 Global
