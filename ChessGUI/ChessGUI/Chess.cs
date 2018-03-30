@@ -2121,13 +2121,34 @@ namespace ChessGUI
         }
         /*private void AddExtrasToNotation*/
 
+        /// <summary>
+        /// Checks if only 2 kings are on the board in which case it is stalemate
+        /// </summary>
+        /// ChessGUI.Chess.ChekcForKingsOnly()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.CheckForKingsOnly - checks if the board is down to 2 kings
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private bool CheckForKingsOnly();
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <returns>false if there are any other pieces on the board, true otherwise</returns>
         private bool CheckForKingsOnly()
         {
-            for(int i = 0; i < 8; i++)
+            for(int m_i = 0; m_i < 8; m_i++)
             {
-                for(int j = 0; j < 8; j++)
+                for(int m_j = 0; m_j < 8; m_j++)
                 {
-                    if(state.Board[i,j].Value != 0 && state.Board[i,j].Value != 9)
+                    if(state.Board[m_i,m_j].Value != 0 && state.Board[m_i,m_j].Value != 9)
                     {
                         return false;
                     }
@@ -2135,6 +2156,7 @@ namespace ChessGUI
             }
             return true;
         }
+        /*private bool CheckForKingsOnly*/
 
         void Square_Click(object sender, EventArgs e)
         {
