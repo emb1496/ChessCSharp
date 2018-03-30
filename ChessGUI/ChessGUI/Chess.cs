@@ -38,8 +38,33 @@ namespace ChessGUI
         private DialogResult userInput;              // also for offer new game, this is the user response
 
         /// <summary>
-        /// Initializes the form after setting the time left to maximum amount, the form loads with 3 hours as the checked option so
-        /// on load in the game sets that time to 3 hours, if the user changes the button it will change
+        /// ChessGUI.Chess.Chess()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.Chess - Initializes Chess GUI
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     public Chess();
+        ///     
+        /// DESCRIPTION
+        /// 
+        ///     Becuase on initialization of the component the 3 hour game is checked it sets the time left to 3 hours each and then
+        ///     Initializes the Form
+        ///     
+        /// RETURNS
+        /// 
+        ///     No Return
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        ///     
         /// </summary>
         public Chess()
         {
@@ -50,9 +75,26 @@ namespace ChessGUI
         /*public Chess();*/
 
         /// <summary>
-        /// Checks if 2 boards are the same position by checking that each spot is same color and value on both boards
-        /// If they are different returns false, it the loop finished then it returns true
+        ///     Checks if 3 given boards are the same by checking each locations value and color
         /// </summary>
+        /// ChessGUI.Chess.IsSameBoard()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.IsSameBoard - Check for same or different boards
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private bool IsSameBoard(Piece[,] a_board1, Piece[,] a_board2);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        ///     
         /// <param name="a_board1">first board</param>
         /// <param name="a_board2">second board</param>
         /// <returns>boolean, true if the boards are same false if they are different</returns>
@@ -76,11 +118,34 @@ namespace ChessGUI
         }
         /*private bool IsSameBoard(Piece[,] a_board1, Piece[,] a_board2);*/
 
+
         /// <summary>
-        /// Only called once game is over, this checks why the game ended and builds a message to the user from that
-        /// Then it displays an interactive message box, if the user selects no then it will close the application
-        /// If the user selects yes it will reset to initial state and start again
+        ///     Only called once game is over, this checks why the game ended and builds a message to the user from that
+        ///     Then it displays an interactive message box, if the user selects no then it will close the application
+        ///     If the user selects yes it will reset to initial state and start again
         /// </summary>
+        /// ChessGUI.Chess.OfferNewGame()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.OfferNewGame - Offers user to play again
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void OfferNewGame();
+        ///         
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        ///     
         private void OfferNewGame()
         {
             if(squares[0,0].Visible == false)
@@ -169,12 +234,34 @@ namespace ChessGUI
         /*private void OfferNewGame();*/
 
         /// <summary>
-        /// In a forever loop this method calls ReadLine from the server then deserializes the message into a gamestate
-        /// It then resets the current position and index showing to correct values
-        /// If the game is over naturally it will call OfferNewGame
-        /// Otherwise it invokes an action where it enables review buttons makes sure the timer is running and updates the board and notation and chat
-        /// If the game is over due to server error or oppenent disconnect it will stop the timer and call OfferNewGame
+        ///     In a forever loop this method calls ReadLine from the server then deserializes the message into a gamestate
+        ///     It then resets the current position and index showing to correct values
+        ///     If the game is over naturally it will call OfferNewGame
+        ///     Otherwise it invokes an action where it enables review buttons makes sure the timer is running and updates the board and notation and chat
+        ///     If the game is over due to server error or oppenent disconnect it will stop the timer and call OfferNewGame
         /// </summary>
+        /// ChessGUI.Chess.ProcessServerMessages()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ProcessServerMessages - Recieves message from server and does makes necessary changes
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void OfferNewGame();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        ///     
         private void ProcessServerMessages()
         {
             while (true)
@@ -224,12 +311,26 @@ namespace ChessGUI
 
         // legal moves functions
         /// <summary>
-        /// Accepts a copy of a board and an index
-        /// Checks if the pawn is on its initial starting point and can move 2 spots
-        /// Then checks for a one square move
-        /// Then checks for empessant 
-        /// Then checks for a regular take
+        ///     Accepts a copy of a board and an index checks if the pawn is on its initial starting point and can move 2 spots
+        ///     Then checks for a one square move then checks for empessant then checks for a regular take
         /// </summary>
+        /// ChessGUI.Chess.PawnLegalMoves()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.PawnLegalMoves - finds all legal moves a pawn has
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private string PawnLegalMoves(Piece[,] a_board, int a_i, int a_j);
+        ///         
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_board">board copy</param>
         /// <param name="a_i">row index</param>
         /// <param name="a_j">col index</param>
@@ -296,12 +397,29 @@ namespace ChessGUI
         /*private string PawnLegalMoves(Piece[,] a_board, int a_i, int a_j);*/
 
         /// <summary>
-        /// uses short-circuit evaluation to check 8 possible indexes on the board copy to see if the knight can be moved there
+        ///     uses short-circuit evaluation to check 8 possible indexes on the board copy to see if the knight can be moved there
         /// </summary>
+        /// ChessGUI.Chess.KnightLegalMoves()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.KnightLegalMoves - finds all legal moves a knight has
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private string KnightLegalMoves(Piece[,] a_board, int a_i, int a_j);
+        ///         
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_board">board copy</param>
         /// <param name="a_i">row index</param>
         /// <param name="a_j">col index</param>
-        /// <returns>string of commma seperated indexes where the knight can move</returns>
+        /// <returns>string of comma seperated indexes on the board that the piece can move</returns>
         private string KnightLegalMoves(Piece[,] a_board, int a_i, int a_j)
         {
             string moves = String.Empty;
@@ -342,13 +460,30 @@ namespace ChessGUI
         /*private string KnightLegalMoves(Piece[,] a_board, int a_i, int a_j);*/
 
         /// <summary>
-        /// Uses short-circuit evaluation to preform checks boundaries on diagonal moves for bishop for as long as there are empty squares it continues
-        /// once it hits a piece if hits the same color it doesnt add it but once it hits a piece of the opposite color it will add it as the ast move
+        ///     Uses short-circuit evaluation to preform checks boundaries on diagonal moves for bishop for as long as there are empty squares it continues
+        ///     once it hits a piece if hits the same color it doesnt add it but once it hits a piece of the opposite color it will add it as the ast move
         /// </summary>
+        /// ChessGUI.Chess.BishopLegalMoves()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.BishopLegalMoves - finds all legal moves a bishop has
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private string BishopLegalMoves(Piece[,] a_board, int a_i, int a_j);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_board">board copy</param>
         /// <param name="a_i">row index</param>
         /// <param name="a_j">col index</param>
-        /// <returns>string of comma seperated indexes representing possible moves</returns>
+        /// <returns>string of comma seperated indexes on the board that the piece can move</returns>
         private string BishopLegalMoves(Piece[,] a_board, int a_i, int a_j)
         {
             string m_moves = String.Empty;
@@ -425,12 +560,29 @@ namespace ChessGUI
         /*private string BishopLegalMoves(Piece[,] a_board, int a_i, int a_j);*/
 
         /// <summary>
-        /// Uses short-circuit evaluation to preform boundary checks for all direction, right, left, up, and down
+        ///     Uses short-circuit evaluation to preform boundary checks for all direction, right, left, up, and down
         /// </summary>
+        /// ChessGUI.Chess.RookLegalMoves()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.RookLegalMoves - finds all legal moves a rook has
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private string RookLegalMoves(Piece[,] a_board, int a_i, int a_j);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_board">board copy</param>
         /// <param name="a_i">row index</param>
         /// <param name="a_j">col index</param>
-        /// <returns>string of comma seperated indexes</returns>
+        /// <returns>string of comma seperated indexes on the board that the piece can move</returns>
         private string RookLegalMoves(Piece[,] a_board, int a_i, int a_j)
         {
             string m_moves = String.Empty;
@@ -507,12 +659,29 @@ namespace ChessGUI
         /*private string RookLegalMoves(Piece[,] a_board, int a_i, int a_j);*/
 
         /// <summary>
-        /// Combines the legal rook and bishop moves together and returns them
+        ///     Combines the legal rook and bishop moves together and returns them
         /// </summary>
+        /// ChessGUI.Chess.QueenLegalMoves()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.QueenLegalMoves - finds all legal moves a Queen has
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private string QueenLegalMoves(Piece[,] a_board, int a_i, int a_j);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_board">board copy</param>
         /// <param name="a_i">row index</param>
         /// <param name="a_j">col index</param>
-        /// <returns>A comma seperated string of indexes to possible moves</returns>
+        /// <returns>string of comma seperated indexes on the board that the piece can move</returns>
         private string QueenLegalMoves(Piece[,] a_board, int a_i, int a_j)
         {
             string m_moves = String.Empty;
@@ -523,15 +692,32 @@ namespace ChessGUI
         /*private string QueenLegalMoves(Piece[,] a_board, int a_i, int a_j);*/
 
         /// <summary>
-        /// Method returns all legal king moves
-        /// First it checks the 8 squares immediately around the king
-        /// Then if the king has not moved it checks if the king can castle
-        /// The rules to not be allowed to castle are if the king or rook has moved or if the king is currently or will castle through check
+        ///     Method returns all legal king moves
+        ///     First it checks the 8 squares immediately around the king
+        ///     Then if the king has not moved it checks if the king can castle
+        ///     The rules to not be allowed to castle are if the king or rook has moved or if the king is currently or will castle through check
         /// </summary>
-        /// <param name="a_tempBoard">board copy</param>
+        /// ChessGUI.Chess.KingLegalMoves()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.KingLegalMoves - finds all legal moves a king has
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private string KingLegalMoves(Piece[,] a_board, int a_i, int a_j);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_board">board copy</param>
         /// <param name="a_i">row index</param>
         /// <param name="a_j">col index</param>
-        /// <returns>string of comma seperated indexes to moves</returns>
+        /// <returns>string of comma seperated indexes on the board that the piece can move</returns>
         private string KingLegalMoves(Piece[,] a_tempBoard, int a_i, int a_j)
         {
             string m_moves = String.Empty;
@@ -621,12 +807,29 @@ namespace ChessGUI
         /*private string KingLegalMoves(Piece[,] a_tempBoard, int a_i, int a_j);*/
 
         /// <summary>
-        /// This method returns all the moves the opponent has, the idea being that if the opponent has no moves its either checkmate or stalemate
-        /// Loops through every square and checks that the square is not empty and is not your piece
-        /// Then calls find legal moves for that square
-        /// If there is a legal move for that square it will just return true
-        /// If the loop ends it will return false
+        ///     This method returns if the opponent has moves, the idea being that if the opponent has no moves its either checkmate or stalemate
+        ///     Loops through every square and checks that the square is not empty and is not your piece
+        ///     Then calls find legal moves for that square
+        ///     If there is a legal move for that square it will just return true
+        ///     If the loop ends it will return false
         /// </summary>
+        /// ChessGUI.Chess.OpponentHasMoves()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.OpponentHasMoves - finds if other player has a move
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private bool OppenentHasMoves();
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <returns>true if oppenent has legal moves, false if he has no moves</returns>
         private bool OpenentHasMoves()
         {
@@ -676,8 +879,25 @@ namespace ChessGUI
         /*private bool OpenentHasMoves();*/
 
         /// <summary>
-        /// Based on piece value it returns the appropriate function call
+        ///     Based on piece value it returns the appropriate function call
         /// </summary>
+        /// ChessGUI.Chess.FindLegalMoves()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.FindLegalMoves - finds moves on a board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private string FindLegalMoves(Piece[,] a_tempBoard, int a_i, int a_j);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_tempBoard">board copy</param>
         /// <param name="a_i">row index</param>
         /// <param name="a_j">col index</param>
@@ -705,13 +925,34 @@ namespace ChessGUI
         /*private string FindLegalMoves(Piece[,] a_tempBoard, int a_i, int a_j);*/
 
         /// <summary>
-        /// Highlights all the moves for a given index of the board (a_i, a_j)
-        /// First it calls FindLegalMoves for the index and splits the result into an array of moves
-        /// Then for every move as long as it is a move it will convert the 2 characters into integers which represent indexes
-        /// Then parse and highlight will check if castling is a possibility by copying the board and moving the king those 2 spots and checking if either would be castling through check
-        /// Then it simply makes a copy of the board and makes the move on the copy and checks that you are not in check after you make the move in the copy
-        /// If you are not in check it highlights that destination square to a green color
+        ///     Highlights all the moves for a given index of the board (a_i, a_j)
+        ///     First it calls FindLegalMoves for the index and splits the result into an array of moves
+        ///     Then for every move as long as it is a move it will convert the 2 characters into integers which represent indexes
+        ///     Then parse and highlight will check if castling is a possibility by copying the board and moving the king those 2 spots and checking if either would be castling through check
+        ///     Then it simply makes a copy of the board and makes the move on the copy and checks that you are not in check after you make the move in the copy
+        ///     If you are not in check it highlights that destination square to a green color
         /// </summary>
+        /// ChessGUI.Chess.ParseAndHighlight()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ParseAndHighlight - highlights moves on a board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ParseAndHighlight(int a_i, int a_j);
+        ///    
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_i">row index</param>
         /// <param name="a_j">col index</param>
         private void ParseAndHighlight(int a_i, int a_j)
@@ -777,10 +1018,27 @@ namespace ChessGUI
         /*private void ParseAndHighlight(int a_i, int a_j);*/
 
         /// <summary>
-        /// Checks if the board is in stalemate,
-        /// If there is only kings on the board it is an automatic draw
-        /// Then if it is not check for either piece and the opponent has no moves it is stalemate
+        ///     Checks if the board is in stalemate,
+        ///     If there is only kings on the board it is an automatic draw
+        ///     Then if it is not check for either piece and the opponent has no moves it is stalemate
         /// </summary>
+        /// ChessGUI.Chess.IsStaleMate()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.IsStaleMate - Checks for stalemate
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private bool IsStaleMate();
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <returns>true if stalemate, false if not</returns>
         private bool IsStaleMate()
         {
@@ -806,8 +1064,25 @@ namespace ChessGUI
         /*private bool IsStaleMate();*/
 
         /// <summary>
-        /// If the opponent is in check and have no legal moves then it is checkmate
+        ///     If the opponent is in check and have no legal moves then it is checkmate
         /// </summary>
+        /// ChessGUI.Chess.IsCheckMate()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.IsCheckMate - checks if its checkmate
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private bool IsCheckMate();
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <returns>returns true if it is checkmate and false if it is not</returns>
         private bool IsCheckMate()
         {
@@ -826,11 +1101,28 @@ namespace ChessGUI
         /*private bool IsCheckMate();*/
 
         /// <summary>
-        /// Loops through the whole board, if the square is empty or the wrong color it just continues
-        /// If the piece is the right color then it finds all the legal moves that piece has
-        /// Then if checks through that pieces legal moves to check if that square is a king
-        /// If it is a king of the opposite color then it is check if the loop finished it is not
+        ///     Loops through the whole board, if the square is empty or the wrong color it just continues
+        ///     If the piece is the right color then it finds all the legal moves that piece has
+        ///     Then if checks through that pieces legal moves to check if that square is a king
+        ///     If it is a king of the opposite color then it is check if the loop finished it is not
         /// </summary>
+        /// ChessGUI.Chess.IsCheck()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.IsCheck - checks if its check
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private bool IsCheck(Piece[,] a_copy, bool a_isWhite);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_copy">copy of the board</param>
         /// <param name="a_isWhite">color to check for</param>
         /// <returns>true if a_isWhite is in check, false if they are not</returns>
@@ -863,14 +1155,35 @@ namespace ChessGUI
             return false;
         }
         /*private bool IsCheck(Piece[,] a_copy, bool a_isWhite);*/
-        
+
         /// <summary>
-        /// Loops through each square on the board, if the square is not white or black then it checks the squares 
-        /// around it to figure out what color it is supposed to be and set the color
+        ///     Loops through each square on the board, if the square is not white or black then it checks the squares 
+        ///     around it to figure out what color it is supposed to be and set the color
         /// <remarks>If you are in the corner and the corner 4 pieces are are all green it will not reset that square
-        /// Therefore when calling ResetColors it gets called twice just to ensure that edge case is accounted 
-        /// for </remarks>
+        /// Therefore when calling ResetColors it gets called twice just to ensure that edge case is accounted for
+        /// </remarks>
         /// </summary>
+        /// ChessGUI.Chess.ResetColors()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ResetColors - resets the board to checkered colors
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ResetColors();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         private void ResetColors()
         {
             for (int m_i = 0; m_i < 8; m_i++)
@@ -918,9 +1231,30 @@ namespace ChessGUI
         /*private void ResetColors();*/
 
         /// <summary>
-        /// Sets the squares to clickable or not based on parameter passed
-        /// Loops through the squares and sets their Enabled property to a_val
+        ///     Sets the squares to clickable or not based on parameter passed
+        ///     Loops through the squares and sets their Enabled property to a_val
         /// </summary>
+        /// ChessGUI.Chess.Clicks()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.Clicks - makes the board clickable or not
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void Clicks(bool a_val);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_val">true or false representing whether or not the user can click the squares</param>
         private void Clicks(bool a_val)
         {
@@ -935,8 +1269,29 @@ namespace ChessGUI
         /*private void Clicks(bool a_val);*/
 
         /// <summary>
-        /// Copies the value and contents of each index of a_original into a_copy
+        ///     Copies the value and contents of each index of a_original into a_copy
         /// </summary>
+        /// ChessGUI.Chess.MakeCopy()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.MakeCopy - makes a copy of a board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void MakeCopy(Piece[,] a_original, Piece[,] a_copy);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_original">original board</param>
         /// <param name="a_copy">copy to be made </param>
         private void MakeCopy(Piece[,] a_original, Piece[,] a_copy)
@@ -952,9 +1307,30 @@ namespace ChessGUI
         /*private void MakeCopy(Piece[,] a_original, Piece[,] a_copy);*/
 
         /// <summary>
-        /// This takes the 4 promotion squares and depending on the user color displays either black or white ->
-        /// knight, bishop, rook, and queen
+        ///     This takes the 4 promotion squares and depending on the user color displays either black or white ->
+        ///     knight, bishop, rook, and queen
         /// </summary>
+        /// ChessGUI.Chess.PopulateSquares()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.PopulateSquares - shows the pieces on promotion squares
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void PopulateSquares(Square[,] a_promotionSquares);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_promotionSquares">2x2 array of squares which appear upon pawn promotion</param>
         private void PopulateSquares(Square[,] a_promotionSquares)
         {
@@ -991,8 +1367,29 @@ namespace ChessGUI
         /*private void PopulateSquares(Square[,] a_promotionSquares);*/
 
         /// <summary>
-        /// Hides the 8x8 board so the user can no longer see it
+        ///     Hides the 8x8 board so the user can no longer see it
         /// </summary>
+        /// ChessGUI.Chess.HideSquares()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.HideSquares - hides the board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void HideSquares();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         private void HideSquares()
         {
             for(int m_i = 0; m_i < 8; m_i++)
@@ -1006,8 +1403,29 @@ namespace ChessGUI
         /*private void HideSquares();*/
 
         /// <summary>
-        /// Shows the 8x8 board so the user can see it
+        ///     Shows the 8x8 board so the user can see it
         /// </summary>
+        /// ChessGUI.Chess.ShowSquares()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ShowSquares - shows the board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ShowSquares();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         private void ShowSquares()
         {
             for(int m_i = 0; m_i < 8; m_i++)
@@ -1021,9 +1439,30 @@ namespace ChessGUI
         /*private void ShowSquares();*/
 
         /// <summary>
-        /// based on the board passed in this method will loop through the board and based on the color and value of the piece 
-        /// it will display the appropriate image
+        ///     based on the board passed in this method will loop through the board and based on the color and value of the piece 
+        ///     it will display the appropriate image
         /// </summary>
+        /// ChessGUI.Chess.Drawing()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.Drawing - drawes the pictures of the pieces on the squares where they belong
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void Drawing(Piece[,] a_board);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_board">8x8 chess board to draw</param>
         private void Drawing(Piece[,] a_board)
         {
@@ -1071,9 +1510,30 @@ namespace ChessGUI
         /*private void Drawing(Piece[,] a_board);*/
 
         /// <summary>
-        /// Fills a_squares with 64 squares, sets their locations and attributes adds onClick event handler and sets the color
-        /// and image location to center
+        ///     Fills a_squares with 64 squares, sets their locations and attributes adds onClick event handler and sets the color
+        ///     and image location to center
         /// </summary>
+        /// ChessGUI.Chess.MakeSquares()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.MakeSquares - makes the board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void MakeSquares(Square[,] a_squares);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         /// <param name="a_squares">8x8 array of Square</param>
         private void MakeSquares(Square[,] a_squares)
         {
@@ -1121,10 +1581,31 @@ namespace ChessGUI
         /*private void MakeSquares(Square[,] a_squares)*/
 
         /// <summary>
-        /// Reverses the board so that each original index maps to 7-index,
-        /// So we loop 0,0 -> 7,7 and make a copy of the board
-        /// Then we loop 7,7 -> 0,0 and set it to 7-row, 7-col
+        ///     Reverses the board so that each original index maps to 7-index,
+        ///     So we loop 0,0 -> 7,7 and make a copy of the board
+        ///     Then we loop 7,7 -> 0,0 and set it to 7-row, 7-col
         /// </summary>
+        /// ChessGUI.Chess.ReverseBoard()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ReverseBoard - reverses the board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ReverseBoard();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         private void ReverseBoard()
         {
             Piece[,] m_temp = new Piece[8, 8];
@@ -1147,40 +1628,65 @@ namespace ChessGUI
         /*private void ReverseBoard();*/
 
 
-        private void PromotePawn(int i, int j)
+        /// <summary>
+        /// Sets clicks to false, hides the board, then makes the promotion squares and calls PopulateSquares()
+        /// </summary>
+        /// ChessGUI.Chess.PromotePawn()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.PromotePawn - called when pawn gets to the end of the board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void PromotePawn();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        private void PromotePawn()
         {
             Clicks(false);
-            int counter = 0;
+            int m_counter = 0;
             HideSquares();
-            for(int x = 0; x < 2; x++)
+            for(int m_x = 0; m_x < 2; m_x++)
             {
-                for(int y = 0; y < 2; y++)
+                for(int m_y = 0; m_y < 2; m_y++)
                 {
-                    promotionSquares[x, y] = new Square
+                    promotionSquares[m_x, m_y] = new Square
                     {
                         TopLevel = false,
                         Parent = this,
-                        Location = new Point(x * 50 + 150, y * 50 + 150),
-                        posX = 100 + counter,
-                        posY = 100 + counter,
+                        Location = new Point(m_x * 50 + 150, m_y * 50 + 150),
+                        posX = 100 + m_counter,
+                        posY = 100 + m_counter,
                         Size = new Size(50, 50)
                     };
-                    promotionSquares[x, y].Click += new EventHandler(Square_Click);
-                    if (counter % 2 == 0)
+                    promotionSquares[m_x, m_y].Click += new EventHandler(Square_Click);
+                    if (m_counter % 2 == 0)
                     {
-                        promotionSquares[x, y].BackColor = Color.Black;
+                        promotionSquares[m_x, m_y].BackColor = Color.Black;
                     }
                     else
                     {
-                        promotionSquares[x, y].BackColor = Color.White;
+                        promotionSquares[m_x, m_y].BackColor = Color.White;
                     }
-                    promotionSquares[x, y].BackgroundImageLayout = ImageLayout.Center;
-                    promotionSquares[x, y].Show();
-                    counter++;
+                    promotionSquares[m_x, m_y].BackgroundImageLayout = ImageLayout.Center;
+                    promotionSquares[m_x, m_y].Show();
+                    m_counter++;
                 }
             }
             PopulateSquares(promotionSquares);
         }
+        /*private void PromotePawn();*/
 
         private void MakeMove(int i, int j, int tempI, int tempJ)
         {
