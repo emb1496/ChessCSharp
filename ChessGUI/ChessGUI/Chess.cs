@@ -2158,7 +2158,7 @@ namespace ChessGUI
         }
         /*private bool CheckForKingsOnly*/
 
-        void Square_Click(object sender, EventArgs e)
+        void Square_Click(object a_sender, EventArgs a_e)
         {
             if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove))
             {
@@ -2180,15 +2180,15 @@ namespace ChessGUI
                 {
                     Clicks(true);
                 }
-                int i = (sender as Square).posY;
-                int j = (sender as Square).posX;
-                if(i >= 100 && j >= 100)
+                int m_i = (a_sender as Square).posY;
+                int m_j = (a_sender as Square).posX;
+                if(m_i >= 100 && m_j >= 100)
                 {
-                    KeyValuePair<int, int> pair = PawnLocation();
-                    int x = pair.Key;
-                    int y = pair.Value;
+                    KeyValuePair<int, int> m_pair = PawnLocation();
+                    int x = m_pair.Key;
+                    int y = m_pair.Value;
                     board[x, y] = new Piece();
-                    switch (i)
+                    switch (m_i)
                     {
                         case 100:
                             board[x, y].Value = 3;
@@ -2207,9 +2207,9 @@ namespace ChessGUI
                     }
                     board[x, y].White = state.White;
                     board[x, y].HasMoved = true;
-                    foreach(Square square in promotionSquares)
+                    foreach(Square m_square in promotionSquares)
                     {
-                        square.Hide();
+                        m_square.Hide();
                     }
                     ShowSquares();
                     Drawing(board);
@@ -2248,21 +2248,21 @@ namespace ChessGUI
                 }
                 else if (origin == String.Empty)
                 {
-                    if(board[i, j].White == state.White && board[i,j].Value != 0)
+                    if(board[m_i, m_j].White == state.White && board[m_i,m_j].Value != 0)
                     {
-                        origin += i.ToString() + j.ToString();
-                        ParseAndHighlight(i, j);
+                        origin += m_i.ToString() + m_j.ToString();
+                        ParseAndHighlight(m_i, m_j);
                     }
                 }
                 else
                 {
-                    if (squares[i, j].BackColor != Color.Black && squares[i, j].BackColor != Color.White)
+                    if (squares[m_i, m_j].BackColor != Color.Black && squares[m_i, m_j].BackColor != Color.White)
                     {
-                        int tempI = Convert.ToInt32(origin.ElementAt(0) - 48);
-                        int tempJ = Convert.ToInt32(origin.ElementAt(1) - 48);
-                        if(board[tempI, tempJ].Value == 1 && (i == 7 || i == 0))
+                        int m_tempI = Convert.ToInt32(origin.ElementAt(0) - 48);
+                        int m_tempJ = Convert.ToInt32(origin.ElementAt(1) - 48);
+                        if(board[m_tempI, m_tempJ].Value == 1 && (m_i == 7 || m_i == 0))
                         {
-                            MakeMove(i, j, tempI, tempJ);
+                            MakeMove(m_i, m_j, m_tempI, m_tempJ);
                             return;
                         }
                         else
@@ -2271,8 +2271,8 @@ namespace ChessGUI
                         }
 
                         ParseForPawns();
-                        AddToNotation(i, j, tempI, tempJ);
-                        MakeMove(i, j, tempI, tempJ);
+                        AddToNotation(m_i, m_j, m_tempI, m_tempJ);
+                        MakeMove(m_i, m_j, m_tempI, m_tempJ);
                         AddExtrasToNotation();
                         state.Board = board;
                         if(!state.White)
@@ -2304,8 +2304,8 @@ namespace ChessGUI
                         {
                             ReverseBoard();
                         }
-                        string json = JsonConvert.SerializeObject(state);
-                        sw.WriteLine(json);
+                        string m_json = JsonConvert.SerializeObject(state);
+                        sw.WriteLine(m_json);
                         sw.Flush();
                         if (!state.White)
                         {
@@ -2325,9 +2325,9 @@ namespace ChessGUI
                 }
 
             }
-            catch (Exception except)
+            catch (Exception m_except)
             {
-                MessageBox.Show(except.Message);
+                MessageBox.Show(m_except.Message);
             }
         }
 
