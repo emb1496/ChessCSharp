@@ -2158,6 +2158,35 @@ namespace ChessGUI
         }
         /*private bool CheckForKingsOnly*/
 
+        /// <summary>
+        /// Handles user clicks, 3 different pieces, pawn promotion, origin click, and destination click
+        /// Pawn promotion will make allow the user to make a new piece
+        /// Origin will make call to highlight all the moves
+        /// And destination will verify the move adjust the state and send it to the server
+        /// </summary>
+        /// ChessGUI.Chess.MakeMove()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.Square_Click - handles user clicks
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     void Square_Click(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object which was clicked which can get converted into row col index</param>
+        /// <param name="a_e">Event arguments</param>
         void Square_Click(object a_sender, EventArgs a_e)
         {
             if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove))
@@ -2330,28 +2359,55 @@ namespace ChessGUI
                 MessageBox.Show(m_except.Message);
             }
         }
+        /*void Square_Click(object a_sender, EventArgs a_e);*/
 
-
-        private void Button1_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Will start up the game by connecting to the server and sending it the game length and then recieving the gamestate back from the server
+        /// Then it will set up the user view and launch a thread to continue listening to the server
+        /// </summary>
+        /// ChessGUI.Chess.Button1_Click()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.Button1_Click - handles user clicking start
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void Button1_Click(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object which was clicked</param>
+        /// <param name="a_e">event arguments</param>
+        private void Button1_Click(object a_sender, EventArgs a_e)
         {
             try
             {
                 ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
-                byte[] buffer = new byte[10];
-                sbyte byte1 = Convert.ToSByte(state.TimePortOffset);
-                buffer[0] = Convert.ToByte(byte1);
-                socket.Send(buffer, SocketFlags.None);
+                byte[] m_buffer = new byte[10];
+                sbyte m_byte1 = Convert.ToSByte(state.TimePortOffset);
+                m_buffer[0] = Convert.ToByte(m_byte1);
+                socket.Send(m_buffer, SocketFlags.None);
                 ns = new NetworkStream(socket);
                 sr = new StreamReader(ns);
                 sw = new StreamWriter(ns);
                 messageFromServer = sr.ReadLine();
-                GameState temp = new GameState();
-                temp = JsonConvert.DeserializeObject<GameState>(messageFromServer);
-                temp.WhiteTimeLeft = state.WhiteTimeLeft;
-                temp.BlackTimeLeft = state.BlackTimeLeft;
-                state = temp;
+                GameState m_temp = new GameState();
+                m_temp = JsonConvert.DeserializeObject<GameState>(messageFromServer);
+                m_temp.WhiteTimeLeft = state.WhiteTimeLeft;
+                m_temp.BlackTimeLeft = state.BlackTimeLeft;
+                state = m_temp;
                 button1.Visible = false;
                 ThreeHour.Visible = false;
                 OneHour.Visible = false;
@@ -2387,28 +2443,82 @@ namespace ChessGUI
                 }
                 else
                 {
-                    if (!temp.WaitingForSecondPlayer)
+                    if (!m_temp.WaitingForSecondPlayer)
                     {
                         Timer1.Start();
                     }
                 }
-                Thread t = new Thread(ProcessServerMessages);
-                t.Start();
+                Thread m_thread = new Thread(ProcessServerMessages);
+                m_thread.Start();
             }
-            catch (Exception a)
+            catch (Exception m_a)
             {
-                MessageBox.Show(a.Message);
+                MessageBox.Show(m_a.Message);
                 Environment.Exit(0);
             }
         }
+        /*private void Button1_Click(object a_sender, EventArgs a_e);*/
 
-        private void Chess_Load(object sender, EventArgs e)
+        /// <summary>
+        /// On load of program this asks the user to enter their username
+        /// </summary>
+        /// ChessGUI.Chess.Chess_Load()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.Chess_Load - load in method
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void Chess_Load(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs not userd</param>
+        private void Chess_Load(object a_sender, EventArgs a_e)
         {
             playerName = Microsoft.VisualBasic.Interaction.InputBox("Enter your name", "Name");
             state.TimePortOffset = 75;
         }
+        /*private void Chess_Load(object a_sender, EventArgs a_e);*/
 
-        private void ButtonSendMessage_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Sends the chat message from user
+        /// </summary>
+        /// ChessGUI.Chess.ButtonSendMessage_Clcik()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ButtonSendMessage_Click - sends message
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ButtonSendMessage_Click(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void ButtonSendMessage_Click(object a_sender, EventArgs a_e)
         {
             if(textBoxInput.Text!= String.Empty)
             {
@@ -2429,8 +2539,36 @@ namespace ChessGUI
                 sw.Flush();
             }
         }
+        /*private void ButtonSendMessage_Click(object a_sender, EventArgs a_e);*/
 
-        private void Timer1_Tick(object sender, EventArgs e)
+        /// <summary>
+        /// On every timer tick it adjusts the player time left until one of them is 0
+        /// Once either gets to 0 it stops the timer and offers a new game
+        /// </summary>
+        /// ChessGUI.Chess.Timer1_Tick()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.Timer1_Tick - handles each second
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void Timer1_Tick(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void Timer1_Tick(object a_sender, EventArgs a_e)
         {
             LowerTimeLabel.Text = String.Empty;
             UpperTimeLabel.Text = String.Empty;
@@ -2461,7 +2599,7 @@ namespace ChessGUI
                 OfferNewGame();
             }
         }
-
+        /*private void Timer1_Tick(object a_sender, EventArgs a_e);*/
 
         // radio buttons setting time variables
         private void OneMin_CheckedChanged(object sender, EventArgs e)
