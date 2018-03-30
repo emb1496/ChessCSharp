@@ -1965,105 +1965,161 @@ namespace ChessGUI
         }
         /*private char ConvertJToLetter(int a_j)*/
 
-        private void AddToNotation(int destI, int destJ, int origI, int origJ)
+        /// <summary>
+        /// Does the first part of notation for a particular move which is based on previous position to the move, it checks value of origin whether we are taking anything and where the destination is and 
+        /// converts that into a string which is readable to chess players and adds it to state.Notation
+        /// </summary>
+        /// ChessGUI.Chess.AddToNotation()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.AddToNotation - makes the first part of notation
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void AddToNotation(int a_destI, int a_destJ, int a_origI, int a_origJ);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_destI">destination row</param>
+        /// <param name="a_destJ">destination col</param>
+        /// <param name="a_origI">origin row</param>
+        /// <param name="a_origJ">origin col</param>
+        private void AddToNotation(int a_destI, int a_destJ, int a_origI, int a_origJ)
         {
-            string move = String.Empty;
+            string m_move = String.Empty;
             if (state.AllPositions.Count % 2 == 1)
             {
-                move += (state.AllPositions.Count / 2 + 1).ToString() + ".  ";
+                m_move += (state.AllPositions.Count / 2 + 1).ToString() + ".  ";
             }
-            switch(state.Board[origI, origJ].Value)
+            switch(state.Board[a_origI, a_origJ].Value)
             {
                 case 1:
                     break;
                 case 3:
-                    move += 'B';
+                    m_move += 'B';
                     break;
                 case 4:
-                    move += 'N';
+                    m_move += 'N';
                     break;
                 case 5:
-                    move += 'R';
+                    m_move += 'R';
                     break;
                 case 8:
-                    move += 'Q';
+                    m_move += 'Q';
                     break;
                 case 9:
-                    if(Math.Abs(destJ - origJ) > 1)
+                    if(Math.Abs(a_destJ - a_origJ) > 1)
                     {
-                        if((!state.White && destJ != 5) || (state.White && destJ == 6))
+                        if((!state.White && a_destJ != 5) || (state.White && a_destJ == 6))
                         {
-                            move += "O-O";
+                            m_move += "O-O";
                         }
                         else
                         {
-                            move += "O-O-O";
+                            m_move += "O-O-O";
                         }
                         break;
                     }
-                    move += 'K';
+                    m_move += 'K';
                     break;
                 default:
                     break;
             }
-            string others = GetOtherPieces(destI, destJ, origI, origJ);
-            if (others != String.Empty && move[0] != 'O')
+            string m_others = GetOtherPieces(a_destI, a_destJ, a_origI, a_origJ);
+            if (m_others != String.Empty && m_move[0] != 'O')
             {
-                int i = Convert.ToInt32(others.ElementAt(0) - 48);
-                int j = Convert.ToInt32(others.ElementAt(1) - 48);
-                if(i == origI)
+                int i = Convert.ToInt32(m_others.ElementAt(0) - 48);
+                int j = Convert.ToInt32(m_others.ElementAt(1) - 48);
+                if(i == a_origI)
                 {
-                    move += ConvertJToLetter(origJ);
+                    m_move += ConvertJToLetter(a_origJ);
                 }
-                else if(j != origJ)
+                else if(j != a_origJ)
                 {
-                    move += ConvertJToLetter(origJ);
+                    m_move += ConvertJToLetter(a_origJ);
                 }
                 else
                 {
-                    move += (origI + 1).ToString();
+                    m_move += (a_origI + 1).ToString();
                 }
             }
-            if(move.Length == 0 || move.ElementAt(move.Length-1) != 'O')
+            if(m_move.Length == 0 || m_move.ElementAt(m_move.Length-1) != 'O')
             {
-                if (state.Board[destI, destJ].Value > 0)
+                if (state.Board[a_destI, a_destJ].Value > 0)
                 {
-                    move += 'x';
+                    m_move += 'x';
                 }
-                move += ConvertJToLetter(destJ);
+                m_move += ConvertJToLetter(a_destJ);
                 if (state.White)
                 {
-                    destI = 7 - destI;
+                    a_destI = 7 - a_destI;
                 }
-                move += (destI + 1).ToString();
+                m_move += (a_destI + 1).ToString();
             }
-            state.Notation += move;
+            state.Notation += m_move;
         }
+        /* private void AddToNotation(int a_destI, int a_destJ, int a_origI, int a_origJ)*/
 
+        /// <summary>
+        /// adds sign for checkmate or check to notation and then either adds a tab or a new column depending on color
+        /// </summary>
+        /// ChessGUI.Chess.AddExtrasToNotation()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.AddExtrasToNotation - adds extra symbols to the notation
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void AddExtrasToNotation();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         private void AddExtrasToNotation()
         {
-            string extra = String.Empty;
-            Piece[,] copy = new Piece[8, 8];
-            MakeCopy(state.Board, copy);
-            if (state.CheckMate)
+            string m_extra = String.Empty;
+            Piece[,] m_copy = new Piece[8, 8];
+            MakeCopy(state.Board, m_copy);
+            if (IsCheckMate())
             {
-                extra += "#";
+                state.CheckMate = true;
+                m_extra += "#";
             }
-            else if (IsCheck(copy, !state.White))
+            else if (IsCheck(m_copy, !state.White))
             {
-                extra += "+";
+                m_extra += "+";
             }
             if (state.White)
             {
-                extra += '\t';
+                m_extra += '\t';
             }
             else
             {
-                extra += "\r\n";
+                m_extra += "\r\n";
             }
-            state.Notation += extra;
+            state.Notation += m_extra;
             textBoxNotation.Text = state.Notation;
         }
+        /*private void AddExtrasToNotation*/
 
         private bool CheckForKingsOnly()
         {
