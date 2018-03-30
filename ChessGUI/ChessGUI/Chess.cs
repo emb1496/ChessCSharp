@@ -1688,164 +1688,282 @@ namespace ChessGUI
         }
         /*private void PromotePawn();*/
 
-        private void MakeMove(int i, int j, int tempI, int tempJ)
+        /// <summary>
+        ///     Makes the move on the board, checks king edge cases to make sure if its castling, checks if pawn is promoting
+        ///     <remarks>
+        ///         In order for empessant to work after a 2 square pawn move thiss function will keep the HasMoved property set to false and the next move it will be set to true
+        ///     </remarks>
+        /// </summary>
+        /// ChessGUI.Chess.MakeMove()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.MakeMove - makes the move
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void MakeMove(int a_i, int a_j, int a_tempI, int a_tempJ);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_i">destination row</param>
+        /// <param name="a_j">destination col</param>
+        /// <param name="a_tempI">origin row</param>
+        /// <param name="a_tempJ">origin col</param>
+        private void MakeMove(int a_i, int a_j, int a_tempI, int a_tempJ)
         {
-            if (board[tempI, tempJ].Value == 9)
+            if (board[a_tempI, a_tempJ].Value == 9)
             {
-                if (tempJ - 2 == j)
+                if (a_tempJ - 2 == a_j)
                 {
-                    board[i, j + 1] = board[i, 0];
-                    board[i, j + 1].HasMoved = true;
-                    board[i, 0] = new Piece();
+                    board[a_i, a_j + 1] = board[a_i, 0];
+                    board[a_i, a_j + 1].HasMoved = true;
+                    board[a_i, 0] = new Piece();
                 }
-                else if (tempJ + 2 == j)
+                else if (a_tempJ + 2 == a_j)
                 {
-                    board[i, j - 1] = board[i, 7];
-                    board[i, j - 1].HasMoved = true;
-                    board[i, 7] = new Piece();
+                    board[a_i, a_j - 1] = board[a_i, 7];
+                    board[a_i, a_j - 1].HasMoved = true;
+                    board[a_i, 7] = new Piece();
                 }
-                board[i, j] = board[tempI, tempJ];
-                board[tempI, tempJ] = new Piece();
-                board[i, j].HasMoved = true;
+                board[a_i, a_j] = board[a_tempI, a_tempJ];
+                board[a_tempI, a_tempJ] = new Piece();
+                board[a_i, a_j].HasMoved = true;
             }
-            else if (board[tempI, tempJ].Value == 1 && Math.Abs(i - tempI) == 2)
+            else if (board[a_tempI, a_tempJ].Value == 1 && Math.Abs(a_i - a_tempI) == 2)
             {
-                board[i, j] = board[tempI, tempJ];
-                board[tempI, tempJ] = new Piece();
-                board[i, j].HasMoved = false;
+                board[a_i, a_j] = board[a_tempI, a_tempJ];
+                board[a_tempI, a_tempJ] = new Piece();
+                board[a_i, a_j].HasMoved = false;
             }
-            else if(board[tempI, tempJ].Value == 1 && i != tempI && j != tempJ && board[i,j].Value == 0)
+            else if(board[a_tempI, a_tempJ].Value == 1 && a_i != a_tempI && a_j != a_tempJ && board[a_i,a_j].Value == 0)
             {
-                board[i, j] = board[tempI, tempJ];
-                board[tempI, tempJ] = new Piece();
-                board[i, j].HasMoved = true;
-                board[tempI, j] = new Piece();
+                board[a_i, a_j] = board[a_tempI, a_tempJ];
+                board[a_tempI, a_tempJ] = new Piece();
+                board[a_i, a_j].HasMoved = true;
+                board[a_tempI, a_j] = new Piece();
             }
-            else if(board[tempI, tempJ].Value == 1 && (i == 7 || i == 0))
+            else if(board[a_tempI, a_tempJ].Value == 1 && (a_i == 7 || a_i == 0))
             {
-                board[i, j] = board[tempI, tempJ];
-                board[tempI, tempJ] = new Piece();
-                PromotePawn(i, j);
+                board[a_i, a_j] = board[a_tempI, a_tempJ];
+                board[a_tempI, a_tempJ] = new Piece();
+                PromotePawn();
             }
             else
             {
-                board[i, j] = board[tempI, tempJ];
-                board[tempI, tempJ] = new Piece();
-                board[i, j].HasMoved = true;
+                board[a_i, a_j] = board[a_tempI, a_tempJ];
+                board[a_tempI, a_tempJ] = new Piece();
+                board[a_i, a_j].HasMoved = true;
             }
         }
+        /*private void MakeMove(int a_i, int a_j, int a_tempI, int a_tempJ);*/
 
+        /// <summary>
+        ///     Loops through the board and finds pawns who are not on their original squares to set their HasMoved property to true
+        ///     This is necessary to make the empessant opportunity expire
+        /// </summary>
+        /// ChessGUI.Chess.ParseForPawns()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ParseForPawns - finds pawns that have moved
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ParseForPawns();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         private void ParseForPawns()
         {
-            for(int i = 0; i < 8; i++)
+            for(int m_i = 0; m_i < 8; m_i++)
             {
-                for(int j = 0; j < 8; j++)
+                for(int m_j = 0; m_j < 8; m_j++)
                 {
-                    if (board[i, j].HasMoved)
+                    if (board[m_i, m_j].HasMoved || board[m_i,m_j].Value != 1)
                     {
                         continue;
                     }
-                    if(board[i, j].Value == 1 && board[i,j].White == state.White && i != 6 && i != 1)
+                    if(board[m_i,m_j].White == state.White && m_i != 6 && m_i != 1)
                     {
-                        board[i, j].HasMoved = true;
+                        board[m_i, m_j].HasMoved = true;
                     }
                 }
             }
         }
+        /*ParseForPawns();*/
 
+        /// <summary>
+        ///     Finds the pawn on the promotion rank and returns its location as a key value pair
+        /// </summary>
+        /// ChessGUI.Chess.PawnLocation()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.PawnLocation - finds promoted pawn
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private KeyValuePair<int, int> PawnLocation();
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <returns>Key value pair of ints representing a pawns location on the board when it promotess</returns>
         private KeyValuePair<int, int> PawnLocation()
         {
-            KeyValuePair<int, int> returnVal = new KeyValuePair<int, int>(-1, -1);
-            for(int i = 0; i < 8; i++)
+            for(int m_i = 0; m_i < 8; m_i++)
             {
-                if(board[0, i].Value == 1)
+                if(board[0, m_i].Value == 1)
                 {
-                    return new KeyValuePair<int, int>(0, i);
+                    return new KeyValuePair<int, int>(0, m_i);
                 }
-                else if(board[7, i].Value == 1)
+                else if(board[7, m_i].Value == 1)
                 {
-                    return new KeyValuePair<int, int>(7, i);
+                    return new KeyValuePair<int, int>(7, m_i);
                 }
             }
-            return returnVal;
+            return new KeyValuePair<int, int>(-1, -1);
         }
+        /*private KeyValuePair<int, int> PawnLocation();*/
 
-        private string GetOtherPieces(int destI, int destJ, int origI, int origJ)
+        /// <summary>
+        ///     Finds the location of another piece with the same value as the piece moving that can move to the same square and returns that
+        /// </summary>
+        /// ChessGUI.Chess.GetOtherPieces()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.GetOtherPieces - finds other pieces that can make the same move
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private string GetOtherPieces(int a_destI int a_destJ, int a_origI, int a_origJ);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_destI">destination row</param>
+        /// <param name="a_destJ">destination col</param>
+        /// <param name="a_origI">origin row</param>
+        /// <param name="a_origJ">origin col</param>
+        /// <returns>location of another piece as a string consisting of 2 chars or empty</returns>
+        private string GetOtherPieces(int a_destI, int a_destJ, int a_origI, int a_origJ)
         {
-            string otherSquares = String.Empty;
-            string[] otherStrings;
-            Piece[,] copy = new Piece[8, 8];
-            for(int i = 0; i < 8; i++)
+            string m_otherSquares = String.Empty;
+            string[] m_otherStrings;
+            Piece[,] m_copy = new Piece[8, 8];
+            for(int m_i = 0; m_i < 8; m_i++)
             {
-                for(int j = 0; j < 8; j++)
+                for(int m_j = 0; m_j < 8; m_j++)
                 {
-                    if(state.Board[i,j].Value != state.Board[origI, origJ].Value || state.Board[i,j].White != state.Board[origI, origJ].White)
+                    if(state.Board[m_i,m_j].Value != state.Board[a_origI, a_origJ].Value || state.Board[m_i,m_j].White != state.Board[a_origI, a_origJ].White)
                     {
                         continue;
                     }
-                    MakeCopy(state.Board, copy);
-                    otherSquares = FindLegalMoves(copy, i, j);
-                    otherStrings = otherSquares.Split(' ', ',');
-                    foreach(string square in otherStrings)
+                    MakeCopy(state.Board, m_copy);
+                    m_otherSquares = FindLegalMoves(m_copy, m_i, m_j);
+                    m_otherStrings = m_otherSquares.Split(' ', ',');
+                    foreach(string m_square in m_otherStrings)
                     {
-                        if (square.Length < 2)
+                        if (m_square.Length < 2)
                         {
                             continue;
                         }
-                        int destI2 = Convert.ToInt32(square.ElementAt(0) - 48);
-                        int destJ2 = Convert.ToInt32(square.ElementAt(1) - 48);
-                        if(destI2 == destI && destJ2 == destJ)
+                        int m_destI = Convert.ToInt32(m_square.ElementAt(0) - 48);
+                        int m_destJ = Convert.ToInt32(m_square.ElementAt(1) - 48);
+                        if(m_destI == a_destI && m_destJ == a_destJ)
                         {
-                            if ((i != origI || j != origJ) && otherSquares != String.Empty)
+                            if ((m_i != a_origI || m_j != a_origJ) && m_otherSquares != String.Empty)
                             {
-                                return i.ToString() + j.ToString();
+                                return m_i.ToString() + m_j.ToString();
                             }
                         }
                     }
-                    otherSquares = String.Empty;
+                    m_otherSquares = String.Empty;
                 }
             }
-            return otherSquares;
+            return m_otherSquares;
         }
+        /*private string GetOtherPieces(int a_destI, int a_destJ, int a_origI, int a_origJ);*/
 
-        private char ConvertJToLetter(int j)
+        /// <summary>
+        ///     Returns a letter corresponding to the chess notation
+        /// </summary>
+        /// ChessGUI.Chess.ConvertJToLetter()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ConvertJToLetter - converts a number to a letter indeex
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private char ConvertJToLetter(int a_j);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_j">column to convert into letter</param>
+        /// <returns>character representing the rank on the board</returns>
+        private char ConvertJToLetter(int a_j)
         {
-            char toRet = '\0';
             if (!state.White)
             {
-                j = 7 - j;
+                a_j = 7 - a_j;
             }
-            switch (j)
+            switch (a_j)
             {
                 case 0:
-                    toRet = 'a';
-                    break;
+                    return 'a';
                 case 1:
-                    toRet = 'b';
-                    break;
+                    return 'b';
                 case 2:
-                    toRet = 'c';
-                    break;
+                    return 'c';
                 case 3:
-                    toRet = 'd';
-                    break;
+                    return 'd';
                 case 4:
-                    toRet = 'e';
-                    break;
+                    return 'e';
                 case 5:
-                    toRet = 'f';
-                    break;
+                    return 'f';
                 case 6:
-                    toRet = 'g';
-                    break;
+                    return 'g';
                 case 7:
-                    toRet = 'h';
-                    break;
+                    return 'h';
                 default:
-                    break;
+                    return '\0';
             }
-            return toRet;
         }
+        /*private char ConvertJToLetter(int a_j)*/
 
         private void AddToNotation(int destI, int destJ, int origI, int origJ)
         {
