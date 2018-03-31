@@ -75,7 +75,7 @@ namespace ChessGUI
         /*public Chess();*/
 
         /// <summary>
-        ///     Checks if 3 given boards are the same by checking each locations value and color
+        ///     Checks if 2 given boards are the same by checking each locations value and color
         /// </summary>
         /// ChessGUI.Chess.IsSameBoard()
         /// 
