@@ -1653,7 +1653,6 @@ namespace ChessGUI
         ///     1:50 PM 3/30/2018
         private void PromotePawn()
         {
-            //Clicks(false);
             int m_counter = 0;
             HideSquares();
             for(int m_x = 0; m_x < 2; m_x++)
@@ -2224,6 +2223,7 @@ namespace ChessGUI
                 int m_j = (a_sender as Square).posX;
                 if(m_i >= 100 && m_j >= 100)
                 {
+                    state.Notation += '=';
                     KeyValuePair<int, int> m_pair = PawnLocation();
                     int x = m_pair.Key;
                     int y = m_pair.Value;
@@ -2232,19 +2232,24 @@ namespace ChessGUI
                     {
                         case 100:
                             board[x, y].Value = 3;
+                            state.Notation += 'B';
                             break;
                         case 101:
                             board[x, y].Value = 4;
+                            state.Notation += 'N';
                             break;
                         case 102:
                             board[x, y].Value = 5;
+                            state.Notation += 'R';
                             break;
                         case 103:
                             board[x, y].Value = 8;
+                            state.Notation += 'Q';
                             break;
                         default:
                             break;
                     }
+                    AddExtrasToNotation();
                     board[x, y].White = state.White;
                     board[x, y].HasMoved = true;
                     foreach(Square m_square in promotionSquares)
@@ -2302,6 +2307,7 @@ namespace ChessGUI
                         int m_tempJ = Convert.ToInt32(origin.ElementAt(1) - 48);
                         if(board[m_tempI, m_tempJ].Value == 1 && (m_i == 7 || m_i == 0))
                         {
+                            AddToNotation(m_i, m_j, m_tempI, m_tempJ);
                             MakeMove(m_i, m_j, m_tempI, m_tempJ);
                             return;
                         }
