@@ -582,6 +582,12 @@ namespace ChessServer
         private static object myLock = new object();
 
         /// <summary>
+        ///     This method opens a listening socket then runs in a forever loop.
+        ///
+        ///     The forever loop accepts a new client and recieves 10 bytes from them
+        ///     Those ten bytes determine what kind of a game it is and the function
+        ///     locks the threads and calls ProcessNewGame with the 10 byte value sent
+        /// </summary>
         ///  ChessServer.ChessServer.ProcessClientRequests()
         /// 
         ///   NAME
@@ -594,11 +600,7 @@ namespace ChessServer
         ///          
         ///   DESCRIPTION
         ///   
-        ///     This function opens a listening socket then runs in a forever loop.
-        ///
-        ///     The forever loop accepts a new client and recieves 10 bytes from them
-        ///     Those ten bytes determine what kind of a game it is and the function
-        ///     locks the threads and calls ProcessNewGame with the 10 byte value sent
+        ///     
         ///
         ///   RETURNS
         ///          
@@ -611,8 +613,6 @@ namespace ChessServer
         ///   DATE
         ///
         ///     10:22 AM 3/27/2018
-        ///     
-        /// </summary>
         private static void ProcessClientRequests()
         {
             //IPHostEntry iPHost = Dns.GetHostEntry("cs.ramapo.edu");
@@ -656,6 +656,8 @@ namespace ChessServer
         /*private static void ProcessClientRequests();*/
 
         /// <summary>
+        ///     This method creates a new SendState out of the members of a_gameState and returns it
+        /// </summary>
         /// 
         ///     ChessServer.ChessServer.ConvertGameStateToSendState(GameState gameState)
         ///         
@@ -669,7 +671,7 @@ namespace ChessServer
         ///                
         ///     DESCRIPTION
         ///         
-        ///         This function creates a new SendState out of the members of a_gameState and returns it
+        ///         
         ///               
         ///     AUTHOR
         ///           
@@ -678,8 +680,6 @@ namespace ChessServer
         ///     DATE
         ///         
         ///         10:22 AM 3/27/2018
-        ///         
-        /// </summary>
         /// <param name="a_gameState">gamestate which needs to be converted</param>
         /// <returns>SendState equivilant to the gamestate which was passed</returns>
         private static SendState ConvertGameStateToSendState(GameState a_gameState)
@@ -703,7 +703,10 @@ namespace ChessServer
         /*private static SendState ConvertGameStateToSendState(GameState a_gameState);*/
 
         /// <summary>
-        /// 
+        ///     This function first converts the game length sent by the client into an index of gamestate in tempgamestate
+        ///     Then if there is one client it will wait for the second
+        ///     If there is a second client it launches a thread with gamestate and clients in Play
+        /// </summary>
         ///     ChessServer.ChessServer.ProcessNewGame(int a_message)
         ///         
         ///     NAME
@@ -714,12 +717,6 @@ namespace ChessServer
         ///         
         ///         SendState ChessServer.ProcessNewGame(int a_message);
         ///              a_message -> int describing how long of a game to play
-        ///                
-        ///     DESCRIPTION
-        ///         
-        ///         This function first converts the game length sent by the client into an index of gamestate in tempgamestate
-        ///         Then if there is one client it will wait for the second
-        ///         If there is a second client it launches a thread with gamestate and clients in Play
         ///         
         ///     RETURNS
         ///          
@@ -732,8 +729,6 @@ namespace ChessServer
         ///     DATE
         ///         
         ///         10:22 AM 3/27/2018
-        ///         
-        /// </summary>
         /// <param name="a_message">int describing how long of a game to play</param>
         private static void ProcessNewGame(int a_message)
         {
@@ -805,6 +800,9 @@ namespace ChessServer
         /*private static void ProcessNewGame(int a_message);*/
 
         /// <summary>
+        ///     This function first converts generates the board
+        ///     Then it assigns the time and basic settings and adds it to tempStateHolder[index]
+        /// </summary>
         ///     ChessServer.ChessServer.GenerateNewGamestate(int a_index)
         ///         
         ///     NAME
@@ -815,11 +813,6 @@ namespace ChessServer
         ///         
         ///         SendState ChessServer.GenerateNewGamestate(int a_index);
         ///         
-        ///     DESCRIPTION
-        ///          
-        ///         This function first converts generates the board
-        ///         Then it assigns the time and basic settings and adds it to tempStateHolder[index]
-        ///               
         ///     RETURNS
         ///         
         ///         void
@@ -831,8 +824,6 @@ namespace ChessServer
         ///     DATE
         ///         
         ///         10:22 AM 3/27/2018
-        ///
-        /// </summary>
         /// <param name="a_index">index of tempGameState where the game should be stored</param>
         private static void GenerateNewGamestate(int a_index)
         {
@@ -921,6 +912,11 @@ namespace ChessServer
         /*private static void GenerateNewGamestate(int a_index);*/
 
         /// <summary>
+        ///     This function first checks that a_white is a_socket, if not it will activate the network
+        ///     stream using a_white convert the sendstate to a message with the player as white and send the state
+        ///     Then if a_black exists and is not equal to a_socket it does the same for the socket a_black with one
+        ///     minor change to the state to have the client be the black player
+        /// </summary>
         ///     ChessServer.ChessServer.SendClientsGameState(SendState a_state, Socket a_white, Socket a_black, Socket a_socket)
         ///         
         ///     NAME
@@ -931,13 +927,6 @@ namespace ChessServer
         ///          
         ///         void SendClientsGameState(SendState a_state, Socket a_white, Socket a_black, Socket a_socket);
         ///               
-        ///     DESCRIPTION
-        ///         
-        ///         This function first checks that a_white is a_socket, if not it will activate the network
-        ///         stream using a_white convert the sendstate to a message with the player as white and send the state
-        ///         Then if a_black exists and is not equal to a_socket it does the same for the socket a_black with one
-        ///         minor change to the state to have the client be the black player
-        ///         
         ///     RETURNS
         ///         
         ///         void
@@ -949,12 +938,10 @@ namespace ChessServer
         ///     DATE
         ///         
         ///         10:22 AM 3/27/2018
-        ///
-        /// </summary>
         /// <param name="a_state">sendstate to serialize and send</param>
         /// <param name="a_white">white player socket</param>
         /// <param name="a_black">black player socket</param>
-        /// <param name="a_socket">socket not to send data to</param>
+        /// <param name="a_socket">socket NOT to send data to this is the socket that just made the move</param>
         private static void SendClientsGameState(SendState a_state, Socket a_white, Socket a_black, Socket a_socket)
         {
             NetworkStream m_networkStream;
@@ -985,6 +972,9 @@ namespace ChessServer
         /*private static void SendClientsGameState(SendState a_state, Socket a_white, Socket a_black, Socket a_socket);*/
 
         /// <summary>
+        ///     This method will loop through both boards and check the the pieces at each given index are the same value and color
+        ///     If at any point there is a difference it will return false but if the loops finish without differences it will return true
+        /// </summary>
         ///   
         ///     ChessServer.ChessServer.IsSameBoard(Piece[,] a_board1, Piece[,] a_board2)
         ///         
@@ -996,16 +986,6 @@ namespace ChessServer
         ///      
         ///         void IsSameBoard(Piece[,] a_board1, Piece[,] a_board2);
         ///           
-        ///     DESCRIPTION
-        ///     
-        ///         This function will loop through both boards and check the the pieces at each given index are the same value and color
-        ///         If at any point there is a difference it will return false but if the loops finish without differences it will return true
-        ///                 
-        ///     RETURNS
-        ///     
-        ///         false - if same board
-        ///         true - if different boards
-        ///           
         ///     AUTHOR
         ///     
         ///         Elliott Barinberg
@@ -1013,11 +993,9 @@ namespace ChessServer
         ///     DATE
         ///      
         ///         10:22 AM 3/27/2018
-        ///     
-        /// </summary>
         /// <param name="a_board1">[8,8] array of Pieces representing the first chess board</param>
         /// <param name="a_board2">[8,8] array of Pieces representing the second chess board</param>
-        /// <returns></returns>
+        /// <returns>bool true if same boards false if different</returns>
         private static bool IsSameBoard(Piece[,] a_board1, Piece[,] a_board2)
         {
             for(int i = 0; i < 8; i++)
@@ -1039,6 +1017,12 @@ namespace ChessServer
         /*private static bool IsSameBoard(Piece[,] a_board1, Piece[,] a_board2);*/
 
         /// <summary>
+        ///     This function will loop through the list of board in a_state.AllPositions
+        ///     From there it loops through the rest of the boards and checks if they are the same
+        ///     If so it increments m_count
+        ///     If by the end of the list m_count >= 2 it sets a_state.DrawByRepitition to true and breaks
+        ///     Otherwise it just continues on with no change to the state
+        /// </summary>
         ///     ChessServer.ChessServer.CheckForDrawByRepitition(SendState a_state)
         ///         
         ///     NAME
@@ -1051,11 +1035,7 @@ namespace ChessServer
         ///               
         ///     DESCRIPTION
         ///         
-        ///         This function will loop through the list of board in a_state.AllPositions
-        ///         From there it loops through the rest of the boards and checks if they are the same
-        ///         If so it increments m_count
-        ///         If by the end of the list m_count >= 2 it sets a_state.DrawByRepitition to true and breaks
-        ///         Otherwise it just continues on with no change to the state
+        ///         
         ///         
         ///     RETURNS
         ///          
@@ -1068,8 +1048,6 @@ namespace ChessServer
         ///     DATE
         ///         
         ///         10:22 AM 3/27/2018
-        ///
-        /// </summary>
         /// <param name="a_state">current state of game to check</param>
         private static void CheckForDrawByRepitition(SendState a_state)
         {
@@ -1096,6 +1074,15 @@ namespace ChessServer
 
 
         /// <summary>
+        ///     This function will be the main gameplay function
+        ///     It will be spawned in a new thread and then it converts the arguments back into the objects they actually are(Socket, Socket, SendState)
+        ///     Then in a forever loop it will call select on both sockets
+        ///     Whichever responds it will read the gamestate from
+        ///     If the board changed between gamestates it will check for draw by repitition
+        ///     after updating whose move it is and how much time is left, if no change in board the above will not happen
+        ///     the board, chat, and notation will be updated and sent to the other client
+        ///     If the game is over an exception will be thrown to take the function out of the forever loop
+        /// </summary>
         ///     ChessServer.ChessServer.Play(Object a_whiteSocket, Object a_blackSocket, Object a_initialGameState)
         ///         
         ///     NAME
@@ -1106,18 +1093,6 @@ namespace ChessServer
         ///          
         ///         void Play(Object a_whiteSocket, Object a_blackSocket, Object a_initialGameState);
         ///               
-        ///     DESCRIPTION
-        ///         
-        ///         This function will be the main gameplay function
-        ///         It will be spawned in a new thread and then it converts the arguments back into the objects they actually are(Socket, Socket, SendState)
-        ///         Then in a forever loop it will call select on both sockets
-        ///         Whichever responds it will read the gamestate from
-        ///         If the board changed between gamestates it will check for draw by repitition
-        ///         after updating whose move it is and how much time is left, if no change in board the above will not happen
-        ///         the board, chat, and notation will be updated and sent to the other client
-        ///         If the game is over an exception will be thrown to take the function out of the forever loop
-        ///               
-        ///                     
         ///     RETURNS
         ///         
         ///         void
@@ -1129,8 +1104,6 @@ namespace ChessServer
         ///     DATE
         ///         
         ///         10:22 AM 3/27/2018
-        ///         
-        /// </summary>
         /// <param name="a_whiteSocket">white socket passed as thread parameter</param>
         /// <param name="a_blackSocket">black socket passed as thread parameter</param>
         /// <param name="a_initialGameState">inital SendState passed as thread parameter</param>
@@ -1233,6 +1206,8 @@ namespace ChessServer
 
 
         /// <summary>
+        ///     This function will add 8 spaces to tempStateHolder and call ProcessClientRequests()
+        /// </summary>
         ///     ChessServer.ChessServer.Main()
         ///         
         ///     NAME
@@ -1243,10 +1218,6 @@ namespace ChessServer
         ///          
         ///         void Main();
         ///               
-        ///     DESCRIPTION
-        ///         
-        ///         This function will add 8 spaces to tempStateHolder and call ProcessClientRequests()
-        ///                     
         ///     RETURNS
         ///         
         ///         void
@@ -1258,8 +1229,6 @@ namespace ChessServer
         ///     DATE
         ///         
         ///         10:22 AM 3/27/2018
-        ///         
-        /// </summary>
         static void Main()
         {
             try
