@@ -65,7 +65,6 @@ namespace ChessGUI
         /// 
         ///     1:50 PM 3/30/2018
         ///     
-        /// </summary>
         public Chess()
         {
             state.WhiteTimeLeft = 10800;
@@ -1183,6 +1182,7 @@ namespace ChessGUI
         /// DATE
         /// 
         ///     1:50 PM 3/30/2018
+        ///     
         private void ResetColors()
         {
             for (int m_i = 0; m_i < 8; m_i++)
@@ -1389,6 +1389,7 @@ namespace ChessGUI
         /// DATE
         /// 
         ///     1:50 PM 3/30/2018
+        ///     
         private void HideSquares()
         {
             for(int m_i = 0; m_i < 8; m_i++)
@@ -1425,6 +1426,7 @@ namespace ChessGUI
         /// DATE
         /// 
         ///     1:50 PM 3/30/2018
+        ///     
         private void ShowSquares()
         {
             for(int m_i = 0; m_i < 8; m_i++)
@@ -1605,6 +1607,7 @@ namespace ChessGUI
         /// DATE
         /// 
         ///     1:50 PM 3/30/2018
+        ///     
         private void ReverseBoard()
         {
             Piece[,] m_temp = new Piece[8, 8];
@@ -1651,6 +1654,7 @@ namespace ChessGUI
         /// DATE
         /// 
         ///     1:50 PM 3/30/2018
+        ///     
         private void PromotePawn()
         {
             int m_counter = 0;
@@ -1790,6 +1794,7 @@ namespace ChessGUI
         /// DATE
         /// 
         ///     1:50 PM 3/30/2018
+        ///     
         private void ParseForPawns()
         {
             for(int m_i = 0; m_i < 8; m_i++)
@@ -2092,6 +2097,7 @@ namespace ChessGUI
         /// DATE
         /// 
         ///     1:50 PM 3/30/2018
+        ///     
         private void AddExtrasToNotation()
         {
             string m_extra = String.Empty;
