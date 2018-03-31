@@ -31,7 +31,6 @@ namespace ChessServer
         private bool waitingForSecondPlayer;    // Are we waiting for a second client
         private int blackTimeLeft;              // Time left in game
         private int whiteTimeLeft;              // ""
-        private int timePortOffset;             // Marks the length of the game
         private bool serverError;               // Did we lose a client
         private bool gameOver;                  // Is the game still going
         private bool opponentDisconnected;      // opponent still connected to game
@@ -69,18 +68,6 @@ namespace ChessServer
             set
             {
                 serverError = value;
-            }
-        }
-
-        public int TimePortOffset
-        {
-            get
-            {
-                return timePortOffset;
-            }
-            set
-            {
-                timePortOffset = value;
             }
         }
 
@@ -1186,6 +1173,9 @@ namespace ChessServer
                         // has the board changed if so the following is the change to be made
                         if(!IsSameBoard(state.Board, m_gameState.Board))
                         {
+                            m_gameState.CheckMate = state.CheckMate;
+                            m_gameState.StaleMate = state.StaleMate;
+                            m_gameState.GameOver = state.GameOver;
                             m_gameState.WhiteToMove = state.WhiteToMove;
                             m_gameState.WhiteTimeLeft = state.WhiteTimeLeft;
                             m_gameState.BlackTimeLeft = state.BlackTimeLeft;

@@ -219,7 +219,7 @@ namespace ChessGUI
                     state.AllPositions.Clear();
                     state.WhiteTimeLeft = 10800;
                     state.BlackTimeLeft = 10800;
-                    state.TimePortOffset = 75;
+                    state.TimeNumber = 75;
                     UpperTimeLabel.Visible = false;
                     LowerTimeLabel.Visible = false;
                     Timer1.Stop();
@@ -296,7 +296,6 @@ namespace ChessGUI
                                 ReverseBoard();
                             }
                             Drawing(board);
-                            Clicks(true);
                         }
                         if (state.GameOver)
                         {
@@ -1654,7 +1653,7 @@ namespace ChessGUI
         ///     1:50 PM 3/30/2018
         private void PromotePawn()
         {
-            Clicks(false);
+            //Clicks(false);
             int m_counter = 0;
             HideSquares();
             for(int m_x = 0; m_x < 2; m_x++)
@@ -2191,23 +2190,35 @@ namespace ChessGUI
         {
             if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove))
             {
-                Clicks(false);
+                if (squares[0, 0].Enabled)
+                {
+                    Clicks(false);
+                }
                 return;
             }
             else
             {
-                Clicks(true);
+                if (!squares[0, 0].Enabled)
+                {
+                    Clicks(true);
+                }
             }
             try
             {
                 if (state.WaitingForSecondPlayer)
                 {
-                    Clicks(false);
+                    if (squares[0, 0].Enabled)
+                    {
+                        Clicks(false);
+                    }
                     return;
                 }
                 else
                 {
-                    Clicks(true);
+                    if (!squares[0, 0].Enabled)
+                    {
+                        Clicks(true);
+                    }
                 }
                 int m_i = (a_sender as Square).posY;
                 int m_j = (a_sender as Square).posX;
@@ -2396,7 +2407,7 @@ namespace ChessGUI
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
                 byte[] m_buffer = new byte[10];
-                sbyte m_byte1 = Convert.ToSByte(state.TimePortOffset);
+                sbyte m_byte1 = Convert.ToSByte(state.TimeNumber);
                 m_buffer[0] = Convert.ToByte(m_byte1);
                 socket.Send(m_buffer, SocketFlags.None);
                 ns = new NetworkStream(socket);
@@ -2488,9 +2499,10 @@ namespace ChessGUI
         private void Chess_Load(object a_sender, EventArgs a_e)
         {
             playerName = Microsoft.VisualBasic.Interaction.InputBox("Enter your name", "Name");
-            state.TimePortOffset = 75;
+            state.TimeNumber = 75;
         }
         /*private void Chess_Load(object a_sender, EventArgs a_e);*/
+
 
         /// <summary>
         /// Sends the chat message from user
@@ -2540,6 +2552,7 @@ namespace ChessGUI
             }
         }
         /*private void ButtonSendMessage_Click(object a_sender, EventArgs a_e);*/
+
 
         /// <summary>
         /// On every timer tick it adjusts the player time left until one of them is 0
@@ -2601,59 +2614,275 @@ namespace ChessGUI
         }
         /*private void Timer1_Tick(object a_sender, EventArgs a_e);*/
 
+
         // radio buttons setting time variables
-        private void OneMin_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// sets up one minute game by making appropriate changes to time left and time number variables
+        /// </summary>
+        /// ChessGUI.Chess.OneMin_CheckedChanged()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.OneMin_CheckedChanged - sets up one minute game
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void OneMin_CheckedChanged(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void OneMin_CheckedChanged(object a_sender, EventArgs a_e)
         {
             state.WhiteTimeLeft = 60;
             state.BlackTimeLeft = 60;
-            state.TimePortOffset = 1;
+            state.TimeNumber = 1;
         }
+        /*private void OneMin_CheckedChanged(object a_sender, EventArgs a_e);*/
 
-        private void FiveMin_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// sets up five minute game by making appropriate changes to time left and time number variables
+        /// </summary>
+        /// ChessGUI.Chess.FiveMin_CheckedChanged()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.FiveMin_CheckedChanged - sets up five minute game
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void FiveMin_CheckedChanged(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>\
+        private void FiveMin_CheckedChanged(object a_sender, EventArgs a_e)
         {
             state.WhiteTimeLeft = 300;
             state.BlackTimeLeft = 300;
-            state.TimePortOffset = 5;
+            state.TimeNumber = 5;
         }
+        /*private void FiveMin_CheckedChanged(object a_sender, EventArgs a_e);*/
 
-        private void TenMin_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// sets up ten minute game by making appropriate changes to time left and time number variables
+        /// </summary>
+        /// ChessGUI.Chess.TenMin_CheckedChanged()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.TenMin_CheckedChanged - sets up ten minute game
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void TenMin_CheckedChanged(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void TenMin_CheckedChanged(object a_sender, EventArgs a_e)
         {
             state.WhiteTimeLeft = 600;
             state.BlackTimeLeft = 600;
-            state.TimePortOffset = 10;
+            state.TimeNumber = 10;
         }
+        /*private void TenMin_CheckedChanged(object a_sender, EventArgs a_e);*/
 
-        private void FifteenMin_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// sets up 15 minute game by making appropriate changes to time left and time number variables
+        /// </summary>
+        /// ChessGUI.Chess.FifteenMin_CheckedChanged()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.FifteenMin_CheckedChanged - sets up 15 minute game
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void FifteenMin_CheckedChanged(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void FifteenMin_CheckedChanged(object a_sender, EventArgs a_e)
         {
             state.WhiteTimeLeft = 900;
             state.BlackTimeLeft = 900;
-            state.TimePortOffset = 15;
+            state.TimeNumber = 15;
         }
+        /*private void FifteenMin_CheckedChanged(object a_sender, EventArgs a_e);*/
 
-        private void ThirtyMin_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// sets up 30 minute game by making appropriate changes to time left and time number variables
+        /// </summary>
+        /// ChessGUI.Chess.ThirtyMin_CheckedChanged()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ThirtyMin_CheckedChanged - sets up 30 minute game
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ThirtyMin_CheckedChanged(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void ThirtyMin_CheckedChanged(object a_sender, EventArgs a_e)
         {
             state.WhiteTimeLeft = 1800;
             state.BlackTimeLeft = 1800;
-            state.TimePortOffset = 30;
+            state.TimeNumber = 30;
         }
+        /*private void ThirtyMin_CheckedChanged(object a_sender, EventArgs a_e);*/
 
-        private void OneHour_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// sets up 60 minute game by making appropriate changes to time left and time number variables
+        /// </summary>
+        /// ChessGUI.Chess.OneHour_CheckedChanged()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.OneHour_CheckedChanged - sets up 60 minute game
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void OneHour_CheckedChanged(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void OneHour_CheckedChanged(object a_sender, EventArgs a_e)
         {
             state.WhiteTimeLeft = 3600;
             state.BlackTimeLeft = 3600;
-            state.TimePortOffset = 60;
+            state.TimeNumber = 60;
         }
+        /*private void OneHour_CheckedChanged(object a_sender, EventArgs a_e);*/
 
-        private void ThreeHour_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// sets up 180 minute game by making appropriate changes to time left and time number variables
+        /// </summary>
+        /// ChessGUI.Chess.ThreeHour_CheckedChanged()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ThreeHour_CheckedChanged - sets up 180 minute game
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ThreeHour_CheckedChanged(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void ThreeHour_CheckedChanged(object a_sender, EventArgs a_e)
         {
             state.WhiteTimeLeft = 10800;
             state.BlackTimeLeft = 10800;
-            state.TimePortOffset = 75;
+            state.TimeNumber = 75;
         }
+        /*private void ThreeHour_CheckedChanged(object a_sender, EventArgs a_e);*/
 
 
         // buttons showing different boards
-        private void ButtonStartOfGame_Click(object sender, EventArgs e)
+        /// <summary>
+        /// This method will make the board showing the start of the game board by showing the first position in AllPositions
+        /// </summary>
+        /// ChessGUI.Chess.ButtonStartOfGame_Click()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ButtonStartOfGame_Click - shows first board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ButtonStartOfGame_Click(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void ButtonStartOfGame_Click(object a_sender, EventArgs a_e)
         {
             board = state.AllPositions.ElementAt(0);
             if (!state.White)
@@ -2664,21 +2893,55 @@ namespace ChessGUI
             indexShowing = 0;
             if(currPosition == 0)
             {
-                Clicks(true);
+                if (!squares[0, 0].Enabled)
+                {
+                    Clicks(true);
+                }
                 ButtonForwardOne.Enabled = false;
                 ButtonCurrentMove.Enabled = false;
             }
             else
             {
-                Clicks(false);
+                if (squares[0, 0].Enabled)
+                {
+                    Clicks(false);
+                }
                 ButtonStartOfGame.Enabled = false;
                 ButtonBackOne.Enabled = false;
                 ButtonForwardOne.Enabled = true;
                 ButtonCurrentMove.Enabled = true;
             }
         }
+        /*private void ButtonStartOfGame_Click(object a_sender, EventArgs a_e);*/
 
-        private void ButtonBackOne_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Moves the board showing back one position in AllPositions, has to make sure if its the start of fthe game 
+        /// Depending on that certain buttons are or are not active
+        /// </summary>
+        /// ChessGUI.Chess.ButtonBackOne_Click()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ButtonBackOne_Click - goes back one board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ButtonBackOne_Click(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void ButtonBackOne_Click(object a_sender, EventArgs a_e)
         {
             if(indexShowing == 0)
             {
@@ -2695,7 +2958,10 @@ namespace ChessGUI
                 ReverseBoard();
             }
             Drawing(board);
-            Clicks(false);
+            if (squares[0, 0].Enabled)
+            {
+                Clicks(false);
+            }
             if (indexShowing == 0)
             {
                 ButtonStartOfGame.Enabled = false;
@@ -2712,12 +2978,40 @@ namespace ChessGUI
                 ButtonCurrentMove.Enabled = true;
             }
         }
+        /*private void ButtonBackOne_Click(object a_sender, EventArgs a_e);*/
 
-        private void ButtonForwardOne_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Moves the board showing forward one position in AllPositions, has to make sure if its the end of the game 
+        /// Depending on that certain buttons are or are not active
+        /// </summary>
+        /// ChessGUI.Chess.ButtonForwardOne_Click()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ButtonForwardOne_Click - shows next board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ButtonForwardOne_Click(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void ButtonForwardOne_Click(object a_sender, EventArgs a_e)
         {
             if(indexShowing == state.AllPositions.Count - 1)
             {
-                if(state.White == state.WhiteToMove)
+                if(state.White == state.WhiteToMove && !squares[0,0].Enabled)
                 {
                     Clicks(true);
                 }
@@ -2736,7 +3030,7 @@ namespace ChessGUI
             Drawing(board);
             if (indexShowing == state.AllPositions.Count - 1)
             {
-                if(state.White == state.WhiteToMove)
+                if(state.White == state.WhiteToMove && !squares[0,0].Enabled)
                 {
                     Clicks(true);
                 }
@@ -2754,11 +3048,38 @@ namespace ChessGUI
                 ButtonCurrentMove.Enabled = true;
             }
         }
+        /*private void ButtonForwardOne_Click(object a_sender, EventArgs a_e);*/
 
-        private void ButtonCurrentMove_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Moves the board showing to the most recent position
+        /// </summary>
+        /// ChessGUI.Chess.ButtonCurrentMove_Click()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ButtonCurrentMove_Click - shows current board
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ButtonCurrentMove_Click(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">object, not used</param>
+        /// <param name="a_e">EventArgs, not used</param>
+        private void ButtonCurrentMove_Click(object a_sender, EventArgs a_e)
         {
             indexShowing = state.AllPositions.Count - 1;
-            if(state.White && state.WhiteToMove)
+            if(state.White && state.WhiteToMove && !squares[0,0].Enabled)
             {
                 Clicks(true);
             }
@@ -2773,5 +3094,6 @@ namespace ChessGUI
             }
             Drawing(board);
         }
+        /*private void ButtonCurrentMove_Click(object a_sender, EventArgs a_e);*/
     }
 }

@@ -19,7 +19,7 @@ namespace ChessGUI
         private bool drawByRepitition;
         private int whiteTimeLeft;
         private int blackTimeLeft;
-        private int timePortOffset;
+        private int timeNumber;
         private bool watingForSecondPlayer;
         private bool gameOver;
         private bool serverError;
@@ -61,15 +61,15 @@ namespace ChessGUI
             }
         }
 
-        public int TimePortOffset
+        public int TimeNumber
         {
             get
             {
-                return timePortOffset;
+                return timeNumber;
             }
             set
             {
-                timePortOffset = value;
+                timeNumber = value;
             }
         }
 
