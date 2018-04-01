@@ -2244,6 +2244,7 @@ namespace ChessGUI
             ShowSquares();
             board[x, y].White = state.White;
             board[x, y].HasMoved = true;
+            state.WhiteToMove = !state.WhiteToMove;
             AfterValidClick();
         }
 
