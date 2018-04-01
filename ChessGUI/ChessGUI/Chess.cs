@@ -2277,6 +2277,23 @@ namespace ChessGUI
             }
         }
 
+        private bool SetClicks()
+        {
+            if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove) || state.WaitingForSecondPlayer)
+            {
+                if (squares[0, 0].Enabled)
+                {
+                    Clicks(false);
+                }
+                return false;
+            }
+            else if (!squares[0, 0].Enabled)
+            {
+                Clicks(true);
+            }
+            return true;
+        }
+
         /// <summary>
         /// Handles user clicks, 3 different pieces, pawn promotion, origin click, and destination click
         /// Pawn promotion will make allow the user to make a new piece
@@ -2308,17 +2325,9 @@ namespace ChessGUI
         /// <param name="a_e">Event arguments</param>
         void Square_Click(object a_sender, EventArgs a_e)
         {
-            if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove) || state.WaitingForSecondPlayer)
+            if (!SetClicks())
             {
-                if (squares[0, 0].Enabled)
-                {
-                    Clicks(false);
-                }
                 return;
-            }
-            else if(!squares[0, 0].Enabled)
-            {
-                Clicks(true);
             }
             try
             {
