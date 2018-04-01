@@ -2162,6 +2162,120 @@ namespace ChessGUI
         }
         /*private bool CheckForKingsOnly*/
 
+        private void AfterValidClick()
+        {
+            AddExtrasToNotation();
+            state.Board = board;
+            if (!state.White)
+            {
+                ReverseBoard();
+            }
+            state.AddToAllPositions(board);
+            if (!state.White)
+            {
+                ReverseBoard();
+            }
+            indexShowing++;
+            currPosition++;
+            ResetColors();
+            ResetColors();
+            Drawing(board);
+            Clicks(false);
+            if (IsCheckMate())
+            {
+                state.CheckMate = true;
+                state.GameOver = true;
+            }
+            else if (IsStaleMate())
+            {
+                state.StaleMate = true;
+                state.GameOver = true;
+            }
+            if (!state.White)
+            {
+                ReverseBoard();
+            }
+            string m_json = JsonConvert.SerializeObject(state);
+            sw.WriteLine(m_json);
+            sw.Flush();
+            if (!state.White)
+            {
+                ReverseBoard();
+            }
+            origin = String.Empty;
+            if (state.GameOver)
+            {
+                OfferNewGame();
+            }
+        }
+
+        private void PromotePawnClick(int a_i)
+        {
+            state.Notation += '=';
+            KeyValuePair<int, int> m_pair = PawnLocation();
+            int x = m_pair.Key;
+            int y = m_pair.Value;
+            board[x, y] = new Piece();
+            switch (a_i)
+            {
+                case 100:
+                    board[x, y].Value = 3;
+                    state.Notation += 'B';
+                    break;
+                case 101:
+                    board[x, y].Value = 4;
+                    state.Notation += 'N';
+                    break;
+                case 102:
+                    board[x, y].Value = 5;
+                    state.Notation += 'R';
+                    break;
+                case 103:
+                    board[x, y].Value = 8;
+                    state.Notation += 'Q';
+                    break;
+                default:
+                    break;
+            }
+            foreach (Square m_square in promotionSquares)
+            {
+                m_square.Hide();
+            }
+            ShowSquares();
+            board[x, y].White = state.White;
+            board[x, y].HasMoved = true;
+            AfterValidClick();
+        }
+
+        private void SecondClick(int a_i, int a_j)
+        {
+            if (squares[a_i, a_j].BackColor != Color.Black && squares[a_i, a_j].BackColor != Color.White)
+            {
+                int m_tempI = Convert.ToInt32(origin.ElementAt(0) - 48);
+                int m_tempJ = Convert.ToInt32(origin.ElementAt(1) - 48);
+                if (board[m_tempI, m_tempJ].Value == 1 && (a_i == 7 || a_i == 0))
+                {
+                    AddToNotation(a_i, a_j, m_tempI, m_tempJ);
+                    MakeMove(a_i, a_j, m_tempI, m_tempJ);
+                    return;
+                }
+                else
+                {
+                    state.WhiteToMove = !state.WhiteToMove;
+                }
+
+                ParseForPawns();
+                AddToNotation(a_i, a_j, m_tempI, m_tempJ);
+                MakeMove(a_i, a_j, m_tempI, m_tempJ);
+                AfterValidClick();
+            }
+            else
+            {
+                origin = String.Empty;
+                ResetColors();
+            }
+        }
+
         /// <summary>
         /// Handles user clicks, 3 different pieces, pawn promotion, origin click, and destination click
         /// Pawn promotion will make allow the user to make a new piece
@@ -2193,7 +2307,7 @@ namespace ChessGUI
         /// <param name="a_e">Event arguments</param>
         void Square_Click(object a_sender, EventArgs a_e)
         {
-            if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove))
+            if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove) || state.WaitingForSecondPlayer)
             {
                 if (squares[0, 0].Enabled)
                 {
@@ -2201,101 +2315,17 @@ namespace ChessGUI
                 }
                 return;
             }
-            else
+            else if(!squares[0, 0].Enabled)
             {
-                if (!squares[0, 0].Enabled)
-                {
-                    Clicks(true);
-                }
+                Clicks(true);
             }
             try
             {
-                if (state.WaitingForSecondPlayer)
-                {
-                    if (squares[0, 0].Enabled)
-                    {
-                        Clicks(false);
-                    }
-                    return;
-                }
-                else
-                {
-                    if (!squares[0, 0].Enabled)
-                    {
-                        Clicks(true);
-                    }
-                }
                 int m_i = (a_sender as Square).posY;
                 int m_j = (a_sender as Square).posX;
-                if(m_i >= 100 && m_j >= 100)
+                if(m_i > 99) // posX and posY are set to specific values over 100 which allows for the 3rd click needed to promote pawn
                 {
-                    state.Notation += '=';
-                    KeyValuePair<int, int> m_pair = PawnLocation();
-                    int x = m_pair.Key;
-                    int y = m_pair.Value;
-                    board[x, y] = new Piece();
-                    switch (m_i)
-                    {
-                        case 100:
-                            board[x, y].Value = 3;
-                            state.Notation += 'B';
-                            break;
-                        case 101:
-                            board[x, y].Value = 4;
-                            state.Notation += 'N';
-                            break;
-                        case 102:
-                            board[x, y].Value = 5;
-                            state.Notation += 'R';
-                            break;
-                        case 103:
-                            board[x, y].Value = 8;
-                            state.Notation += 'Q';
-                            break;
-                        default:
-                            break;
-                    }
-                    AddExtrasToNotation();
-                    board[x, y].White = state.White;
-                    board[x, y].HasMoved = true;
-                    foreach(Square m_square in promotionSquares)
-                    {
-                        m_square.Hide();
-                    }
-                    ShowSquares();
-                    Drawing(board);
-                    state.Board = board;
-                    Drawing(board);
-                    ResetColors();
-                    ResetColors();
-                    Clicks(false);
-                    if (IsCheckMate())
-                    {
-                        state.GameOver = true;
-                        state.CheckMate = true;
-                    }
-                    else if (IsStaleMate())
-                    {
-                        state.GameOver = true;
-                        state.StaleMate = true;
-                    }
-                    if (!state.White)
-                    {
-                        ReverseBoard();
-                    }
-                    state.WhiteToMove = !state.WhiteToMove;
-                    string json = JsonConvert.SerializeObject(state);
-                    sw.WriteLine(json);
-                    sw.Flush();
-                    if (!state.White)
-                    {
-                        ReverseBoard();
-                    }
-                    origin = String.Empty;
-                    if (state.GameOver)
-                    {
-                        OfferNewGame();
-                    }
+                    PromotePawnClick(m_i);
                 }
                 else if (origin == String.Empty)
                 {
@@ -2307,73 +2337,7 @@ namespace ChessGUI
                 }
                 else
                 {
-                    if (squares[m_i, m_j].BackColor != Color.Black && squares[m_i, m_j].BackColor != Color.White)
-                    {
-                        int m_tempI = Convert.ToInt32(origin.ElementAt(0) - 48);
-                        int m_tempJ = Convert.ToInt32(origin.ElementAt(1) - 48);
-                        if(board[m_tempI, m_tempJ].Value == 1 && (m_i == 7 || m_i == 0))
-                        {
-                            AddToNotation(m_i, m_j, m_tempI, m_tempJ);
-                            MakeMove(m_i, m_j, m_tempI, m_tempJ);
-                            return;
-                        }
-                        else
-                        {
-                            state.WhiteToMove = !state.WhiteToMove;
-                        }
-
-                        ParseForPawns();
-                        AddToNotation(m_i, m_j, m_tempI, m_tempJ);
-                        MakeMove(m_i, m_j, m_tempI, m_tempJ);
-                        AddExtrasToNotation();
-                        state.Board = board;
-                        if(!state.White)
-                        {
-                            ReverseBoard();
-                        }
-                        state.AddToAllPositions(board);
-                        if(!state.White)
-                        {
-                            ReverseBoard();
-                        }
-                        indexShowing++;
-                        currPosition++;
-                        ResetColors();
-                        ResetColors();
-                        Drawing(board);
-                        Clicks(false);
-                        if (IsCheckMate())
-                        {
-                            state.CheckMate = true;
-                            state.GameOver = true;
-                        }
-                        else if (IsStaleMate())
-                        {
-                            state.StaleMate = true;
-                            state.GameOver = true;
-                        }
-                        if (!state.White)
-                        {
-                            ReverseBoard();
-                        }
-                        string m_json = JsonConvert.SerializeObject(state);
-                        sw.WriteLine(m_json);
-                        sw.Flush();
-                        if (!state.White)
-                        {
-                            ReverseBoard();
-                        }
-                        origin = String.Empty;
-                        if (state.GameOver)
-                        {
-                            OfferNewGame();
-                        }
-                    }
-                    else
-                    {
-                        origin = String.Empty;
-                        ResetColors();
-                    }
+                    SecondClick(m_i, m_j);
                 }
 
             }
