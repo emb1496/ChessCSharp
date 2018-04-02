@@ -1485,25 +1485,46 @@ namespace ChessGUI
                     switch (a_board[m_i, m_j].Value)
                     {
                         case 0:
-                            squares[m_i, m_j].BackgroundImage = null;
+                            if(squares[m_i, m_j].BackgroundImage != null)
+                            {
+                                squares[m_i, m_j].BackgroundImage = null;
+                            }
                             break;
                         case 1:
-                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\p" + m_pieceColor + ".gif");
+                            if(squares[m_i, m_j].BackgroundImage != System.Drawing.Image.FromFile(m_dir + "\\Images\\p" + m_pieceColor + ".gif"))
+                            {
+                                squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\p" + m_pieceColor + ".gif");
+                            }
                             break;
                         case 3:
-                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\B" + m_pieceColor + ".gif");
+                            if (squares[m_i, m_j].BackgroundImage != System.Drawing.Image.FromFile(m_dir + "\\Images\\B" + m_pieceColor + ".gif"))
+                            {
+                                squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\B" + m_pieceColor + ".gif");
+                            }
                             break;
                         case 4:
-                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\N" + m_pieceColor + ".gif");
+                            if (squares[m_i, m_j].BackgroundImage != System.Drawing.Image.FromFile(m_dir + "\\Images\\N" + m_pieceColor + ".gif"))
+                            {
+                                squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\N" + m_pieceColor + ".gif");
+                            }
                             break;
                         case 5:
-                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\R" + m_pieceColor + ".gif");
+                            if (squares[m_i, m_j].BackgroundImage != System.Drawing.Image.FromFile(m_dir + "\\Images\\R" + m_pieceColor + ".gif"))
+                            {
+                                squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\R" + m_pieceColor + ".gif");
+                            }
                             break;
                         case 8:
-                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\Q" + m_pieceColor + ".gif");
+                            if (squares[m_i, m_j].BackgroundImage != System.Drawing.Image.FromFile(m_dir + "\\Images\\Q" + m_pieceColor + ".gif"))
+                            {
+                                squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\Q" + m_pieceColor + ".gif");
+                            }
                             break;
                         case 9:
-                            squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\K" + m_pieceColor + ".gif");
+                            if (squares[m_i, m_j].BackgroundImage != System.Drawing.Image.FromFile(m_dir + "\\Images\\K" + m_pieceColor + ".gif"))
+                            {
+                                squares[m_i, m_j].BackgroundImage = System.Drawing.Image.FromFile(m_dir + "\\Images\\K" + m_pieceColor + ".gif");
+                            }
                             break;
                     }
                 }
