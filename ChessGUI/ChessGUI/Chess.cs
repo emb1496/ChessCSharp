@@ -2162,6 +2162,31 @@ namespace ChessGUI
         }
         /*private bool CheckForKingsOnly*/
 
+        /// <summary>
+        /// handles what the program needss to do after the final click of a valid move
+        /// </summary>
+        /// ChessGUI.Chess.AfterValidClick()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.AfterValidClick - handles what the client needs to do for each user move
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void AfterValidClick();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        ///     
         private void AfterValidClick()
         {
             AddExtrasToNotation();
@@ -2208,7 +2233,33 @@ namespace ChessGUI
                 OfferNewGame();
             }
         }
+        /*private void AfterValidClick();*/
 
+        /// <summary>
+        /// Handles what the client needs to do after selecting the piece to promote to
+        /// </summary>
+        /// ChessGUI.Chess.PromotePawnClick()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.PromotePawnClick - handles client clicking piece after promotion
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void PromotePawnClick();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_i">posX value of the square which was clicked</param>
         private void PromotePawnClick(int a_i)
         {
             state.Notation += '=';
@@ -2247,7 +2298,34 @@ namespace ChessGUI
             state.WhiteToMove = !state.WhiteToMove;
             AfterValidClick();
         }
+        /*private void PromotePawnClick(int a_i);*/
 
+        /// <summary>
+        /// Handles user's second click after setting origin, updates notation and board and calls the AfterValidMove
+        /// </summary>
+        /// ChessGUI.Chess.SecondClick()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.SecondClick - handles second click
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void SecondClick();
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_i">row index</param>
+        /// <param name="a_j">col index</param>
         private void SecondClick(int a_i, int a_j)
         {
             if (squares[a_i, a_j].BackColor != Color.Black && squares[a_i, a_j].BackColor != Color.White)
@@ -2276,7 +2354,29 @@ namespace ChessGUI
                 ResetColors();
             }
         }
+        /*private void SecondClick(int a_i, int a_j);*/
 
+        /// <summary>
+        /// Sets whether the board is clickable or not
+        /// </summary>
+        /// ChessGUI.Chess.SetClicks()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.SetClicks - makes the board clickable or not
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void SecondClick();
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <returns>true if the board can be clicked, false otherwise</returns>
         private bool SetClicks()
         {
             if ((state.White && !state.WhiteToMove) || (!state.White && state.WhiteToMove) || state.WaitingForSecondPlayer)
@@ -2293,6 +2393,7 @@ namespace ChessGUI
             }
             return true;
         }
+        /*private bool SetClicks();*/
 
         /// <summary>
         /// Handles user clicks, 3 different pieces, pawn promotion, origin click, and destination click
