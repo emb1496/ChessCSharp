@@ -13,52 +13,6 @@ using System.Timers;
 
 namespace ChessServer
 {
-    class TimedReader
-    {
-        private static Thread readThread;
-        private static AutoResetEvent getMessage, gotMessage;
-        private static string message;
-        private static StreamReader streamReader;
-
-
-        static TimedReader()
-        {
-            getMessage = new AutoResetEvent(false);
-            gotMessage = new AutoResetEvent(false);
-            readThread = new Thread(Reader)
-            {
-                IsBackground = true
-            };
-            readThread.Start();
-        }
-
-        private static void Reader()
-        {
-            while (true)
-            {
-                getMessage.WaitOne();
-                message = streamReader.ReadLine();
-                gotMessage.Set();
-            }
-        }
-
-        public static string ReadLine(StreamReader a_streamReader)
-        {
-            streamReader = a_streamReader;
-            getMessage.Set();
-            bool success = gotMessage.WaitOne(1500);
-            if (success)
-            {
-                return message;
-            }
-            else
-            {
-                throw new TimeoutException("There was no message to recieve");
-            }
-        }
-    }
-
-
     /// <summary>
     /// Main GamePlay class
     /// </summary>
