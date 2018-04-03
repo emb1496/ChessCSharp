@@ -25,6 +25,7 @@ namespace ChessServer
         private static Socket listeningSocket;
         private static object myLock = new object();
 
+        
         private static string DeSerializeInitialMessage(ref string message)
         {
             string toRet = String.Empty;
