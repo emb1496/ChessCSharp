@@ -69,7 +69,7 @@
             this.textBoxNotation.Name = "textBoxNotation";
             this.textBoxNotation.ReadOnly = true;
             this.textBoxNotation.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxNotation.Size = new System.Drawing.Size(335, 474);
+            this.textBoxNotation.Size = new System.Drawing.Size(335, 258);
             this.textBoxNotation.TabIndex = 1;
             // 
             // textBoxInput

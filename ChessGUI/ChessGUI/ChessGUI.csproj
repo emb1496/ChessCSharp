@@ -95,5 +95,23 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\BPawn.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\BKnight.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\BBishop.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\BB.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\BQueen.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\BRook.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

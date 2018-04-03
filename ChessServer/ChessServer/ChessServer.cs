@@ -73,7 +73,7 @@ namespace ChessServer
         {
             //IPHostEntry iPHost = Dns.GetHostEntry("cs.ramapo.edu");
             //IPAddress iPAddress = iPHost.AddressList[0];
-            IPAddress iPAddress = IPAddress.Parse("172.17.138.32");
+            IPAddress iPAddress = IPAddress.Parse("127.0.0.1");
             IPEndPoint ip = new IPEndPoint(iPAddress, 1234);
             IPEndPoint newEndPoint = null;
             listeningSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -94,8 +94,9 @@ namespace ChessServer
                     StreamReader streamReader = new StreamReader(networkStream);
                     try
                     {
-                        message = TimedReader.ReadLine(streamReader);
-                        message = DeSerializeInitialMessage(ref message);
+                        //message = TimedReader.ReadLine(streamReader);
+                        message = streamReader.ReadLine();
+                        //message = DeSerializeInitialMessage(ref message);
                         SendState tempState = JsonConvert.DeserializeObject<SendState>(message);
                         lock (myLock)
                         {

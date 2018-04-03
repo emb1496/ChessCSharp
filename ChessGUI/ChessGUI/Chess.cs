@@ -2524,7 +2524,7 @@ namespace ChessGUI
         {
             try
             {
-                ip = new IPEndPoint(IPAddress.Parse("172.17.138.32"), 1234);
+                ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
                 byte[] m_buffer = new byte[10];
@@ -2535,7 +2535,7 @@ namespace ChessGUI
                 sr = new StreamReader(ns);
                 sw = new StreamWriter(ns);
                 string message = JsonConvert.SerializeObject(state);
-                message = SerializeInitialMessage(message);
+                //message = SerializeInitialMessage(message);
                 sw.WriteLine(message);
                 sw.Flush();
                 messageFromServer = sr.ReadLine();
