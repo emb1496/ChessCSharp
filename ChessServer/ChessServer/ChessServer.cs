@@ -9,9 +9,56 @@ using System.Threading;
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections;
+using System.Timers;
 
 namespace ChessServer
 {
+    class TimedReader
+    {
+        private static Thread readThread;
+        private static AutoResetEvent getMessage, gotMessage;
+        private static string message;
+        private static StreamReader streamReader;
+
+
+        static TimedReader()
+        {
+            getMessage = new AutoResetEvent(false);
+            gotMessage = new AutoResetEvent(false);
+            readThread = new Thread(Reader)
+            {
+                IsBackground = true
+            };
+            readThread.Start();
+        }
+
+        private static void Reader()
+        {
+            while (true)
+            {
+                getMessage.WaitOne();
+                message = streamReader.ReadLine();
+                gotMessage.Set();
+            }
+        }
+
+        public static string ReadLine(StreamReader a_streamReader)
+        {
+            streamReader = a_streamReader;
+            getMessage.Set();
+            bool success = gotMessage.WaitOne(1500);
+            if (success)
+            {
+                return message;
+            }
+            else
+            {
+                throw new TimeoutException("There was no message to recieve");
+            }
+        }
+    }
+
+
     /// <summary>
     /// Main GamePlay class
     /// </summary>
@@ -23,6 +70,16 @@ namespace ChessServer
         private static List<GameState> tempStateHolder = new List<GameState>(8);
         private static Socket listeningSocket;
         private static object myLock = new object();
+
+        private static string DeSerializeInitialMessage(ref string message)
+        {
+            string toRet = String.Empty;
+            for(int i = 0; i < message.Length; i++)
+            {
+                toRet += message.ElementAt(i) + 2;
+            }
+            return toRet;
+        }
 
         /// <summary>
         ///     This method opens a listening socket then runs in a forever loop.
@@ -61,12 +118,13 @@ namespace ChessServer
         {
             //IPHostEntry iPHost = Dns.GetHostEntry("cs.ramapo.edu");
             //IPAddress iPAddress = iPHost.AddressList[0];
-            IPAddress iPAddress = IPAddress.Parse("127.0.0.1");
+            IPAddress iPAddress = IPAddress.Parse("172.17.138.32");
             IPEndPoint ip = new IPEndPoint(iPAddress, 1234);
             IPEndPoint newEndPoint = null;
             listeningSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Socket client = null;
             byte[] buffer = new byte[10];
+            string message = String.Empty;
             try
             {
                 listeningSocket.Bind(ip);
@@ -77,19 +135,41 @@ namespace ChessServer
                     myClients.Add(client);
                     newEndPoint = (IPEndPoint)client.RemoteEndPoint;
                     myEndPoints.Add(newEndPoint);
-                    int x = 0;
-                    while ((x += client.Receive(buffer, 10, SocketFlags.None)) < 10) ;
-                    x = 0;
-                    foreach(byte b in buffer)
+                    NetworkStream networkStream = new NetworkStream(client);
+                    StreamReader streamReader = new StreamReader(networkStream);
+                    try
                     {
-                        x += Convert.ToInt32(b);
+                        message = TimedReader.ReadLine(streamReader);
+                        message = DeSerializeInitialMessage(ref message);
+                        SendState tempState = JsonConvert.DeserializeObject<SendState>(message);
+                        lock (myLock)
+                        {
+                            ProcessNewGame(tempState.TimeNumber);
+                        }
+                        newEndPoint = null;
+                        client = null;
                     }
-                    lock (myLock)
+                    catch (TimeoutException)
                     {
-                        ProcessNewGame(x);
+
                     }
-                    newEndPoint = null;
-                    client = null;
+                    catch (Exception e)
+                    {
+                        if(e.HResult != -2146233088)
+                        {
+                            throw e;
+                        }
+                    }
+                    //string message = streamReader.ReadLine();
+                    
+                    //int x = 0;
+                    //while ((x += client.Receive(buffer, 10, SocketFlags.None)) < 10) ;
+                    //x = 0;
+                    //foreach(byte b in buffer)
+                    //{
+                    //    x += Convert.ToInt32(b);
+                    //}
+                    
                 }
             }
             catch (Exception e)
@@ -184,26 +264,23 @@ namespace ChessServer
                 case 1:
                     m_index = 0;
                     break;
-                case 3:
+                case 5:
                     m_index = 1;
                     break;
-                case 5:
+                case 10:
                     m_index = 2;
                     break;
-                case 10:
+                case 15:
                     m_index = 3;
                     break;
-                case 15:
+                case 30:
                     m_index = 4;
                     break;
-                case 30:
+                case 60:
                     m_index = 5;
                     break;
-                case 60:
-                    m_index = 6;
-                    break;
                 case 75:
-                    m_index = 7;
+                    m_index = 6;
                     break;
                 default:
                     break;
@@ -678,7 +755,7 @@ namespace ChessServer
         {
             try
             {
-                for (int i = 0; i <= 7; i++)
+                for (int i = 0; i < 7; i++)
                 {
                     tempStateHolder.Add(new GameState());
                 }

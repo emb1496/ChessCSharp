@@ -27,6 +27,19 @@ namespace ChessServer
         private bool serverError;               // Did we lose a client
         private bool gameOver;                  // Is the game still going
         private bool opponentDisconnected;      // opponent still connected to game
+        private int timeNumber;
+
+        public int TimeNumber
+        {
+            get
+            {
+                return timeNumber;
+            }
+            set
+            {
+                timeNumber = value;
+            }
+        }
 
         public bool OpponentDisconnected
         {

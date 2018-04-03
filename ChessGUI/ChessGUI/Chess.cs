@@ -2483,6 +2483,16 @@ namespace ChessGUI
         }
         /*void Square_Click(object a_sender, EventArgs a_e);*/
 
+        private string SerializeInitialMessage(string message)
+        {
+            string toRet = String.Empty;
+            for(int i = 0; i < message.Length; i++)
+            {
+                toRet += message.ElementAt(i) - 2;
+            }
+            return toRet;
+        }
+
         /// <summary>
         /// Will start up the game by connecting to the server and sending it the game length and then recieving the gamestate back from the server
         /// Then it will set up the user view and launch a thread to continue listening to the server
@@ -2514,16 +2524,20 @@ namespace ChessGUI
         {
             try
             {
-                ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
+                ip = new IPEndPoint(IPAddress.Parse("172.17.138.32"), 1234);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
                 byte[] m_buffer = new byte[10];
                 sbyte m_byte1 = Convert.ToSByte(state.TimeNumber);
                 m_buffer[0] = Convert.ToByte(m_byte1);
-                socket.Send(m_buffer, SocketFlags.None);
+//                socket.Send(m_buffer, SocketFlags.None);
                 ns = new NetworkStream(socket);
                 sr = new StreamReader(ns);
                 sw = new StreamWriter(ns);
+                string message = JsonConvert.SerializeObject(state);
+                message = SerializeInitialMessage(message);
+                sw.WriteLine(message);
+                sw.Flush();
                 messageFromServer = sr.ReadLine();
                 GameState m_temp = new GameState();
                 m_temp = JsonConvert.DeserializeObject<GameState>(messageFromServer);
