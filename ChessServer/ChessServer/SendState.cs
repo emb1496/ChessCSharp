@@ -28,6 +28,19 @@ namespace ChessServer
         private bool gameOver;                  // Is the game still going
         private bool opponentDisconnected;      // opponent still connected to game
         private int timeNumber;
+        private int[] takenPieces;
+
+        public int[] TakenPieces
+        {
+            get
+            {
+                return takenPieces;
+            }
+            set
+            {
+                takenPieces = value;
+            }
+        }
 
         public int TimeNumber
         {
@@ -244,6 +257,7 @@ namespace ChessServer
             blackTimeLeft = 10000;
             serverError = false;
             opponentDisconnected = false;
+            takenPieces = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
     }
 }

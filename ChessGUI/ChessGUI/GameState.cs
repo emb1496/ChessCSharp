@@ -24,6 +24,19 @@ namespace ChessGUI
         private bool gameOver;
         private bool serverError;
         private bool opponentDisconnected;
+        private int[] takenPieces;
+
+        public int[] TakenPieces
+        {
+            get
+            {
+                return takenPieces;
+            }
+            set
+            {
+                takenPieces = value;
+            }
+        }
 
         public bool ServerError
         {
@@ -254,6 +267,7 @@ namespace ChessGUI
             WhiteToMove = true;
             chat = String.Empty;
             notation = String.Empty;
+            takenPieces = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         }
     }
 }

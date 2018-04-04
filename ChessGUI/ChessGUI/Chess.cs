@@ -295,6 +295,7 @@ namespace ChessGUI
                             {
                                 ReverseBoard();
                             }
+                            UpdateBoneyardLabels();
                             Drawing(board);
                         }
                         if (state.GameOver)
@@ -924,6 +925,24 @@ namespace ChessGUI
         /*private string FindLegalMoves(Piece[,] a_tempBoard, int a_i, int a_j);*/
 
         /// <summary>
+        /// Resets the origin string if there is no legal moves on the board so the next click performs the new origin check
+        /// </summary>
+        private void ResetOriginBySquares()
+        {
+            for(int i = 0; i < 8; i++)
+            {
+                for(int j = 0; j < 8; j++)
+                {
+                    if(squares[i, j].BackColor == Color.Green)
+                    {
+                        return;
+                    }
+                }
+            }
+            origin = String.Empty;
+        }
+
+        /// <summary>
         ///     Highlights all the moves for a given index of the board (a_i, a_j)
         ///     First it calls FindLegalMoves for the index and splits the result into an array of moves
         ///     Then for every move as long as it is a move it will convert the 2 characters into integers which represent indexes
@@ -1013,6 +1032,7 @@ namespace ChessGUI
                     squares[m_i, m_j].BackColor = Color.Green;
                 }
             }
+            ResetOriginBySquares();
         }
         /*private void ParseAndHighlight(int a_i, int a_j);*/
 
@@ -1990,6 +2010,80 @@ namespace ChessGUI
         }
         /*private char ConvertJToLetter(int a_j)*/
 
+        private void UpdateBoneyardLabels()
+        {
+            labelBlackPawnsTaken.Text = 'x' + state.TakenPieces[0].ToString();
+            labelBlackBishopsTaken.Text = 'x' + state.TakenPieces[1].ToString();
+            labelBlackKnightsTaken.Text = 'x' + state.TakenPieces[2].ToString();
+            labelBlackRooksTaken.Text = 'x' + state.TakenPieces[3].ToString();
+            labelBlackQueensTaken.Text = 'x' + state.TakenPieces[4].ToString();
+            labelWhitePawnsTaken.Text = 'x' + state.TakenPieces[5].ToString();
+            labelWhiteBishopsTaken.Text = 'x' + state.TakenPieces[6].ToString();
+            labelWhiteKnightsTaken.Text = 'x' + state.TakenPieces[7].ToString();
+            labelWhiteRooksTaken.Text = 'x' + state.TakenPieces[8].ToString();
+            labelWhiteQueensTaken.Text = 'x' + state.TakenPieces[9].ToString();
+        }
+
+        private void UpdateBoneyard(int a_destI, int a_destJ)
+        {
+            int[] temp = state.TakenPieces;
+            switch(state.Board[a_destI, a_destJ].Value)
+            {
+                case 1:
+                    if (state.White)
+                    {
+                        temp[0]++;
+                    }
+                    else
+                    {
+                        temp[5]++;
+                    }
+                    break;
+                case 3:
+                    if (state.White)
+                    {
+                        temp[1]++;
+                    }
+                    else
+                    {
+                        temp[6]++;
+                    }
+                    break;
+                case 4:
+                    if (state.White)
+                    {
+                        temp[2]++;
+                    }
+                    else
+                    {
+                        temp[7]++;
+                    }
+                    break;
+                case 5:
+                    if (state.White)
+                    {
+                        temp[3]++;
+                    }
+                    else
+                    {
+                        temp[8]++;
+                    }
+                    break;
+                case 8:
+                    if (state.White)
+                    {
+                        temp[4]++;
+                    }
+                    else
+                    {
+                        temp[9]++;
+                    }
+                    break;
+            }
+            state.TakenPieces = temp;
+            UpdateBoneyardLabels();
+        }
+
         /// <summary>
         /// Does the first part of notation for a particular move which is based on previous position to the move, it checks value of origin whether we are taking anything and where the destination is and 
         /// converts that into a string which is readable to chess players and adds it to moveNotation which is a private member variable
@@ -2082,6 +2176,7 @@ namespace ChessGUI
                 if (state.Board[a_destI, a_destJ].Value > 0)
                 {
                     moveNotation += 'x';
+                    UpdateBoneyard(a_destI, a_destJ);
                 }
                 moveNotation += ConvertJToLetter(a_destJ);
                 if (state.White)

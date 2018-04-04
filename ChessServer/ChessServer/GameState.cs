@@ -32,6 +32,19 @@ namespace ChessServer
         private bool serverError;
         private bool gameOver;
         private bool opponentDisconnected;
+        private int[] takenPieces;
+
+        public int[] TakenPieces
+        {
+            get
+            {
+                return takenPieces;
+            }
+            set
+            {
+                takenPieces = value;
+            }
+        }
 
         public bool OpponentDisconnected
         {
@@ -283,6 +296,7 @@ namespace ChessServer
             blackTimeLeft = 10000;
             gameOver = false;
             opponentDisconnected = false;
+            takenPieces = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
     }
 }

@@ -94,8 +94,8 @@ namespace ChessServer
                     StreamReader streamReader = new StreamReader(networkStream);
                     try
                     {
-                        //message = TimedReader.ReadLine(streamReader);
-                        message = streamReader.ReadLine();
+                        message = TimedReader.ReadLine(streamReader);
+                        //message = streamReader.ReadLine();
                         //message = DeSerializeInitialMessage(ref message);
                         SendState tempState = JsonConvert.DeserializeObject<SendState>(message);
                         lock (myLock)
@@ -116,16 +116,6 @@ namespace ChessServer
                             throw e;
                         }
                     }
-                    //string message = streamReader.ReadLine();
-                    
-                    //int x = 0;
-                    //while ((x += client.Receive(buffer, 10, SocketFlags.None)) < 10) ;
-                    //x = 0;
-                    //foreach(byte b in buffer)
-                    //{
-                    //    x += Convert.ToInt32(b);
-                    //}
-                    
                 }
             }
             catch (Exception e)
@@ -623,6 +613,7 @@ namespace ChessServer
                         // has the board changed if so the following is the change to be made
                         if(!IsSameBoard(state.Board, m_gameState.Board))
                         {
+                            m_gameState.TakenPieces = state.TakenPieces;
                             m_gameState.CheckMate = state.CheckMate;
                             m_gameState.StaleMate = state.StaleMate;
                             m_gameState.GameOver = state.GameOver;

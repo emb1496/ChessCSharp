@@ -118,4 +118,37 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="NB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NB.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RB.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="QB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\QB.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BB.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pB.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pW.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BW.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NW.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="KW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\KW.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="QW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\QW.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RW.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
