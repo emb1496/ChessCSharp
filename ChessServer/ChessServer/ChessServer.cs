@@ -31,7 +31,7 @@ namespace ChessServer
             string toRet = String.Empty;
             for(int i = 0; i < message.Length; i++)
             {
-                toRet += message.ElementAt(i) + 2;
+                toRet += Convert.ToChar(message.ElementAt(i) + 2);
             }
             return toRet;
         }
@@ -95,8 +95,7 @@ namespace ChessServer
                     try
                     {
                         message = TimedReader.ReadLine(streamReader);
-                        //message = streamReader.ReadLine();
-                        //message = DeSerializeInitialMessage(ref message);
+                        message = DeSerializeInitialMessage(ref message);
                         SendState tempState = JsonConvert.DeserializeObject<SendState>(message);
                         lock (myLock)
                         {

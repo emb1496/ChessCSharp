@@ -2674,7 +2674,7 @@ namespace ChessGUI
             string m_toRet = String.Empty;
             for(int m_i = 0; m_i < a_message.Length; m_i++)
             {
-                m_toRet += a_message.ElementAt(m_i) - 2;
+                m_toRet += Convert.ToChar(a_message.ElementAt(m_i) - 2);
             }
             return m_toRet;
         }
