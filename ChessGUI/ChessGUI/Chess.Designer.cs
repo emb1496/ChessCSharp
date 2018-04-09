@@ -528,6 +528,7 @@
             this.Controls.Add(this.textBoxInput);
             this.Controls.Add(this.textBoxNotation);
             this.Controls.Add(this.textBoxChat);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Chess";
             this.Text = "Chess";
             this.Load += new System.EventHandler(this.Chess_Load);

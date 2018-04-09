@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
+using Microsoft.Win32;
 
 namespace ChessGUI
 {
@@ -32,7 +33,7 @@ namespace ChessGUI
         private StreamWriter sw;
         private GameState state = new GameState();
         private string messageToUser = String.Empty; // this deals with offer new game, this is the message shown
-        private DialogResult userInput;              // also for offer new game, this is the user response
+        private DialogResult userInput = DialogResult.Yes;              // also for offer new game, this is the user response
 
         /// <summary>
         /// ChessGUI.Chess.Chess()
@@ -67,6 +68,7 @@ namespace ChessGUI
             state.WhiteTimeLeft = 10800;
             state.BlackTimeLeft = 10800;
             InitializeComponent();
+            this.MaximizeBox = false;
         }
         /*public Chess();*/
 
@@ -202,7 +204,10 @@ namespace ChessGUI
             {
                 messageToUser = "Your opponent has disconnected, would you like to play again?";
             }
-            userInput = MessageBox.Show(messageToUser, "New Game?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            if(userInput == DialogResult.Yes)
+            {
+                userInput = MessageBox.Show(messageToUser, "New Game?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            }
             if (userInput == DialogResult.Yes)
             {
                 Invoke(new Action(() =>
@@ -221,10 +226,6 @@ namespace ChessGUI
                     Timer1.Stop();
                     InitializeComponent();
                 }));
-            }
-            else
-            {
-                Environment.Exit(0);
             }
         }
         /*private void OfferNewGame();*/
