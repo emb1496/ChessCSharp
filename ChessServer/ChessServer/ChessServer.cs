@@ -25,16 +25,39 @@ namespace ChessServer
         private static Socket listeningSocket;
         private static object myLock = new object();
 
-        
-        private static string DeSerializeInitialMessage(ref string message)
+        /// <summary>
+        /// Undoes the hash funtion in the client to allow the server to parse the message sent from the client
+        /// </summary>
+        ///  ChessServer.ChessServer.DeserializeInitialMessage()
+        /// 
+        ///   NAME
+        ///     
+        ///     ChessServer.ChessServer.DeserializeInitialMessage - parses clients first message and makes it readable
+        ///     
+        ///   SYNOPSIS
+        ///    
+        ///      string DeserializeInitialMessage(ref string a_message);
+        ///   
+        ///   AUTHOR
+        ///           
+        ///     Elliott Barinberg
+        ///    
+        ///   DATE
+        ///
+        ///     10:22 AM 3/27/2018
+        ///     
+        /// <param name="a_message">message from client</param>
+        /// <returns>original string with no hash</returns>
+        private static string DeSerializeInitialMessage(ref string a_message)
         {
-            string toRet = String.Empty;
-            for(int i = 0; i < message.Length; i++)
+            string m_toRet = String.Empty;
+            for (int m_i = 0; m_i < a_message.Length; m_i++)
             {
-                toRet += Convert.ToChar(message.ElementAt(i) + 2);
+                m_toRet += Convert.ToChar(a_message.ElementAt(m_i) + 2);
             }
-            return toRet;
+            return m_toRet;
         }
+        /*private static string DeSerializeInitialMessage(ref string a_message);*/
 
         /// <summary>
         ///     This method opens a listening socket then runs in a forever loop.
@@ -53,10 +76,6 @@ namespace ChessServer
         ///    
         ///      void ProcessClientRequests();
         ///          
-        ///   DESCRIPTION
-        ///   
-        ///     
-        ///
         ///   RETURNS
         ///          
         ///     void
@@ -73,36 +92,36 @@ namespace ChessServer
         {
             //IPHostEntry iPHost = Dns.GetHostEntry("cs.ramapo.edu");
             //IPAddress iPAddress = iPHost.AddressList[0];
-            IPAddress iPAddress = IPAddress.Parse("127.0.0.1");
-            IPEndPoint ip = new IPEndPoint(iPAddress, 1234);
-            IPEndPoint newEndPoint = null;
+            IPAddress m_iPAddress = IPAddress.Parse("127.0.0.1");
+            IPEndPoint m_ip = new IPEndPoint(m_iPAddress, 1234);
+            IPEndPoint m_newEndPoint = null;
             listeningSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            Socket client = null;
-            byte[] buffer = new byte[10];
-            string message = String.Empty;
+            Socket m_client = null;
+            byte[] m_buffer = new byte[10];
+            string m_message = String.Empty;
             try
             {
-                listeningSocket.Bind(ip);
+                listeningSocket.Bind(m_ip);
                 listeningSocket.Listen(10);
                 while (true)
                 {
-                    client = listeningSocket.Accept();
-                    myClients.Add(client);
-                    newEndPoint = (IPEndPoint)client.RemoteEndPoint;
-                    myEndPoints.Add(newEndPoint);
-                    NetworkStream networkStream = new NetworkStream(client);
-                    StreamReader streamReader = new StreamReader(networkStream);
+                    m_client = listeningSocket.Accept();
+                    myClients.Add(m_client);
+                    m_newEndPoint = (IPEndPoint)m_client.RemoteEndPoint;
+                    myEndPoints.Add(m_newEndPoint);
+                    NetworkStream m_networkStream = new NetworkStream(m_client);
+                    StreamReader m_streamReader = new StreamReader(m_networkStream);
                     try
                     {
-                        message = TimedReader.ReadLine(streamReader);
-                        message = DeSerializeInitialMessage(ref message);
-                        SendState tempState = JsonConvert.DeserializeObject<SendState>(message);
+                        m_message = TimedReader.ReadLine(m_streamReader);
+                        m_message = DeSerializeInitialMessage(ref m_message);
+                        SendState m_tempState = JsonConvert.DeserializeObject<SendState>(m_message);
                         lock (myLock)
                         {
-                            ProcessNewGame(tempState.TimeNumber);
+                            ProcessNewGame(m_tempState.TimeNumber);
                         }
-                        newEndPoint = null;
-                        client = null;
+                        m_newEndPoint = null;
+                        m_client = null;
                     }
                     catch (TimeoutException)
                     {
