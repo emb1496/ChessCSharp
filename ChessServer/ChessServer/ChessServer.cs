@@ -342,30 +342,26 @@ namespace ChessServer
                     m_gameState.BlackTimeLeft = 60;
                     break;
                 case 1:
-                    m_gameState.WhiteTimeLeft = 180;
-                    m_gameState.BlackTimeLeft = 180;
-                    break;
-                case 2:
                     m_gameState.WhiteTimeLeft = 300;
                     m_gameState.BlackTimeLeft = 300;
                     break;
-                case 3:
+                case 2:
                     m_gameState.WhiteTimeLeft = 600;
                     m_gameState.BlackTimeLeft = 600;
                     break;
-                case 4:
+                case 3:
                     m_gameState.WhiteTimeLeft = 900;
                     m_gameState.BlackTimeLeft = 900;
                     break;
-                case 5:
+                case 4:
                     m_gameState.WhiteTimeLeft = 1800;
                     m_gameState.BlackTimeLeft = 1800;
                     break;
-                case 6:
+                case 5:
                     m_gameState.WhiteTimeLeft = 3600;
                     m_gameState.BlackTimeLeft = 3600;
                     break;
-                case 7:
+                case 6:
                     m_gameState.WhiteTimeLeft = 10800;
                     m_gameState.BlackTimeLeft = 10800;
                     break;

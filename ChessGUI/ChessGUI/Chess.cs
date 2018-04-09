@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
@@ -927,13 +923,34 @@ namespace ChessGUI
         /// <summary>
         /// Resets the origin string if there is no legal moves on the board so the next click performs the new origin check
         /// </summary>
+        /// ChessGUI.Chess.ResetOriginBySquares()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.ResetOriginBySquares - resets the origin string
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void ResetOriginBySquares();
+        ///    
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         private void ResetOriginBySquares()
         {
-            for(int i = 0; i < 8; i++)
+            for(int m_i = 0; m_i < 8; m_i++)
             {
-                for(int j = 0; j < 8; j++)
+                for(int m_j = 0; m_j < 8; m_j++)
                 {
-                    if(squares[i, j].BackColor == Color.Green)
+                    if(squares[m_i, m_j].BackColor == Color.Green)
                     {
                         return;
                     }
@@ -2010,6 +2027,30 @@ namespace ChessGUI
         }
         /*private char ConvertJToLetter(int a_j)*/
 
+        /// <summary>
+        /// Updates the labels in the boneyard so each piece shows how many have been taken off the board
+        /// </summary>
+        /// ChessGUI.Chess.UpdateBoneyardLabels()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.UpdateBoneyardLabels - updates numbers next to pieces
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void UpdateBoneyardLabels();
+        ///    
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
         private void UpdateBoneyardLabels()
         {
             labelBlackPawnsTaken.Text = 'x' + state.TakenPieces[0].ToString();
@@ -2023,66 +2064,94 @@ namespace ChessGUI
             labelWhiteRooksTaken.Text = 'x' + state.TakenPieces[8].ToString();
             labelWhiteQueensTaken.Text = 'x' + state.TakenPieces[9].ToString();
         }
+        /*private void UpdateBoneyardLabels();*/
 
+        /// <summary>
+        /// Updates how many of the piece was taken based on which piece is at the position on the board which is being moved to
+        /// </summary>
+        /// ChessGUI.Chess.UpdateBoneyard()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.UpdateBoneyard - updates the boneyard in state and then calls updateboneyardlabels
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void UpdateBoneyard(int a_destI, int a_destJ);
+        ///    
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_destI">Destination col</param>
+        /// <param name="a_destJ">Destination row</param>
         private void UpdateBoneyard(int a_destI, int a_destJ)
         {
-            int[] temp = state.TakenPieces;
+            int[] m_temp = state.TakenPieces;
             switch(state.Board[a_destI, a_destJ].Value)
             {
                 case 1:
                     if (state.White)
                     {
-                        temp[0]++;
+                        m_temp[0]++;
                     }
                     else
                     {
-                        temp[5]++;
+                        m_temp[5]++;
                     }
                     break;
                 case 3:
                     if (state.White)
                     {
-                        temp[1]++;
+                        m_temp[1]++;
                     }
                     else
                     {
-                        temp[6]++;
+                        m_temp[6]++;
                     }
                     break;
                 case 4:
                     if (state.White)
                     {
-                        temp[2]++;
+                        m_temp[2]++;
                     }
                     else
                     {
-                        temp[7]++;
+                        m_temp[7]++;
                     }
                     break;
                 case 5:
                     if (state.White)
                     {
-                        temp[3]++;
+                        m_temp[3]++;
                     }
                     else
                     {
-                        temp[8]++;
+                        m_temp[8]++;
                     }
                     break;
                 case 8:
                     if (state.White)
                     {
-                        temp[4]++;
+                        m_temp[4]++;
                     }
                     else
                     {
-                        temp[9]++;
+                        m_temp[9]++;
                     }
                     break;
             }
-            state.TakenPieces = temp;
+            state.TakenPieces = m_temp;
             UpdateBoneyardLabels();
         }
+        /*private void UpdateBoneyard(int a_destI, int a_destJ);*/
 
         /// <summary>
         /// Does the first part of notation for a particular move which is based on previous position to the move, it checks value of origin whether we are taking anything and where the destination is and 
@@ -2578,15 +2647,38 @@ namespace ChessGUI
         }
         /*void Square_Click(object a_sender, EventArgs a_e);*/
 
-        private string SerializeInitialMessage(string message)
+        /// <summary>
+        /// Serializes the message sent to the server by hashing the string
+        /// </summary>
+        /// ChessGUI.Chess.SerializeInitialMessage()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.Button1_Click - hides information in initial message
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private string SerializeInitialMessage(string a_message);
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_message">string to serialize in a hash</param>
+        /// <returns>hashed string</returns>
+        private string SerializeInitialMessage(string a_message)
         {
-            string toRet = String.Empty;
-            for(int i = 0; i < message.Length; i++)
+            string m_toRet = String.Empty;
+            for(int m_i = 0; m_i < a_message.Length; m_i++)
             {
-                toRet += message.ElementAt(i) - 2;
+                m_toRet += a_message.ElementAt(m_i) - 2;
             }
-            return toRet;
+            return m_toRet;
         }
+        /*private string SerializeInitialMessage(string a_message);*/
 
         /// <summary>
         /// Will start up the game by connecting to the server and sending it the game length and then recieving the gamestate back from the server
@@ -2619,6 +2711,8 @@ namespace ChessGUI
         {
             try
             {
+                
+                
                 ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
@@ -2630,7 +2724,7 @@ namespace ChessGUI
                 sr = new StreamReader(ns);
                 sw = new StreamWriter(ns);
                 string message = JsonConvert.SerializeObject(state);
-                //message = SerializeInitialMessage(message);
+                message = SerializeInitialMessage(message);
                 sw.WriteLine(message);
                 sw.Flush();
                 messageFromServer = sr.ReadLine();
@@ -3105,7 +3199,7 @@ namespace ChessGUI
         private void ButtonStartOfGame_Click(object a_sender, EventArgs a_e)
         {
             board = state.AllPositions.ElementAt(0);
-            if (!state.White)
+            if ((!state.White && !board[0,0].White) || (state.White && board[0,0].White))
             {
                 ReverseBoard();
             }
@@ -3173,7 +3267,7 @@ namespace ChessGUI
             }
             indexShowing--;
             board = state.AllPositions.ElementAt(indexShowing);
-            if(!state.White)
+            if ((!state.White && !board[0, 0].White) || (state.White && board[0, 0].White))
             {
                 ReverseBoard();
             }
@@ -3243,7 +3337,7 @@ namespace ChessGUI
             }
             indexShowing++;
             board = state.AllPositions.ElementAt(indexShowing);
-            if(!state.White)
+            if ((!state.White && !board[0, 0].White) || (state.White && board[0, 0].White))
             {
                 ReverseBoard();
             }
@@ -3308,7 +3402,7 @@ namespace ChessGUI
             ButtonForwardOne.Enabled = false;
             ButtonCurrentMove.Enabled = false;
             board = state.AllPositions.ElementAt(indexShowing);
-            if(!state.White)
+            if ((!state.White && !board[0, 0].White) || (state.White && board[0, 0].White))
             {
                 ReverseBoard();
             }
