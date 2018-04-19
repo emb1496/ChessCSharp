@@ -2762,9 +2762,9 @@ namespace ChessGUI
                 ns = new NetworkStream(socket);
                 sr = new StreamReader(ns);
                 sw = new StreamWriter(ns);
-                string message = JsonConvert.SerializeObject(state);
-                message = SerializeInitialMessage(message);
-                sw.WriteLine(message);
+                string m_message = JsonConvert.SerializeObject(state);
+                m_message = SerializeInitialMessage(m_message);
+                sw.WriteLine(m_message);
                 sw.Flush();
                 messageFromServer = sr.ReadLine();
                 GameState m_temp = new GameState();
