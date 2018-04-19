@@ -90,7 +90,7 @@ namespace ChessServer
         ///     
         private static void ProcessClientRequests()
         {
-            IPAddress m_iPAddress = IPAddress.Parse("172.17.138.70");
+            IPAddress m_iPAddress = IPAddress.Parse("127.0.0.1");
             IPEndPoint m_ip = new IPEndPoint(m_iPAddress, 1234);
             IPEndPoint m_newEndPoint = null;
             listeningSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
