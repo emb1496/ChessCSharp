@@ -90,9 +90,7 @@ namespace ChessServer
         ///     
         private static void ProcessClientRequests()
         {
-            //IPHostEntry iPHost = Dns.GetHostEntry("cs.ramapo.edu");
-            //IPAddress iPAddress = iPHost.AddressList[0];
-            IPAddress m_iPAddress = IPAddress.Parse("127.0.0.1");
+            IPAddress m_iPAddress = IPAddress.Parse("172.17.138.70");
             IPEndPoint m_ip = new IPEndPoint(m_iPAddress, 1234);
             IPEndPoint m_newEndPoint = null;
             listeningSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

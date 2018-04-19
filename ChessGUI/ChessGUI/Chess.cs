@@ -208,6 +208,7 @@ namespace ChessGUI
             {
                 userInput = MessageBox.Show(messageToUser, "New Game?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             }
+            Timer1.Stop();
             if (userInput == DialogResult.Yes)
             {
                 Invoke(new Action(() =>
@@ -223,7 +224,6 @@ namespace ChessGUI
                     state.TimeNumber = 75;
                     UpperTimeLabel.Visible = false;
                     LowerTimeLabel.Visible = false;
-                    Timer1.Stop();
                     InitializeComponent();
                 }));
             }
@@ -2681,6 +2681,12 @@ namespace ChessGUI
         }
         /*private string SerializeInitialMessage(string a_message);*/
 
+        private void OnProcessExit(object sender, EventArgs e)
+        {
+            socket.Close();
+            Environment.Exit(0);
+        }
+
         /// <summary>
         /// Will start up the game by connecting to the server and sending it the game length and then recieving the gamestate back from the server
         /// Then it will set up the user view and launch a thread to continue listening to the server
@@ -2711,16 +2717,11 @@ namespace ChessGUI
         private void Button1_Click(object a_sender, EventArgs a_e)
         {
             try
-            {
-                
-                
+            {             
+                AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
                 ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
-                byte[] m_buffer = new byte[10];
-                sbyte m_byte1 = Convert.ToSByte(state.TimeNumber);
-                m_buffer[0] = Convert.ToByte(m_byte1);
-//                socket.Send(m_buffer, SocketFlags.None);
                 ns = new NetworkStream(socket);
                 sr = new StreamReader(ns);
                 sw = new StreamWriter(ns);

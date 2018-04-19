@@ -144,9 +144,8 @@
             this.Label2.AutoSize = true;
             this.Label2.Location = new System.Drawing.Point(970, 493);
             this.Label2.Name = "Label2";
-            this.Label2.Size = new System.Drawing.Size(38, 17);
+            this.Label2.Size = new System.Drawing.Size(0, 17);
             this.Label2.TabIndex = 7;
-            this.Label2.Text = "label";
             // 
             // Timer1
             // 
@@ -156,7 +155,7 @@
             // LowerTimeLabel
             // 
             this.LowerTimeLabel.AutoSize = true;
-            this.LowerTimeLabel.Location = new System.Drawing.Point(409, 629);
+            this.LowerTimeLabel.Location = new System.Drawing.Point(450, 629);
             this.LowerTimeLabel.Name = "LowerTimeLabel";
             this.LowerTimeLabel.Size = new System.Drawing.Size(0, 17);
             this.LowerTimeLabel.TabIndex = 8;
@@ -243,11 +242,10 @@
             // UpperTimeLabel
             // 
             this.UpperTimeLabel.AutoSize = true;
-            this.UpperTimeLabel.Location = new System.Drawing.Point(474, 13);
+            this.UpperTimeLabel.Location = new System.Drawing.Point(450, 13);
             this.UpperTimeLabel.Name = "UpperTimeLabel";
-            this.UpperTimeLabel.Size = new System.Drawing.Size(46, 17);
+            this.UpperTimeLabel.Size = new System.Drawing.Size(0, 17);
             this.UpperTimeLabel.TabIndex = 16;
-            this.UpperTimeLabel.Text = "label3";
             // 
             // ButtonStartOfGame
             // 
