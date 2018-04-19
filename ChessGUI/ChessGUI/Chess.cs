@@ -2662,7 +2662,7 @@ namespace ChessGUI
         /// 
         /// NAME
         ///     
-        ///     ChessGUI.Chess.Button1_Click - hides information in initial message
+        ///     ChessGUI.Chess.SerializeInitialMessage - hides information in initial message
         ///     
         /// SYNOPIS
         /// 
