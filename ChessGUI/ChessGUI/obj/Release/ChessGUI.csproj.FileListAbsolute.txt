@@ -133,3 +133,4 @@ C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\C
 C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.csproj.CoreCompileInputs.cache
 C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.exe
 C:\Users\Elliott\Desktop\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.pdb
+C:\Users\emb14\source\repos\ChessCSharp\ChessCSharp\ChessGUI\ChessGUI\obj\Release\ChessGUI.csproj.CopyComplete

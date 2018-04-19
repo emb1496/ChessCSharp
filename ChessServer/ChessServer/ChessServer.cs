@@ -95,7 +95,6 @@ namespace ChessServer
             IPEndPoint m_newEndPoint = null;
             listeningSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Socket m_client = null;
-            byte[] m_buffer = new byte[10];
             string m_message = String.Empty;
             try
             {
