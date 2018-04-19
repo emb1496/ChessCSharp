@@ -263,45 +263,52 @@ namespace ChessGUI
         {
             while (true)
             {
-                messageFromServer = sr.ReadLine();
-                state = JsonConvert.DeserializeObject<GameState>(messageFromServer);
-                currPosition = state.AllPositions.Count - 1;
-                indexShowing = currPosition;
-                Invoke(new Action(() =>
+                try
                 {
-                    if (state.WaitingForSecondPlayer)
+                    messageFromServer = sr.ReadLine();
+                    state = JsonConvert.DeserializeObject<GameState>(messageFromServer);
+                    currPosition = state.AllPositions.Count - 1;
+                    indexShowing = currPosition;
+                    Invoke(new Action(() =>
                     {
-                        Clicks(false);
-                        state.Chat += "Waiting for second player";
-                        textBoxChat.Text = state.Chat;
-                    }
-                    else
-                    {
-                        ButtonBackOne.Enabled = true;
-                        ButtonStartOfGame.Enabled = true;
-                        ButtonForwardOne.Enabled = true;
-                        ButtonCurrentMove.Enabled = true;
-                        Clicks(true);
-                        Timer1.Start();
-                        textBoxChat.Text = state.Chat;
-                        if (!IsSameBoard(board, state.Board))
+                        if (state.WaitingForSecondPlayer)
                         {
-                            textBoxNotation.Text = state.Notation;
-                            board = state.Board;
-                            if (!state.White)
+                            Clicks(false);
+                            state.Chat += "Waiting for second player";
+                            textBoxChat.Text = state.Chat;
+                        }
+                        else
+                        {
+                            ButtonBackOne.Enabled = true;
+                            ButtonStartOfGame.Enabled = true;
+                            ButtonForwardOne.Enabled = true;
+                            ButtonCurrentMove.Enabled = true;
+                            Clicks(true);
+                            Timer1.Start();
+                            textBoxChat.Text = state.Chat;
+                            if (!IsSameBoard(board, state.Board))
                             {
-                                ReverseBoard();
+                                textBoxNotation.Text = state.Notation;
+                                board = state.Board;
+                                if (!state.White)
+                                {
+                                    ReverseBoard();
+                                }
+                                UpdateBoneyardLabels();
+                                Drawing(board);
                             }
-                            UpdateBoneyardLabels();
-                            Drawing(board);
+                            if (state.GameOver)
+                            {
+                                Timer1.Stop();
+                                OfferNewGame();
+                            }
                         }
-                        if (state.GameOver)
-                        {
-                            Timer1.Stop();
-                            OfferNewGame();
-                        }
-                    }
-                }));
+                    }));
+                }
+                catch
+                {
+
+                }
             }
         }
         /*private void ProcessServerMessages();*/
@@ -2681,11 +2688,41 @@ namespace ChessGUI
         }
         /*private string SerializeInitialMessage(string a_message);*/
 
-        private void OnProcessExit(object sender, EventArgs e)
+        /// <summary>
+        /// Makes graceful exit of client application, without this upon exit if the server is restarted
+        /// then the client computer will pull up a message saying something is wrong
+        /// </summary>
+        /// ChessGUI.Chess.OnProcessExit()
+        /// 
+        /// NAME
+        ///     
+        ///     ChessGUI.Chess.OnProcessExit - handles graceful exit of program
+        ///     
+        /// SYNOPIS
+        /// 
+        ///     private void OnProcessExit(object a_sender, EventArgs a_e);
+        ///     
+        /// RETURNS
+        /// 
+        ///     void
+        ///     
+        /// AUTHOR
+        /// 
+        ///     Elliott Barinberg
+        ///     
+        /// DATE
+        /// 
+        ///     1:50 PM 3/30/2018
+        /// <param name="a_sender">not used</param>
+        /// <param name="a_e">not used</param>
+        private void OnProcessExit(object a_sender, EventArgs a_e)
         {
             socket.Close();
+            socket.Dispose();
             Environment.Exit(0);
+            Application.Exit();
         }
+        /*private void OnProcessExit(object a_sender, EventArgs a_e);*/
 
         /// <summary>
         /// Will start up the game by connecting to the server and sending it the game length and then recieving the gamestate back from the server
@@ -2717,8 +2754,8 @@ namespace ChessGUI
         private void Button1_Click(object a_sender, EventArgs a_e)
         {
             try
-            {             
-                AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
+            {
+                Application.ApplicationExit += new EventHandler(OnProcessExit);
                 ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip);
