@@ -2797,7 +2797,14 @@ namespace ChessGUI
                 Label2.Text = playerName;
                 if (!state.White)
                 {
+                    Timer1_Tick(null, null);
+                    Timer1.Start();
                     ReverseBoard();
+                }
+                else
+                {
+                    state.WhiteTimeLeft++;
+                    Timer1_Tick(null, null);
                 }
                 MakeSquares(squares);
                 Drawing(board);
