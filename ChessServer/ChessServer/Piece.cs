@@ -51,7 +51,11 @@ namespace ChessServer
             }
         }
 
-        // cunstructor
+        /// <summary>
+        /// Constructor for Piece which sets the value and color of the piece
+        /// </summary>
+        /// <param name="val">piece value</param>
+        /// <param name="isWhite">piece color</param>
         public Piece(int val, bool isWhite)
         {
             value = val;
