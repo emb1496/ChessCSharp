@@ -2231,7 +2231,7 @@ namespace ChessGUI
                     break;
             }
             string m_others = GetOtherPieces(a_destI, a_destJ, a_origI, a_origJ);
-            if (m_others != String.Empty && moveNotation[0] != 'O')
+            if (m_others != String.Empty)
             {
                 int i = Convert.ToInt32(m_others.ElementAt(0) - 48);
                 int j = Convert.ToInt32(m_others.ElementAt(1) - 48);
