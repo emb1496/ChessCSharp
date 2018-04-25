@@ -547,7 +547,6 @@ namespace ChessServer
         }
         /*private static void CheckForDrawByRepitition(SendState a_state);*/
 
-
         /// <summary>
         ///     This function will be the main gameplay function
         ///     It will be spawned in a new thread and then it converts the arguments back into the objects they actually are(Socket, Socket, SendState)
@@ -679,7 +678,6 @@ namespace ChessServer
             }
         }
         /*private static void Play(Object a_whiteSocket, Object a_blackSocket, Object a_initialGameState);*/
-
 
         /// <summary>
         ///     This function will add 8 spaces to tempStateHolder and call ProcessClientRequests()
