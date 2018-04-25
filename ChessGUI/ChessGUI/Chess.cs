@@ -2362,7 +2362,7 @@ namespace ChessGUI
         /*private bool CheckForKingsOnly*/
 
         /// <summary>
-        /// handles what the program needss to do after the final click of a valid move
+        /// handles what the program needs to do after the final click of a valid move
         /// </summary>
         /// ChessGUI.Chess.AfterValidClick()
         /// 
