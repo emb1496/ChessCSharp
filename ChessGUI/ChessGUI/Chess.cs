@@ -274,7 +274,8 @@ namespace ChessGUI
                         {
                             Clicks(false);
                             state.Chat += "Waiting for second player";
-                            textBoxChat.Text = state.Chat;
+                            textBoxChat.Text = String.Empty;
+                            textBoxChat.AppendText(state.Chat);
                         }
                         else
                         {
@@ -284,7 +285,8 @@ namespace ChessGUI
                             ButtonCurrentMove.Enabled = true;
                             Clicks(true);
                             Timer1.Start();
-                            textBoxChat.Text = state.Chat;
+                            textBoxChat.Text = String.Empty;
+                            textBoxChat.AppendText(state.Chat);
                             if (!IsSameBoard(board, state.Board))
                             {
                                 textBoxNotation.Text = String.Empty;
@@ -2897,7 +2899,8 @@ namespace ChessGUI
             {
                 string message = playerName + ": " + textBoxInput.Text + "\r\n";
                 state.Chat += message;
-                textBoxChat.Text = state.Chat;
+                textBoxChat.Text = String.Empty;
+                textBoxChat.AppendText(state.Chat);
                 textBoxInput.Text = String.Empty;
                 if (!state.White)
                 {
