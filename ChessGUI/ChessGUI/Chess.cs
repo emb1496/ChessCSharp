@@ -116,7 +116,6 @@ namespace ChessGUI
         }
         /*private bool IsSameBoard(Piece[,] a_board1, Piece[,] a_board2);*/
 
-
         /// <summary>
         ///     Only called once game is over, this checks why the game ended and builds a message to the user from that
         ///     Then it displays an interactive message box, if the user selects no then it will close the application
@@ -288,7 +287,8 @@ namespace ChessGUI
                             textBoxChat.Text = state.Chat;
                             if (!IsSameBoard(board, state.Board))
                             {
-                                textBoxNotation.Text = state.Notation;
+                                textBoxNotation.Text = String.Empty;
+                                textBoxNotation.AppendText(state.Notation);
                                 board = state.Board;
                                 if (!state.White)
                                 {
@@ -2317,7 +2317,8 @@ namespace ChessGUI
             }
             state.Notation += moveNotation;
             moveNotation = String.Empty;
-            textBoxNotation.Text = state.Notation;
+            textBoxNotation.Text = String.Empty;
+            textBoxNotation.AppendText(state.Notation);
         }
         /*private void AddExtrasToNotation*/
 
