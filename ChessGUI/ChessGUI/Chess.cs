@@ -3249,11 +3249,15 @@ namespace ChessGUI
         private void ButtonStartOfGame_Click(object a_sender, EventArgs a_e)
         {
             board = state.AllPositions.ElementAt(0);
-            if ((!state.White && !board[0,0].White) || (state.White && board[0,0].White))
+            if (!state.White)
             {
                 ReverseBoard();
             }
             Drawing(board);
+            if (!state.White)
+            {
+                ReverseBoard();
+            }
             indexShowing = 0;
             if(currPosition == 0)
             {
@@ -3317,11 +3321,15 @@ namespace ChessGUI
             }
             indexShowing--;
             board = state.AllPositions.ElementAt(indexShowing);
-            if ((!state.White && !board[0, 0].White) || (state.White && board[0, 0].White))
+            if (!state.White)
             {
                 ReverseBoard();
             }
             Drawing(board);
+            if (!state.White)
+            {
+                ReverseBoard();
+            }
             if (squares[0, 0].Enabled)
             {
                 Clicks(false);
@@ -3387,11 +3395,15 @@ namespace ChessGUI
             }
             indexShowing++;
             board = state.AllPositions.ElementAt(indexShowing);
-            if ((!state.White && !board[0, 0].White) || (state.White && board[0, 0].White))
+            if (!state.White)
             {
                 ReverseBoard();
             }
             Drawing(board);
+            if (!state.White)
+            {
+                ReverseBoard();
+            }
             if (indexShowing == state.AllPositions.Count - 1)
             {
                 if(state.White == state.WhiteToMove && !squares[0,0].Enabled)
@@ -3452,11 +3464,15 @@ namespace ChessGUI
             ButtonForwardOne.Enabled = false;
             ButtonCurrentMove.Enabled = false;
             board = state.AllPositions.ElementAt(indexShowing);
-            if ((!state.White && !board[0, 0].White) || (state.White && board[0, 0].White))
+            if (!state.White)
             {
                 ReverseBoard();
             }
             Drawing(board);
+            if (!state.White)
+            {
+                ReverseBoard();
+            }
         }
         /*private void ButtonCurrentMove_Click(object a_sender, EventArgs a_e);*/
     }
