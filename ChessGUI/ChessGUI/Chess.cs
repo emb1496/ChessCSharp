@@ -720,7 +720,7 @@ namespace ChessGUI
         /// DATE
         /// 
         ///     1:50 PM 3/30/2018
-        /// <param name="a_board">board copy</param>
+        /// <param name="a_tempBoard">board copy</param>
         /// <param name="a_i">row index</param>
         /// <param name="a_j">col index</param>
         /// <returns>string of comma seperated indexes on the board that the piece can move</returns>
