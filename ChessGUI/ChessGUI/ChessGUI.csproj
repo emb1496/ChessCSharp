@@ -11,6 +11,22 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -30,6 +46,18 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>B97B9D0372F644F54A231973F104B742F443FF79</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>ChessGUI_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
@@ -77,6 +105,7 @@
     <EmbeddedResource Include="Square.resx">
       <DependentUpon>Square.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="ChessGUI_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -91,42 +120,130 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\BB.gif" />
+    <None Include="Resources\BW.gif" />
+    <None Include="Resources\KW.gif" />
+    <None Include="Resources\NB.gif" />
+    <None Include="Resources\NW.gif" />
+    <None Include="Resources\pB.gif" />
+    <None Include="Resources\pW.gif" />
+    <None Include="Resources\QB.gif" />
+    <None Include="Resources\QW.gif" />
+    <None Include="Resources\RB.gif" />
+    <None Include="Resources\RW.gif" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\pB.gif" />
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\NB.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\BB.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\QB.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\RB.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\pW.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\BW.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\NW.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\KW.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\QW.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\RW.gif" />
+    <Content Include="bin\Release\Images\BB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\BW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\KB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\KW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\NB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\NW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\pB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\pW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\QB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\QW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\RB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Images\RW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\Release\Resources\Images\BB.gif" />
+    <Content Include="bin\Release\Resources\Images\BW.gif" />
+    <Content Include="bin\Release\Resources\Images\KB.gif" />
+    <Content Include="bin\Release\Resources\Images\KW.gif" />
+    <Content Include="bin\Release\Resources\Images\NB.gif" />
+    <Content Include="bin\Release\Resources\Images\NW.gif" />
+    <Content Include="bin\Release\Resources\Images\pB.gif" />
+    <Content Include="bin\Release\Resources\Images\pW.gif" />
+    <Content Include="bin\Release\Resources\Images\QB.gif" />
+    <Content Include="bin\Release\Resources\Images\QW.gif" />
+    <Content Include="bin\Release\Resources\Images\RB.gif" />
+    <Content Include="bin\Release\Resources\Images\RW.gif" />
+    <Content Include="Images\BB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\BW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\KB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\KW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\NB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\NW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\pB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\pW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\QB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\QW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\RB.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\RW.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\BB.gif" />
+    <Content Include="Resources\Images\BW.gif" />
+    <Content Include="Resources\Images\KB.gif" />
+    <Content Include="Resources\Images\KW.gif" />
+    <Content Include="Resources\Images\NB.gif" />
+    <Content Include="Resources\Images\NW.gif" />
+    <Content Include="Resources\Images\pB.gif" />
+    <Content Include="Resources\Images\pW.gif" />
+    <Content Include="Resources\Images\QB.gif" />
+    <Content Include="Resources\Images\QW.gif" />
+    <Content Include="Resources\Images\RB.gif" />
+    <Content Include="Resources\Images\RW.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
